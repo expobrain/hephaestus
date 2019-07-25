@@ -1,5 +1,5 @@
 [package]
-name = "calculator1"
+name = "efesto"
 version = "0.1.0"
 authors = ["Daniele Esposti"]
 edition = "2018"
@@ -10,3 +10,9 @@ lalrpop = "0.17.1"
 [dependencies]
 lalrpop-util = "0.17.1"
 regex = "0.2.1"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
+[dependencies.dict_derive]
+path = "./dict_derive"

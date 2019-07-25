@@ -20,11 +20,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-extern crate lalrpop;
+use efesto::ast::*;
 
-fn main() {
-    lalrpop::Configuration::new()
-        .generate_in_source_tree()
-        .process()
-        .unwrap()
+use efesto::sql;
+
+#[allow(unused_macros)]
+macro_rules! test_data_types {
+    ($name:ident, $sql:expr, $expected:expr) => {
+        #[test]
+        fn $name() {
+            let result = sql::DataTypeParser::new().parse($sql).unwrap();
+
+            assert_eq!(result, $expected);
+        }
+    };
 }
+
+test_data_types!(boolean_type, "BOOLEAN", DataType::Boolean);
+
+test_data_types!(
+    char_type,
+    "CHAR(10)",
+    DataType::Char(Literal::Numeric("10".to_string()))
+);
+
+test_data_types!(date_type, "DATE", DataType::Date);
+
+test_data_types!(
+    decimal_type,
+    "DECIMAL(10, 2)",
+    DataType::Decimal {
+        p: Literal::Numeric("10".to_string()),
+        s: Literal::Numeric("2".to_string()),
+    }
+);
+
+test_data_types!(timestamp_type, "TIMESTAMP", DataType::Timestamp);
+
+test_data_types!(
+    timestamp_local_type,
+    "TIMESTAMP WITH LOCAL TIME ZONE",
+    DataType::LocalTimestamp
+);
+
+test_data_types!(
+    varchar_type,
+    "VARCHAR(10)",
+    DataType::Varchar(Literal::Numeric("10".to_string()))
+);

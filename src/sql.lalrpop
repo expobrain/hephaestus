@@ -1,0 +1,1019 @@
+// MIT License
+//
+// Copyright (c) 2018 Hans-Martin Will
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+use super::ast;
+use super::symbols;
+
+grammar;
+
+// Lexer specification, with the primary purpose of making language keywords case insensitive
+match {
+    r"(?i)all" => "ALL",
+    r"(?i)and" => "AND",
+    r"(?i)as" => "AS",
+    r"(?i)asc" => "ASC",
+    r"(?i)attach" => "ATTACH",
+
+    r"(?i)between" => "BETWEEN",
+    r"(?i)by" => "BY",
+    r"(?i)boolean" => "BOOLEAN",
+
+    r"(?i)case" => "CASE",
+    r"(?i)cast" => "CAST",
+    r"(?i)char" => "CHAR",
+    r"(?i)coalesce" => "COALESCE",
+    r"(?i)collate" => "COLLATE",
+    r"(?i)concat" => "CONCAT",
+    r"(?i)count" => "COUNT",
+    r"(?i)cross" => "CROSS",
+    r"(?i)current_date" => "CURRENT_DATE",
+    r"(?i)current_time" => "CURRENT_TIME",
+    r"(?i)current_timestamp" => "CURRENT_TIMESTAMP",
+
+    r"(?i)date" => "DATE",
+    r"(?i)decimal" => "DECIMAL",
+    r"(?i)delete" => "DELETE",
+    r"(?i)desc" => "DESC",
+    r"(?i)describe" => "DESCRIBE",
+    r"(?i)distinct" => "DISTINCT",
+    r"(?i)double" => "DOUBLE",
+
+    r"(?i)else" => "ELSE",
+    r"(?i)end" => "END",
+    r"(?i)explain" => "EXPLAIN",
+    r"(?i)except" => "EXCEPT",
+
+    r"(?i)file" => "FILE",
+    r"(?i)for" => "FOR",
+    r"(?i)from" => "FROM",
+    r"(?i)full" => "FULL",
+
+    r"(?i)group" => "GROUP",
+
+    r"(?i)having" => "HAVING",
+
+    r"(?i)in" => "IN",
+    r"(?i)inner" => "INNER",
+    r"(?i)insert" => "INSERT",
+    r"(?i)intersect" => "INTERSECT",
+    r"(?i)into" => "INTO",
+    r"(?i)is" => "IS",
+    r"(?i)isnull" => "ISNULL",
+
+    r"(?i)join" => "JOIN",
+
+    r"(?i)left" => "LEFT",
+    r"(?i)limit" => "LIMIT",
+    r"(?i)like" => "LIKE",
+    r"(?i)local" => "LOCAL",
+
+    r"(?i)max" => "MAX",
+    r"(?i)min" => "MIN",
+
+    r"(?i)natural" => "NATURAL",
+    r"(?i)not" => "NOT",
+    r"(?i)notnull" => "NOTNULL",
+    r"(?i)null" => "NULL",
+
+    r"(?i)offset" => "OFFSET",
+    r"(?i)on" => "ON",
+    r"(?i)or" => "OR",
+    r"(?i)order" => "ORDER",
+    r"(?i)outer" => "OUTER",
+
+    r"(?i)plan" => "PLAN",
+    r"(?i)power" => "POWER",
+    r"(?i)precision" => "PRECISION",
+
+    r"(?i)query" => "QUERY",
+
+    r"(?i)replace" => "REPLACE",
+    r"(?i)right" => "RIGHT",
+
+    r"(?i)select" => "SELECT",
+    r"(?i)set" => "SET",
+    r"(?i)substr" => "SUBSTR",
+    r"(?i)substring" => "SUBSTRING",
+    r"(?i)sum" => "SUM",
+
+    r"(?i)table" => "TABLE",
+    r"(?i)then" => "THEN",
+    r"(?i)time" => "TIME",
+    r"(?i)timestamp" => "TIMESTAMP",
+    r"(?i)to_date" => "TO_DATE",
+
+    r"(?i)update" => "UPDATE",
+    r"(?i)union" => "UNION",
+    r"(?i)using" => "USING",
+
+    r"(?i)values" => "VALUES",
+    r"(?i)varchar" => "VARCHAR",
+
+    r"(?i)when" => "WHEN",
+    r"(?i)where" => "WHERE",
+    r"(?i)with" => "WITH",
+
+    r"(?i)zone" => "ZONE",
+
+    "," => ",",
+    "." => ".",
+    "(" => "(",
+    ")" => ")",
+    "*" => "*",
+    "/" => "/",
+    "+" => "+",
+    "-" => "-",
+    "=" => "=",
+    "!=" => "!=",
+    "<" => "<",
+    "<=" => "<=",
+    ">" => ">",
+    ">=" => ">=",
+    "||" => "||"
+} else {
+    r"[A-Za-z_][A-Za-z0-9_]*" => ID,
+    r"[0-9]+(\.[0-9]*)?(E[+-]?[0-9]+)?" => NUMERIC_LIT_1,
+    r"\.[0-9]+(E[+-]?[0-9]+)?" => NUMERIC_LIT_2,
+    r"0x[0-9A-Fa-f]+" => HEX_LIT,
+    r"'[^[[:cntrl:]]']*'" => STRING_LIT
+}
+
+pub SqlStatement: ast::SqlStatement = {
+    <Statement> => ast::SqlStatement::Statement(<>),
+    "EXPLAIN" ("QUERY" "PLAN")? <Statement> => ast::SqlStatement::ExplainQueryPlan(<>),
+    <AttachStatement> => ast::SqlStatement::Attach(<>),
+    <DescribeStatement> => ast::SqlStatement::Describe(<>),
+};
+
+Statement: ast::Statement = {
+    SelectStatement => ast::Statement::Select(<>),
+    InsertStatement => ast::Statement::Insert(<>),
+    DeleteStatement => ast::Statement::Delete(<>),
+    UpdateStatement => ast::Statement::Update(<>),
+};
+
+InsertStatement: ast::InsertStatement = {
+    TableExpressions? "INSERT" "INTO" <table_name:QualifiedIdentifier> <columns:ColumnNameList?> <source:SelectCore> =>
+        ast::InsertStatement { table_name, columns, source }
+};
+
+ColumnNameList: Vec<symbols::Name> = {
+    "(" <ids:IdentifierList> ")" => ids,
+};
+
+DeleteStatement: ast::DeleteStatement = {
+    TableExpressions? "DELETE" "FROM" <table_name:QualifiedIdentifier> <where_expr:WhereClause?> =>
+        ast::DeleteStatement { table_name, where_expr }
+};
+
+UpdateStatement: ast::UpdateStatement = {
+    TableExpressions? "UPDATE" <table_name:QualifiedIdentifier>
+    "SET" <assignments:Assignments> <where_expr:WhereClause?> => ast::UpdateStatement { <> }
+};
+
+Assignments: Vec<ast::Assignment> = {
+    Assignment => vec![<>],
+    <assignments:Assignments> "," <assignment:Assignment> => ast::append(assignments, assignment),
+};
+
+Assignment: ast::Assignment = {
+    <columns:IdentifierList> "=" <expr:Expression> => ast::Assignment { <> },
+};
+
+SelectStatement: ast::SelectStatement = {
+    <ctl:TableExpressions> <expr:SelectCoreList> <ordering:OrderByClause?> <limit:LimitClause?> =>
+        ast::SelectStatement {
+            common: ctl,
+            expr: Box::new(expr),
+            order_by: ordering.unwrap_or(Vec::new()),
+            limit
+        },
+    <expr:SelectCoreList> <ordering:OrderByClause?> <limit:LimitClause?> =>
+        ast::SelectStatement {
+            common: vec![],
+            expr: Box::new(expr),
+            order_by: ordering.unwrap_or(Vec::new()),
+            limit
+        },
+};
+
+TableExpressions: Vec<ast::CommonTableExpression> = {
+    "WITH" <ctl:CommonTableExpressionList> => ctl,
+};
+
+CommonTableExpressionList: Vec<ast::CommonTableExpression>= {
+    <cte:CommonTableExpression> => vec![cte],
+    <ctl:CommonTableExpressionList> "," <cte:CommonTableExpression> => ast::append(ctl, cte),
+};
+
+CommonTableExpression: ast::CommonTableExpression = {
+    <id:Identifier> "AS" "(" <query:SelectStatement> ")" =>
+        ast::CommonTableExpression { identifier: id, column_names: None, query },
+    <id:Identifier> "(" <column_names:IdentifierList> ")" "AS" "(" <query: SelectStatement> ")" =>
+        ast::CommonTableExpression {
+            identifier: id,
+            column_names: Some(column_names),
+            query,
+        },
+};
+
+SelectCoreList: ast::SetExpression = {
+    SelectCore,
+    <left:SelectCoreList> <op:CompoundOperator> <right:SelectCore> =>
+        ast::SetExpression::Op(ast::OpSetExpression {
+            op,
+            left: Box::new(left),
+            right: Box::new(right)
+        }),
+};
+
+CompoundOperator: ast::SetOperator = {
+    "UNION" => ast::SetOperator::Union,
+    "UNION" "ALL" => ast::SetOperator::UnionAll,
+    "INTERSECT" => ast::SetOperator::Intersect,
+    "EXCEPT" => ast::SetOperator::Except,
+};
+
+SelectCore: ast::SetExpression = {
+    "SELECT" <mode:SelectMode> <columns:ResultColumns> <where_expr:WhereClause?> <group_by:GroupByClause?> =>
+        ast::SetExpression::Query(ast::QuerySetExpression {
+            mode, columns, from: Vec::new(), where_expr, group_by
+        }),
+    "SELECT" <mode:SelectMode> <columns:ResultColumns> <from:FromClause> <where_expr:WhereClause?> <group_by:GroupByClause?> =>
+        ast::SetExpression::Query(ast::QuerySetExpression {
+            mode, columns, from, where_expr, group_by
+        }),
+    "VALUES" <values:TupleList> => {
+        ast::SetExpression::Values(ast::ValuesSetExpression{ values })
+    },
+};
+
+SelectMode: ast::SelectMode = {
+    "ALL"? => ast::SelectMode::All,
+    "DISTINCT" => ast::SelectMode::Distinct,
+};
+
+TupleList: Vec<Vec<ast::Expression>> = {
+    Tuple => vec![<>],
+    <tuples:TupleList> "," <tuple:Tuple> => ast::append(tuples, tuple),
+};
+
+Tuple: Vec<ast::Expression> = {
+    "(" <exprs:ExpressionList> ")" => exprs,
+};
+
+ResultColumns: ast::ResultColumns = {
+    "*" => ast::ResultColumns::All,
+    ResultColumnList => ast::ResultColumns::List(<>),
+};
+
+ResultColumnList: Vec<ast::ResultColumn> = {
+    ResultColumn => vec![<>],
+    <columns:ResultColumnList> "," <column:ResultColumn> => ast::append(columns, column),
+};
+
+ResultColumn: ast::ResultColumn = {
+    <expr:Expression> =>
+        ast::ResultColumn::Expr(ast::ExprResultColumn {
+            expr,
+            rename: None
+        }),
+    <expr:Expression> "AS"? <rename:Identifier> =>
+        ast::ResultColumn::Expr(ast::ExprResultColumn {
+            expr,
+            rename: Some(rename)
+        }),
+    <name:Identifier> "." "*" => ast::ResultColumn::AllFrom(name),
+};
+
+QualifiedIdentifier: Vec<symbols::Name> = {
+    Identifier => vec![<>],
+    <i1:Identifier> "." <i2:Identifier> => vec![i1, i2],
+    <i1:Identifier> "." <i2:Identifier> "." <i3:Identifier> => vec![i1, i2, i3],
+};
+
+FromClause: Vec<ast::TableExpression> = {
+    "FROM" <exprs:TableExpressionList> => exprs,
+};
+
+TableExpressionList: Vec<ast::TableExpression> = {
+    TableExpression => vec![<>],
+    <exprs:TableExpressionList> "," <expr:TableExpression> => ast::append(exprs, expr),
+};
+
+TableExpression: ast::TableExpression = {
+    TableOrSubQuery,
+    <left:TableExpression> <op:JoinOperator> <right:TableOrSubQuery> <constraint:JoinConstraint> =>
+        ast::TableExpression::Join(ast::JoinTableExpression {
+            left: Box::new(left),
+            right: Box::new(right),
+            op,
+            constraint
+        }),
+};
+
+TableOrSubQuery: ast::TableExpression = {
+    <name:QualifiedIdentifier> <alias:TableAlias?> =>
+        ast::TableExpression::Named(ast::NamedTableExpression { <> }),
+    "(" <select:SelectStatement> ")" <alias:TableAlias?> =>
+        ast::TableExpression::Select(ast::SelectTableExpression { <> }),
+    "(" <expr:TableExpression> ")" => expr,
+};
+
+TableAlias: symbols::Name = {
+    "AS"? <name:Identifier> => name,
+};
+
+JoinOperator: ast::JoinOperator = {
+    <join:JoinType?> "JOIN" => ast::JoinOperator::Join(join.unwrap_or(ast::JoinType::Inner)),
+    "NATURAL" <join:JoinType?> "JOIN" => ast::JoinOperator::Natural(join.unwrap_or(ast::JoinType::Inner)),
+    "CROSS" "JOIN" => ast::JoinOperator::Cross,
+};
+
+JoinType: ast::JoinType = {
+    "LEFT" "OUTER"? => ast::JoinType::Left,
+    "RIGHT" "OUTER"? => ast::JoinType::Right,
+    "FULL" "OUTER"? => ast::JoinType::Full,
+    "INNER" => ast::JoinType::Inner,
+};
+
+JoinConstraint: ast::JoinConstraint = {
+    "ON" <expr:Expression> => ast::JoinConstraint::Expr(expr),
+    "USING" "(" <ids:IdentifierList> ")" =>
+        ast::JoinConstraint::Columns(ast::ColumnsJoinConstraint { columns: ids }),
+};
+
+IdentifierList: Vec<symbols::Name> = {
+    Identifier => vec![<>],
+    <ids:IdentifierList> "," <id:Identifier> => ast::append(ids, id),
+};
+
+WhereClause: ast::Expression = {
+    "WHERE" <expr:Expression> => expr,
+};
+
+GroupByClause: ast::GroupBy = {
+    "GROUP" "BY" <groupings:ExpressionList> => ast::GroupBy { groupings, having: None },
+    "GROUP" "BY" <groupings:ExpressionList> "HAVING" <expr:Expression> =>
+        ast::GroupBy { groupings, having: Some(expr) },
+};
+
+OrderByClause: Vec<ast::Ordering> = {
+    "ORDER" "BY" <OrderingTermList> => <>,
+};
+
+OrderingTermList: Vec<ast::Ordering> = {
+    OrderingTerm => vec![<>],
+    <terms:OrderingTermList> "," <term:OrderingTerm> => ast::append(terms, term),
+};
+
+OrderingTerm: ast::Ordering = {
+    <expr:Expression> <collation:OrderingCollation?> <direction:OrderingDirection> =>
+        ast::Ordering { <> },
+};
+
+OrderingCollation: symbols::Name = {
+    "COLLATE" <name:Identifier> => name,
+};
+
+OrderingDirection: ast::OrderingDirection = {
+    "ASC"? => ast::OrderingDirection::Ascending,
+    "DESC" => ast::OrderingDirection::Descending,
+};
+
+LimitClause: Box<ast::Limit> = {
+    "LIMIT" <number_rows:Expression> => Box::new(ast::Limit { number_rows, offset_value: None }),
+    "LIMIT" <number_rows:Expression> "," <offset:Expression> =>
+        Box::new(ast::Limit { number_rows, offset_value: Some(offset) }),
+    "LIMIT" <number_rows:Expression> "OFFSET" <offset:Expression> =>
+        Box::new(ast::Limit { number_rows, offset_value: Some(offset) }),
+};
+
+AttachStatement: ast::AttachStatement = {
+    "ATTACH" "FILE" <path: StringLiteral> "AS" <schema: SchemaName?> <name: Identifier> =>
+        ast::AttachStatement::new(schema, name, path),
+};
+
+DescribeStatement: ast::DescribeStatement = {
+    "DESCRIBE" <schema: SchemaName?> <name: Identifier> =>
+        ast::DescribeStatement::new(schema, name),
+};
+
+SchemaName: symbols::Name = {
+    <schema: Identifier> "." => schema,
+};
+
+//
+// Expressions
+//
+
+ExpressionList: Vec<ast::Expression> = {
+    Expression => vec![<>],
+    <exprs:ExpressionList> "," <expr:Expression> => ast::append(exprs, expr),
+};
+
+PrimaryExpression: ast::Expression = {
+    "(" <exprs:ExpressionList> ")" => {
+        if exprs.len() == 1 {
+            let mut copy = exprs;
+            copy.remove(0)
+        } else {
+            ast::Expression::MakeTuple(ast::MakeTupleExpression { exprs })
+        }
+    },
+    "(" <SelectStatement> ")" => ast::Expression::Select(<>),
+    LiteralValue => ast::Expression::Literal(<>),
+    QualifiedIdentifier =>
+        ast::Expression::QualifiedIdentifier(ast::QualifiedIdentifierExpression {
+            identifiers: <>
+        })
+};
+
+UnaryExpression: ast::Expression = {
+    PrimaryExpression,
+    "+" <expr:UnaryExpression> => expr,
+    "-" <expr:UnaryExpression> =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Negate,
+            expr: Box::new(expr),
+        }),
+};
+
+MultiplicativeExpression: ast::Expression = {
+    UnaryExpression,
+    <left:MultiplicativeExpression> "*" <right:UnaryExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:MultiplicativeExpression> "*" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "*" <right:UnaryExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "*" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+
+    <left:MultiplicativeExpression> "/" <right:UnaryExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:MultiplicativeExpression> "/" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "/" <right:UnaryExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "/" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+};
+
+AdditiveExpression: ast::Expression = {
+    MultiplicativeExpression,
+    <left:AdditiveExpression> "+" <right:MultiplicativeExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:AdditiveExpression> "+" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "+" <right:MultiplicativeExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "+" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+
+    <left:AdditiveExpression> "-" <right:MultiplicativeExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:AdditiveExpression> "-" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "-" <right:MultiplicativeExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "-" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+
+    <left:AdditiveExpression> "||" <right:MultiplicativeExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "||" <right:MultiplicativeExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:AdditiveExpression> "||" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "||" <right:FunctionExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+};
+
+ComparativeExpression: ast::Expression = {
+    AdditiveExpression,
+    <left:ComparativeExpression> "=" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::Equal,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> "=" <right:CaseExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::Equal,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> "=" <right:FunctionExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::Equal,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+
+    <left:ComparativeExpression> "!=" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> "!=" <right:FunctionExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "!=" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:FunctionExpression> "!=" <right:FunctionExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+
+    <left:ComparativeExpression> "<" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::LessThan,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> ">" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::GreaterThan,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> "<=" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::LessEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> ">=" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::GreaterEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+    <left:ComparativeExpression> "IS" "NULL" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::IsNull, expr: Box::new(left)
+        }),
+    <left:ComparativeExpression> "IS" "NOT" "NULL" => {
+        let not_null = ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::IsNull,
+            expr: Box::new(left),
+        });
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(not_null),
+        })
+    },
+    <left:ComparativeExpression> "LIKE" <right:AdditiveExpression> =>
+        ast::Expression::Comparison(ast::ComparisonExpression {
+            op: ast::ComparisonOperator::Like,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+
+    <expr:ComparativeExpression> "ISNULL" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::IsNull, expr: Box::new(expr),
+        }),
+    <expr:ComparativeExpression> "NOTNULL" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::Unary(ast::UnaryExpression {
+                op: ast::UnaryOperator::IsNull, expr: Box::new(expr),
+            }))
+        }),
+    <expr:ComparativeExpression> "NOT" "NULL" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::Unary(ast::UnaryExpression {
+                op: ast::UnaryOperator::IsNull, expr: Box::new(expr),
+            }))
+        }),
+
+    <expr:ComparativeExpression> "IN" "("  ")" =>
+        ast::Expression::In(ast::InExpression {
+            expr: Box::new(expr),
+            set: ast::SetSpecification::List(Vec::new()),
+        }),
+    <expr:ComparativeExpression> "NOT" "IN" "("  ")" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr: Box::new(expr),
+                set: ast::SetSpecification::List(Vec::new()),
+            }))
+        }),
+
+    <expr:ComparativeExpression> "IN" "(" <exprs:ExpressionList> ")" =>
+        ast::Expression::In(ast::InExpression {
+            expr: Box::new(expr),
+            set: ast::SetSpecification::List(exprs),
+        }),
+    <expr:ComparativeExpression> "NOT" "IN" "(" <exprs:ExpressionList> ")" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr: Box::new(expr),
+                set: ast::SetSpecification::List(exprs),
+            }))
+        }),
+
+    <expr:ComparativeExpression> "IN" "(" <select:SelectStatement> ")" =>
+        ast::Expression::In(ast::InExpression {
+            expr:Box::new(expr),
+            set: ast::SetSpecification::Select(select),
+        }),
+    <expr:ComparativeExpression> "NOT" "IN" "(" <select:SelectStatement> ")" =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr:Box::new(expr),
+                set: ast::SetSpecification::Select(select),
+            }))
+        }),
+
+    <expr:ComparativeExpression> "IN" <name:QualifiedIdentifier> =>
+        ast::Expression::In(ast::InExpression {
+            expr: Box::new(expr),
+            set: ast::SetSpecification::Name(name),
+        }),
+    <expr:ComparativeExpression> "NOT" "IN" <name:QualifiedIdentifier> =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr: Box::new(expr),
+                set: ast::SetSpecification::Name(name),
+            }))
+        }),
+
+    <expr:ComparativeExpression> "BETWEEN" <lower:AdditiveExpression> "AND" <upper:AdditiveExpression> =>
+        ast::Expression::Between(ast::BetweenExpression {
+            expr: Box::new(expr),
+            lower: Box::new(lower),
+            upper: Box::new(upper),
+        }),
+    <expr:ComparativeExpression> "NOT" "BETWEEN" <lower:AdditiveExpression> "AND" <upper:AdditiveExpression> =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::Between(ast::BetweenExpression {
+                expr: Box::new(expr),
+                lower: Box::new(lower),
+                upper: Box::new(upper),
+            }))
+        }),
+};
+
+ComplexExpression: ast::Expression = {
+    ComparativeExpression,
+    CaseExpression,
+    FunctionExpression,
+};
+
+pub FunctionExpression: ast::Expression = {
+    CoalesceExpression,
+    ReplaceExpression,
+    SubstringExpression,
+    ToDateExpression,
+    PowerExpression,
+    ConcatExpression,
+    MaxExpression,
+    MinExpression,
+    SumExpression,
+    CastExpression,
+    RightExpression,
+    CountExpression,
+
+    UnknownExpression,
+};
+
+UnknownExpression: ast::Expression = {
+    <name:Identifier> "(" <exprs:ExpressionList> ")" =>
+        ast::Expression::Unknown(ast::UnknownExpression {
+            name: vec![name],
+            exprs,
+        }),
+    <schema:Identifier> "." <name:Identifier> "(" <exprs:ExpressionList> ")" =>
+        ast::Expression::Unknown(ast::UnknownExpression {
+            name: vec![schema, name],
+            exprs,
+        }),
+}
+
+CountExpression: ast::Expression = {
+    "COUNT" "(" <mode:SelectMode> <columns:ResultColumns> ")" =>
+        ast::Expression::Count(ast::CountExpression { <> }),
+}
+
+SumExpression: ast::Expression = {
+    "SUM" "(" <mode:SelectMode> <expr:Expression> ")" =>
+        ast::Expression::Sum(ast::SumExpression {
+            mode,
+            expr: Box::new(expr),
+        }),
+}
+
+CastExpression: ast::Expression = {
+    "CAST" "(" <expr:Expression> "AS" <data_type:DataType> ")" =>
+        ast::Expression::Cast(ast::CastExpression {
+            expr: Box::new(expr),
+            data_type,
+        }),
+}
+
+ConcatExpression: ast::Expression = {
+    "CONCAT" "(" <exprs: ExpressionList> ")" =>
+        ast::Expression::Concat(ast::ConcatExpression { <> }),
+};
+
+MaxExpression: ast::Expression = {
+    "MAX" "(" <mode:SelectMode> <expr:Expression> ")" =>
+        ast::Expression::Max(ast::MaxExpression {
+            mode,
+            expr: Box::new(expr),
+        }),
+};
+
+MinExpression: ast::Expression = {
+    "MIN" "(" <mode:SelectMode> <expr:Expression> ")" =>
+        ast::Expression::Min(ast::MinExpression {
+            mode,
+            expr: Box::new(expr),
+        }),
+};
+
+ToDateExpression: ast::Expression = {
+    "TO_DATE" "(" <string:Expression> <format:ToDateFormatExpression?> ")" =>
+        ast::Expression::ToDate(ast::ToDateExpression {
+            string: Box::new(string),
+            format,
+        }),
+};
+
+PowerExpression: ast::Expression = {
+    "POWER" "(" <base:Expression> "," <exponent:Expression> ")" =>
+        ast::Expression::Power(ast::PowerExpression {
+            base:Box::new(base),
+            exponent: Box::new(exponent),
+        }),
+};
+
+ToDateFormatExpression: Box<ast::Expression> = {
+    "," <Expression> => Box::new(<>),
+};
+
+RightExpression: ast::Expression = {
+    "RIGHT" "(" <string:Expression> "," <length:Expression> ")" =>
+        ast::Expression::Right(ast::RightExpression {
+            string: Box::new(string),
+            length: Box::new(length),
+        }),
+};
+
+SubstringExpression: ast::Expression = {
+    "SUBSTR" "(" <string:Expression> "," <position:Expression> <length:SubstrLengthExpression?> ")" =>
+        ast::Expression::Substring(ast::SubstringExpression {
+            string: Box::new(string),
+            position: Box::new(position),
+            length,
+        }),
+    "SUBSTRING" "(" <string:Expression> "FROM" <position:Expression> <length:SubstringLengthExpression?> ")" =>
+        ast::Expression::Substring(ast::SubstringExpression {
+            string: Box::new(string),
+            position: Box::new(position),
+            length,
+        }),
+
+    // Exasol can accept also this undocumented grammar for SUBSTRING
+    "SUBSTRING" "(" <string:Expression> "," <position:Expression> <length:SubstrLengthExpression?> ")" =>
+        ast::Expression::Substring(ast::SubstringExpression {
+            string: Box::new(string),
+            position: Box::new(position),
+            length,
+        }),
+};
+
+SubstrLengthExpression: Box<ast::Expression> = {
+    "," <Expression> => Box::new(<>),
+};
+
+SubstringLengthExpression: Box<ast::Expression> = {
+    "FOR" <Expression> => Box::new(<>)
+};
+
+CoalesceExpression: ast::Expression = {
+    "COALESCE" "(" <exprs:ExpressionList> ")" =>
+        ast::Expression::Coalesce(ast::CoalesceExpression { <> })
+}
+
+ReplaceExpression: ast::Expression = {
+    "REPLACE" "(" <string:Expression> "," <search_string:Expression> <replace_string:ReplaceStringExpression?> ")" =>
+        ast::Expression::Replace(ast::ReplaceExpression {
+            string: Box::new(string),
+            search_string: Box::new(search_string),
+            replace_string,
+        })
+}
+
+ReplaceStringExpression: Box<ast::Expression> = {
+    "," <Expression> => Box::new(<>),
+};
+
+pub CaseExpression: ast::Expression = {
+    "CASE" <expr:Expression?> <when_part:WhenClause+> <else_part:ElseClause?> "END" =>
+        ast::Expression::Case(ast::CaseExpression {
+            expr: expr.map(|v| Box::new(v)),
+            when_part,
+            else_part,
+        }),
+};
+
+WhenClause: ast::WhenClause = {
+    "WHEN" <when:Expression> "THEN" <then:Expression> => ast::WhenClause { guard: when, body:then},
+};
+
+ElseClause: Box<ast::Expression> = {
+    "ELSE" <Expression> => Box::new(<>),
+};
+
+NotExpression: ast::Expression = {
+    ComplexExpression,
+    "NOT" <expr:ComplexExpression> =>
+        ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(expr),
+        }),
+};
+
+AndExpression: ast::Expression = {
+    NotExpression,
+    <left:AndExpression> "AND" <right:NotExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::And,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+};
+
+OrExpression: ast::Expression = {
+    AndExpression,
+    <left:OrExpression> "OR" <right:AndExpression> =>
+        ast::Expression::Binary(ast::BinaryExpression {
+            op: ast::BinaryOperator::Or,
+            left: Box::new(left),
+            right: Box::new(right),
+        }),
+};
+
+pub Expression: ast::Expression = {
+    OrExpression,
+};
+
+pub DataType: ast::DataType = {
+    "BOOLEAN" => ast::DataType::Boolean,
+    "CHAR" "(" <NumericLiteral> ")" => ast::DataType::Char(ast::Literal::Numeric( <> )),
+    "DATE" => ast::DataType::Date,
+    "DECIMAL" "(" <p:NumericLiteral> "," <s:NumericLiteral> ")" => ast::DataType::Decimal {
+            p: ast::Literal::Numeric(p),
+            s: ast::Literal::Numeric(s),
+        },
+    "DOUBLE" "PRECISION" => ast::DataType::DoublePrecision,
+    "TIMESTAMP" => ast::DataType::Timestamp,
+    "TIMESTAMP" "WITH" "LOCAL" "TIME" "ZONE" => ast::DataType::LocalTimestamp,
+    "VARCHAR" "(" <n:NumericLiteral> ")" =>
+        ast::DataType::Varchar(ast::Literal::Numeric( <> )),
+};
+
+//
+// Tokens
+//
+
+LiteralValue: ast::Literal = {
+    NumericLiteral => ast::Literal::Numeric(<>),
+    StringLiteral => ast::Literal::String(<>),
+    "NULL" => ast::Literal::Null,
+    "CURRENT_TIME" => ast::Literal::CurrentTime,
+    "CURRENT_DATE" => ast::Literal::CurrentDate,
+    "CURRENT_TIMESTAMP" => ast::Literal::CurrentTimestamp,
+    "DATE" <s:StringLiteral> => ast::Literal::Date(s),
+    "TIME" <s:StringLiteral> => ast::Literal::Time(s),
+    "TIMESTAMP" <s:StringLiteral> => ast::Literal::Timestamp(s),
+};
+
+Identifier: symbols::Name = ID => symbols::Name::from(<>);
+
+NumericLiteral: String = {
+    NUMERIC_LIT_1 => <>.to_string(),
+    NUMERIC_LIT_2 => <>.to_string(),
+    HEX_LIT => <>.to_string(),
+};
+
+StringLiteral: String = STRING_LIT => <>[1..<>.len() - 1].to_string();

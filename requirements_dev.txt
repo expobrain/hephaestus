@@ -1,0 +1,9 @@
+black>=19.3b0
+flake8>=3.7.8
+isort[pyproject]>=4.3.21
+pytest>=5.0.1
+safety>=1.8.5
+setuptools-rust>=0.10.6
+setuptools>=40
+twine>=2.0.0
+wheel>=0.33

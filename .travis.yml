@@ -1,0 +1,45 @@
+language: python
+
+python: 3.7
+
+cache: pip
+
+matrix:
+  fast_finish: true
+  include:
+    - name: "Rust supported nightly"
+      env: RUST_VERSION=nightly-2019-09-23
+    - name: "Rust nightly"
+      env: RUST_VERSION=nightly
+    - name: "Rust stable"
+      env: RUST_VERSION=stable
+  allow_failures:
+    - name: "Rust nightly"
+    - name: "Rust stable"
+
+before_install:
+  - pip uninstall -y numpy
+  - source ./ci/setup.sh
+
+install:
+  - pip install -r requirements_dev.txt
+
+script:
+  - rustc --version
+  - make test_rust
+  - make develop
+  - pytest -vv tests
+  - black --check .
+  - safety check
+
+deploy:
+  provider: pypi
+  user: __token__
+  server: https://test.pypi.org/index
+  password:
+    secure: IxkUJ3CPStUL1NNSckKI3HKqYQh11N59Yi4UCuKoq/JjuPZLbdF6dbbF85ywCL6w6H0ucckeulInms3epgrqp/KyCIPjkwgURhqVwZw4fjoIp1OxrG5wynVUsv+rtmez2MfCA6JCcbQkRlRBz7Yv3FnaUCpl8dzEAN6H2duL3AKDNnNoWVr5G9uP4a1iqY2KifbRWxhf5r4HnoQGmlENY+LKTy2kPfyF+r7ZH62rQ+HB/udH26EQlCq0qARh0jBASqPq1yndoz1/ytNvpwuSHBMoeyCFLRdTfLg/buX8BUGeuIMRgi5I5p0FaOKCNAXobZBW6i4ji281MI7JpG/1scgmbPxPEJn6Qq5wnLbsQdcxFu6h8q8n0Dl0zbtSkwB7sgRqmd8OxzYZhGW0/kJKitYihHHynM48Y6Tc/AqXuFPNei5Y59QlbMsZ60BVMBdSZhytxouRicpbxu1TzaZO0/HItaE7kKUfOA+paewKwrW1k7yGotYB3Px7aGx2Y5Nw4ewHqgLQGxKJsWoVCtsPdWlxE02b96QOh3bl0dDIgIakesvtXhWzepOSXfuUYB0tbXnNUg2v4788+vLNtFOnPSmO510gwXM/Fhr++T62fOShxCMSZj0pcWI3DSH/PGRYijKMEdLbwHKLnS1xnzEpwE6t/rE/bN+1AgAR2CBk7Vo=
+  distributions: sdist bdist_wheel
+  skip_existing: true
+  on:
+    tags: true
+    branch: develop

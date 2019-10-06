@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use efesto::ast::*;
-use efesto::sql::FunctionExpressionParser;
-use efesto::symbols;
+use hephaestus::ast::*;
+use hephaestus::sql::FunctionExpressionParser;
+use hephaestus::symbols;
 
 macro_rules! test_function_builder {
     ($name:ident, $sql:expr, $expected:expr) => {

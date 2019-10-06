@@ -1,4 +1,4 @@
-from efesto.walk import Visitor
+from hephaestus.walk import Visitor
 
 
 def test_traverse_node():

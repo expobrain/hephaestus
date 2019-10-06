@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use efesto::ast::*;
+use hephaestus::ast::*;
 
-use efesto::sql;
+use hephaestus::sql;
 
 #[allow(unused_macros)]
 macro_rules! test_data_types {

@@ -23,9 +23,9 @@
 #[macro_use]
 mod macros;
 
-use efesto::ast::*;
-use efesto::parse;
-use efesto::symbols;
+use hephaestus::ast::*;
+use hephaestus::parse;
+use hephaestus::symbols;
 
 test_builder!(
     select_minimum_cte,

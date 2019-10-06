@@ -1,5 +1,5 @@
 [package]
-name = "efesto"
+name = "hephaestus"
 version = "0.1.0"
 authors = ["Daniele Esposti"]
 edition = "2018"

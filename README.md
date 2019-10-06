@@ -1,10 +1,10 @@
-# Efesto
+# Hephaestus
 
-[![Build Status](https://travis-ci.org/expobrain/efesto.svg?branch=master)](https://travis-ci.org/expobrain/efesto)
+[![Build Status](https://travis-ci.org/expobrain/hephaestus.svg?branch=master)](https://travis-ci.org/expobrain/hephaestus)
 
 ## Introduction
 
-Efesto is a library to statically which parses a SQL query and return an AST.
+Hephaestus is a library to statically which parses a SQL query and return an AST.
 
 This is useful for different purposes like:
 
@@ -14,7 +14,7 @@ This is useful for different purposes like:
 
 The SQL grammar is specific for [Exasol](https://www.exasol.com/en/), but it can be easily ported to support other grammars as well.
 
-Efesto's parser is built in [Rust](https://www.rust-lang.org/) using the [lalrpop](https://github.com/lalrpop/lalrpop) crate for grammar's definition and [vervolg](https://github.com/hmwill/vervolg) used as a base for the SQL grammar.
+Hephaestus's parser is built in [Rust](https://www.rust-lang.org/) using the [lalrpop](https://github.com/lalrpop/lalrpop) crate for grammar's definition and [vervolg](https://github.com/hmwill/vervolg) used as a base for the SQL grammar.
 
 ## Installation
 
@@ -27,7 +27,7 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain=nightly
 then install the package straight from Github:
 
 ```shell
-pip install git+https://github.com/expobrain/efesto@develop
+pip install git+https://github.com/expobrain/hephaestus@develop
 ```
 
 > Note: until version 0.8 of `pyo3` you need to have the `python` binary available in your `PATH`; on some systems it will fail because only `python3` is present. In this case install the Python 2 package.
@@ -36,11 +36,11 @@ pip install git+https://github.com/expobrain/efesto@develop
 
 ### Parsing
 
-Efesto exposes a single `parse()` function which given a SQl string returns a dictionary representing the SQL in an AST format:
+Hephaestus exposes a single `parse()` function which given a SQl string returns a dictionary representing the SQL in an AST format:
 
 ```python
->>> import efesto
->>> efesto.parse("SELECT 1")
+>>> import hephaestus
+>>> hephaestus.parse("SELECT 1")
 {'_type': 'SelectStatement',
  'common': [],
  'expr': {'_type': 'QuerySetExpression',
@@ -64,7 +64,7 @@ Every node of the dictionary has a `_type` key which indicate the type of the no
 
 Parsing the incoming SQL expression is only the first step and its not very useful without the ability to traverse the tree and inspect the nodes.
 
-Instead of writing from scratch the code to traverse the dictionary nested structure by yourself Efesto provides you a class to be used to walk through the tree and call a method for every node it encouters during the traverse.
+Instead of writing from scratch the code to traverse the dictionary nested structure by yourself Hephaestus provides you a class to be used to walk through the tree and call a method for every node it encouters during the traverse.
 
 Just inherith from the `Visitor` class and implement methods in the form of `visit_<node_type>` where `<node_type>` is the type of the node in the `_type` key.
 
@@ -73,7 +73,7 @@ This example shows how to check if the given SQL statement is querying from the 
 ```python
 from typing import Dict
 
-from efesto.walk import Visitor
+from hephaestus.walk import Visitor
 
 
 class MyVisitor(Visitor):
@@ -111,7 +111,7 @@ make test_py
 
 ## Contribute
 
-If you want to contribute to the Efesto project to extend the grammar follow this steps:
+If you want to contribute to the Hephaestus project to extend the grammar follow this steps:
 
 1. switch to a pure Rust `Cargo.toml` with `make rust`
 1. write a test in `src/tests` to cover the cases

@@ -23,8 +23,8 @@
 #[macro_use]
 mod macros;
 
-use efesto::ast::*;
-use efesto::parse;
+use hephaestus::ast::*;
+use hephaestus::parse;
 
 test_builder!(
     comment,

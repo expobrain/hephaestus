@@ -20,9 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-use efesto::ast::*;
-use efesto::sql::CaseExpressionParser;
-use efesto::symbols;
+use hephaestus::ast::*;
+use hephaestus::sql::CaseExpressionParser;
+use hephaestus::symbols;
 
 macro_rules! test_case_builder {
     ($name:ident, $sql:expr, $expected:expr) => {

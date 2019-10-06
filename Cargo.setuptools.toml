@@ -1,5 +1,5 @@
 [lib]
-name = "efesto"
+name = "hephaestus"
 crate-type = ["cdylib"]
 
 [dependencies.pyo3]

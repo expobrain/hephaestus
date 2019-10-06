@@ -1,7 +1,7 @@
 import pytest
 
-from efesto import parse
-from efesto.utils import iter_ctes, iter_node_attributes, iter_tables
+from hephaestus import parse
+from hephaestus.utils import iter_ctes, iter_node_attributes, iter_tables
 
 
 def test_iter_node_attributes():

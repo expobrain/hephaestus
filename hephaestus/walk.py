@@ -1,4 +1,4 @@
-from efesto import parse
+from hephaestus import parse
 
 
 class Visitor:

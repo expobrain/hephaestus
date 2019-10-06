@@ -70,7 +70,7 @@ pub fn parse(sql_str: &str) -> PyResult<ast::SqlStatement> {
 }
 
 #[pymodule]
-fn efesto(_py: Python, m: &PyModule) -> PyResult<()> {
+fn hephaestus(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(parse))?;
 
     Ok(())

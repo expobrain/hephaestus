@@ -1,7 +1,6 @@
-import pytest
-
 from hephaestus import parse
 from hephaestus.utils import iter_ctes, iter_node_attributes, iter_tables
+import pytest
 
 
 def test_iter_node_attributes():

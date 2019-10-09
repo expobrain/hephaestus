@@ -32,6 +32,9 @@ script:
   - black --check .
   - safety check
 
+before_deploy:
+  - make py
+
 deploy:
   provider: pypi
   user: __token__
@@ -42,4 +45,4 @@ deploy:
   skip_existing: true
   on:
     tags: true
-    branch: develop
+    branch: master

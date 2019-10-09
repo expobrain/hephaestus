@@ -40,7 +40,7 @@ deploy:
   user: __token__
   password:
     secure: Zn19SpwobFgpkye0k3ACtICjcb3lKVSsu3P/tRtm9m5WE9DT4IAAHVZvKBIYaqjZtTHWV//QopuS4ITPEV8rCq+SZlaPKaLbfL3tsGNPoVtZAwVa1HKSSPxYL3mR6U4fTu9dTNGW8d3yzkJnYtHOLJE8GWeRJzZNvvMj5r1vGiwQ3xAO4rqN9fh1U7KRdy8cEnHPRgvm+eCpkYxHrSPwrvzwYcpTRdfKxIZtXgvL+s0usnCHlsbnPnnzPrdf4vc9UaczU2sBMMjCqXQ0jFRMWBcR1hlfpiaqsw6OHdGnukfJYXDBn/cDM33bEi+Tix+wHhL/qoNJpCC9suc/Tb2adXwTseOMomuQdns3UhGdupZ+bNUHMSbRrnGdF6BeB50IwnQyPjCFwJqQZZcXWhJRDPG/qEXvgULOZ1jf0qfmXG2IA5Dwg6/eTbCDo9NeLBF+iUc8sSyjrGSblnrC+EUKVU5glJbHF9cI6QRYgQFopPG/v1BapMr/Oguzhdp2Qq9QUEDWir/0ojbn7WpRFX11OOf06LHbIggXE4xrx44sRW3n1UdmXVfWdR7I70Ogk1xqKY+3foX+JPwriR5Z3pJzt1VFafS3ryKn8d8geRET7YwDCvFwZ7sel/yTU+VFI1tWL9HhKHdABqp/K3QkSysmGrVuOzOZdZNme1P5JWw1d8w=
-  distributions: sdist bdist_wheel
+  distributions: "sdist bdist_wheel"
   skip_existing: true
   on:
     tags: true

@@ -5,7 +5,7 @@ from setuptools_rust import Binding, RustExtension
 
 setup(
     name="hephaestus",
-    version="0.1.1",
+    version="0.1.2",
     rust_extensions=[RustExtension("hephaestus.hephaestus", binding=Binding.PyO3)],
     packages=["hephaestus"],
     # rust extensions are not zip safe, just like C-extensions.

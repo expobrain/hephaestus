@@ -3,7 +3,7 @@ line-length = 99
 target-version = ["py36", "py37"]
 exclude = '''
 /(
-    \.git|venv|target
+    \.git|.venv|target
 )/
 '''
 

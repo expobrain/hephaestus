@@ -11,7 +11,7 @@ Cargo.lock
 **/*.rs.bk
 
 # Virtualenv
-/venv/
+/.venv/
 
 # VSCode
 .vscode/

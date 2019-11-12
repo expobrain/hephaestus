@@ -1,5 +1,5 @@
 // auto-generated: "lalrpop 0.17.1"
-// sha256: cc81528ece6d8f32d93f3e38df9645cdc6ac43929746a820daf8e5b694e88
+// sha256: 411c20d8806af666c71ca7d7e84c48e5c6d550738a6bbb6d17faa7d0602bea9
 use super::ast;
 use super::symbols;
 #[allow(unused_extern_crates)]
@@ -62957,293 +62957,339 @@ mod __intern_token {
 pub use self::__intern_token::Token;
 
 #[allow(unused_variables)]
-fn __action0<'input>(
+fn __action0<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::SqlStatement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action1<'input>(
+fn __action1<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action2<'input>(
+fn __action2<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action3<'input>(
+fn __action3<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action4<'input>(
+fn __action4<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::DataType, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action5<'input>(
+fn __action5<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Statement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     ast::SqlStatement::Statement(__0)
 }
 
 #[allow(unused_variables)]
-fn __action6<'input>(
+fn __action6<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
-    (_, _, _): (
-        usize,
-        ::std::option::Option<(&'input str, &'input str)>,
-        usize,
-    ),
+    (_, _, _): (usize, ::std::option::Option<(&'input str, &'input str)>, usize),
     (_, __0, _): (usize, ast::Statement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     ast::SqlStatement::ExplainQueryPlan(__0)
 }
 
 #[allow(unused_variables)]
-fn __action7<'input>(
+fn __action7<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::AttachStatement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     ast::SqlStatement::Attach(__0)
 }
 
 #[allow(unused_variables)]
-fn __action8<'input>(
+fn __action8<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::DescribeStatement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     ast::SqlStatement::Describe(__0)
 }
 
 #[allow(unused_variables)]
-fn __action9<'input>(
+fn __action9<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::SelectStatement, usize),
-) -> ast::Statement {
+) -> ast::Statement
+{
     ast::Statement::Select(__0)
 }
 
 #[allow(unused_variables)]
-fn __action10<'input>(
+fn __action10<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::InsertStatement, usize),
-) -> ast::Statement {
+) -> ast::Statement
+{
     ast::Statement::Insert(__0)
 }
 
 #[allow(unused_variables)]
-fn __action11<'input>(
+fn __action11<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::DeleteStatement, usize),
-) -> ast::Statement {
+) -> ast::Statement
+{
     ast::Statement::Delete(__0)
 }
 
 #[allow(unused_variables)]
-fn __action12<'input>(
+fn __action12<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::UpdateStatement, usize),
-) -> ast::Statement {
+) -> ast::Statement
+{
     ast::Statement::Update(__0)
 }
 
 #[allow(unused_variables)]
-fn __action13<'input>(
+fn __action13<
+    'input,
+>(
     input: &'input str,
-    (_, _, _): (
-        usize,
-        ::std::option::Option<Vec<ast::CommonTableExpression>>,
-        usize,
-    ),
+    (_, _, _): (usize, ::std::option::Option<Vec<ast::CommonTableExpression>>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, table_name, _): (usize, Vec<symbols::Name>, usize),
     (_, columns, _): (usize, ::std::option::Option<Vec<symbols::Name>>, usize),
     (_, source, _): (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
-    ast::InsertStatement {
-        table_name,
-        columns,
-        source,
-    }
+) -> ast::InsertStatement
+{
+    ast::InsertStatement { table_name, columns, source }
 }
 
 #[allow(unused_variables)]
-fn __action14<'input>(
+fn __action14<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, ids, _): (usize, Vec<symbols::Name>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> Vec<symbols::Name> {
+) -> Vec<symbols::Name>
+{
     ids
 }
 
 #[allow(unused_variables)]
-fn __action15<'input>(
+fn __action15<
+    'input,
+>(
     input: &'input str,
-    (_, _, _): (
-        usize,
-        ::std::option::Option<Vec<ast::CommonTableExpression>>,
-        usize,
-    ),
+    (_, _, _): (usize, ::std::option::Option<Vec<ast::CommonTableExpression>>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, table_name, _): (usize, Vec<symbols::Name>, usize),
     (_, where_expr, _): (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::DeleteStatement {
-    ast::DeleteStatement {
-        table_name,
-        where_expr,
-    }
+) -> ast::DeleteStatement
+{
+    ast::DeleteStatement { table_name, where_expr }
 }
 
 #[allow(unused_variables)]
-fn __action16<'input>(
+fn __action16<
+    'input,
+>(
     input: &'input str,
-    (_, _, _): (
-        usize,
-        ::std::option::Option<Vec<ast::CommonTableExpression>>,
-        usize,
-    ),
+    (_, _, _): (usize, ::std::option::Option<Vec<ast::CommonTableExpression>>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, table_name, _): (usize, Vec<symbols::Name>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, assignments, _): (usize, Vec<ast::Assignment>, usize),
     (_, where_expr, _): (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::UpdateStatement {
-    ast::UpdateStatement {
-        table_name: table_name,
-        assignments: assignments,
-        where_expr: where_expr,
-    }
+) -> ast::UpdateStatement
+{
+    ast::UpdateStatement { table_name:table_name, assignments:assignments, where_expr:where_expr }
 }
 
 #[allow(unused_variables)]
-fn __action17<'input>(
+fn __action17<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Assignment, usize),
-) -> Vec<ast::Assignment> {
+) -> Vec<ast::Assignment>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action18<'input>(
+fn __action18<
+    'input,
+>(
     input: &'input str,
     (_, assignments, _): (usize, Vec<ast::Assignment>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, assignment, _): (usize, ast::Assignment, usize),
-) -> Vec<ast::Assignment> {
+) -> Vec<ast::Assignment>
+{
     ast::append(assignments, assignment)
 }
 
 #[allow(unused_variables)]
-fn __action19<'input>(
+fn __action19<
+    'input,
+>(
     input: &'input str,
     (_, columns, _): (usize, Vec<symbols::Name>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::Assignment {
-    ast::Assignment {
-        columns: columns,
-        expr: expr,
-    }
+) -> ast::Assignment
+{
+    ast::Assignment { columns:columns, expr:expr }
 }
 
 #[allow(unused_variables)]
-fn __action20<'input>(
+fn __action20<
+    'input,
+>(
     input: &'input str,
     (_, ctl, _): (usize, Vec<ast::CommonTableExpression>, usize),
     (_, expr, _): (usize, ast::SetExpression, usize),
     (_, ordering, _): (usize, ::std::option::Option<Vec<ast::Ordering>>, usize),
     (_, limit, _): (usize, ::std::option::Option<Box<ast::Limit>>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     ast::SelectStatement {
-        common: ctl,
-        expr: Box::new(expr),
-        order_by: ordering.unwrap_or(Vec::new()),
-        limit,
-    }
+            common: ctl,
+            expr: Box::new(expr),
+            order_by: ordering.unwrap_or(Vec::new()),
+            limit
+        }
 }
 
 #[allow(unused_variables)]
-fn __action21<'input>(
+fn __action21<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::SetExpression, usize),
     (_, ordering, _): (usize, ::std::option::Option<Vec<ast::Ordering>>, usize),
     (_, limit, _): (usize, ::std::option::Option<Box<ast::Limit>>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     ast::SelectStatement {
-        common: vec![],
-        expr: Box::new(expr),
-        order_by: ordering.unwrap_or(Vec::new()),
-        limit,
-    }
+            common: vec![],
+            expr: Box::new(expr),
+            order_by: ordering.unwrap_or(Vec::new()),
+            limit
+        }
 }
 
 #[allow(unused_variables)]
-fn __action22<'input>(
+fn __action22<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, ctl, _): (usize, Vec<ast::CommonTableExpression>, usize),
-) -> Vec<ast::CommonTableExpression> {
+) -> Vec<ast::CommonTableExpression>
+{
     ctl
 }
 
 #[allow(unused_variables)]
-fn __action23<'input>(
+fn __action23<
+    'input,
+>(
     input: &'input str,
     (_, cte, _): (usize, ast::CommonTableExpression, usize),
-) -> Vec<ast::CommonTableExpression> {
+) -> Vec<ast::CommonTableExpression>
+{
     vec![cte]
 }
 
 #[allow(unused_variables)]
-fn __action24<'input>(
+fn __action24<
+    'input,
+>(
     input: &'input str,
     (_, ctl, _): (usize, Vec<ast::CommonTableExpression>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, cte, _): (usize, ast::CommonTableExpression, usize),
-) -> Vec<ast::CommonTableExpression> {
+) -> Vec<ast::CommonTableExpression>
+{
     ast::append(ctl, cte)
 }
 
 #[allow(unused_variables)]
-fn __action25<'input>(
+fn __action25<
+    'input,
+>(
     input: &'input str,
     (_, id, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, query, _): (usize, ast::SelectStatement, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::CommonTableExpression {
-    ast::CommonTableExpression {
-        identifier: id,
-        column_names: None,
-        query,
-    }
+) -> ast::CommonTableExpression
+{
+    ast::CommonTableExpression { identifier: id, column_names: None, query }
 }
 
 #[allow(unused_variables)]
-fn __action26<'input>(
+fn __action26<
+    'input,
+>(
     input: &'input str,
     (_, id, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -63253,89 +63299,109 @@ fn __action26<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, query, _): (usize, ast::SelectStatement, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::CommonTableExpression {
+) -> ast::CommonTableExpression
+{
     ast::CommonTableExpression {
-        identifier: id,
-        column_names: Some(column_names),
-        query,
-    }
+            identifier: id,
+            column_names: Some(column_names),
+            query,
+        }
 }
 
 #[allow(unused_variables)]
-fn __action27<'input>(
+fn __action27<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::SetExpression, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action28<'input>(
+fn __action28<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::SetExpression, usize),
     (_, op, _): (usize, ast::SetOperator, usize),
     (_, right, _): (usize, ast::SetExpression, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     ast::SetExpression::Op(ast::OpSetExpression {
-        op,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op,
+            left: Box::new(left),
+            right: Box::new(right)
+        })
 }
 
 #[allow(unused_variables)]
-fn __action29<'input>(
+fn __action29<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::SetOperator {
+) -> ast::SetOperator
+{
     ast::SetOperator::Union
 }
 
 #[allow(unused_variables)]
-fn __action30<'input>(
+fn __action30<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, &'input str, usize),
-) -> ast::SetOperator {
+) -> ast::SetOperator
+{
     ast::SetOperator::UnionAll
 }
 
 #[allow(unused_variables)]
-fn __action31<'input>(
+fn __action31<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::SetOperator {
+) -> ast::SetOperator
+{
     ast::SetOperator::Intersect
 }
 
 #[allow(unused_variables)]
-fn __action32<'input>(
+fn __action32<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::SetOperator {
+) -> ast::SetOperator
+{
     ast::SetOperator::Except
 }
 
 #[allow(unused_variables)]
-fn __action33<'input>(
+fn __action33<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, mode, _): (usize, ast::SelectMode, usize),
     (_, columns, _): (usize, ast::ResultColumns, usize),
     (_, where_expr, _): (usize, ::std::option::Option<ast::Expression>, usize),
     (_, group_by, _): (usize, ::std::option::Option<ast::GroupBy>, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     ast::SetExpression::Query(ast::QuerySetExpression {
-        mode,
-        columns,
-        from: Vec::new(),
-        where_expr,
-        group_by,
-    })
+            mode, columns, from: Vec::new(), where_expr, group_by
+        })
 }
 
 #[allow(unused_variables)]
-fn __action34<'input>(
+fn __action34<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, mode, _): (usize, ast::SelectMode, usize),
@@ -63343,509 +63409,633 @@ fn __action34<'input>(
     (_, from, _): (usize, Vec<ast::TableExpression>, usize),
     (_, where_expr, _): (usize, ::std::option::Option<ast::Expression>, usize),
     (_, group_by, _): (usize, ::std::option::Option<ast::GroupBy>, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     ast::SetExpression::Query(ast::QuerySetExpression {
-        mode,
-        columns,
-        from,
-        where_expr,
-        group_by,
-    })
+            mode, columns, from, where_expr, group_by
+        })
 }
 
 #[allow(unused_variables)]
-fn __action35<'input>(
+fn __action35<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, values, _): (usize, Vec<Vec<ast::Expression>>, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     {
-        ast::SetExpression::Values(ast::ValuesSetExpression { values })
+        ast::SetExpression::Values(ast::ValuesSetExpression{ values })
     }
 }
 
 #[allow(unused_variables)]
-fn __action36<'input>(
+fn __action36<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ::std::option::Option<&'input str>, usize),
-) -> ast::SelectMode {
+) -> ast::SelectMode
+{
     ast::SelectMode::All
 }
 
 #[allow(unused_variables)]
-fn __action37<'input>(
+fn __action37<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::SelectMode {
+) -> ast::SelectMode
+{
     ast::SelectMode::Distinct
 }
 
 #[allow(unused_variables)]
-fn __action38<'input>(
+fn __action38<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Vec<ast::Expression>, usize),
-) -> Vec<Vec<ast::Expression>> {
+) -> Vec<Vec<ast::Expression>>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action39<'input>(
+fn __action39<
+    'input,
+>(
     input: &'input str,
     (_, tuples, _): (usize, Vec<Vec<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, tuple, _): (usize, Vec<ast::Expression>, usize),
-) -> Vec<Vec<ast::Expression>> {
+) -> Vec<Vec<ast::Expression>>
+{
     ast::append(tuples, tuple)
 }
 
 #[allow(unused_variables)]
-fn __action40<'input>(
+fn __action40<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> Vec<ast::Expression> {
+) -> Vec<ast::Expression>
+{
     exprs
 }
 
 #[allow(unused_variables)]
-fn __action41<'input>(
+fn __action41<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::ResultColumns {
+) -> ast::ResultColumns
+{
     ast::ResultColumns::All
 }
 
 #[allow(unused_variables)]
-fn __action42<'input>(
+fn __action42<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Vec<ast::ResultColumn>, usize),
-) -> ast::ResultColumns {
+) -> ast::ResultColumns
+{
     ast::ResultColumns::List(__0)
 }
 
 #[allow(unused_variables)]
-fn __action43<'input>(
+fn __action43<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::ResultColumn, usize),
-) -> Vec<ast::ResultColumn> {
+) -> Vec<ast::ResultColumn>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action44<'input>(
+fn __action44<
+    'input,
+>(
     input: &'input str,
     (_, columns, _): (usize, Vec<ast::ResultColumn>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, column, _): (usize, ast::ResultColumn, usize),
-) -> Vec<ast::ResultColumn> {
+) -> Vec<ast::ResultColumn>
+{
     ast::append(columns, column)
 }
 
 #[allow(unused_variables)]
-fn __action45<'input>(
+fn __action45<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::ResultColumn {
-    ast::ResultColumn::Expr(ast::ExprResultColumn { expr, rename: None })
+) -> ast::ResultColumn
+{
+    ast::ResultColumn::Expr(ast::ExprResultColumn {
+            expr,
+            rename: None
+        })
 }
 
 #[allow(unused_variables)]
-fn __action46<'input>(
+fn __action46<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, ::std::option::Option<&'input str>, usize),
     (_, rename, _): (usize, symbols::Name, usize),
-) -> ast::ResultColumn {
+) -> ast::ResultColumn
+{
     ast::ResultColumn::Expr(ast::ExprResultColumn {
-        expr,
-        rename: Some(rename),
-    })
+            expr,
+            rename: Some(rename)
+        })
 }
 
 #[allow(unused_variables)]
-fn __action47<'input>(
+fn __action47<
+    'input,
+>(
     input: &'input str,
     (_, name, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::ResultColumn {
+) -> ast::ResultColumn
+{
     ast::ResultColumn::AllFrom(name)
 }
 
 #[allow(unused_variables)]
-fn __action48<'input>(
+fn __action48<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, symbols::Name, usize),
-) -> Vec<symbols::Name> {
+) -> Vec<symbols::Name>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action49<'input>(
+fn __action49<
+    'input,
+>(
     input: &'input str,
     (_, i1, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, i2, _): (usize, symbols::Name, usize),
-) -> Vec<symbols::Name> {
+) -> Vec<symbols::Name>
+{
     vec![i1, i2]
 }
 
 #[allow(unused_variables)]
-fn __action50<'input>(
+fn __action50<
+    'input,
+>(
     input: &'input str,
     (_, i1, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, i2, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, i3, _): (usize, symbols::Name, usize),
-) -> Vec<symbols::Name> {
+) -> Vec<symbols::Name>
+{
     vec![i1, i2, i3]
 }
 
 #[allow(unused_variables)]
-fn __action51<'input>(
+fn __action51<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::TableExpression>, usize),
-) -> Vec<ast::TableExpression> {
+) -> Vec<ast::TableExpression>
+{
     exprs
 }
 
 #[allow(unused_variables)]
-fn __action52<'input>(
+fn __action52<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::TableExpression, usize),
-) -> Vec<ast::TableExpression> {
+) -> Vec<ast::TableExpression>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action53<'input>(
+fn __action53<
+    'input,
+>(
     input: &'input str,
     (_, exprs, _): (usize, Vec<ast::TableExpression>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::TableExpression, usize),
-) -> Vec<ast::TableExpression> {
+) -> Vec<ast::TableExpression>
+{
     ast::append(exprs, expr)
 }
 
 #[allow(unused_variables)]
-fn __action54<'input>(
+fn __action54<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::TableExpression, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action55<'input>(
+fn __action55<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::TableExpression, usize),
     (_, op, _): (usize, ast::JoinOperator, usize),
     (_, right, _): (usize, ast::TableExpression, usize),
     (_, constraint, _): (usize, ast::JoinConstraint, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     ast::TableExpression::Join(ast::JoinTableExpression {
-        left: Box::new(left),
-        right: Box::new(right),
-        op,
-        constraint,
-    })
+            left: Box::new(left),
+            right: Box::new(right),
+            op,
+            constraint
+        })
 }
 
 #[allow(unused_variables)]
-fn __action56<'input>(
+fn __action56<
+    'input,
+>(
     input: &'input str,
     (_, name, _): (usize, Vec<symbols::Name>, usize),
     (_, alias, _): (usize, ::std::option::Option<symbols::Name>, usize),
-) -> ast::TableExpression {
-    ast::TableExpression::Named(ast::NamedTableExpression {
-        name: name,
-        alias: alias,
-    })
+) -> ast::TableExpression
+{
+    ast::TableExpression::Named(ast::NamedTableExpression { name:name, alias:alias })
 }
 
 #[allow(unused_variables)]
-fn __action57<'input>(
+fn __action57<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, select, _): (usize, ast::SelectStatement, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, alias, _): (usize, ::std::option::Option<symbols::Name>, usize),
-) -> ast::TableExpression {
-    ast::TableExpression::Select(ast::SelectTableExpression {
-        select: select,
-        alias: alias,
-    })
+) -> ast::TableExpression
+{
+    ast::TableExpression::Select(ast::SelectTableExpression { select:select, alias:alias })
 }
 
 #[allow(unused_variables)]
-fn __action58<'input>(
+fn __action58<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::TableExpression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     expr
 }
 
 #[allow(unused_variables)]
-fn __action59<'input>(
+fn __action59<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, ::std::option::Option<&'input str>, usize),
     (_, name, _): (usize, symbols::Name, usize),
-) -> symbols::Name {
+) -> symbols::Name
+{
     name
 }
 
 #[allow(unused_variables)]
-fn __action60<'input>(
+fn __action60<
+    'input,
+>(
     input: &'input str,
     (_, join, _): (usize, ::std::option::Option<ast::JoinType>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::JoinOperator {
+) -> ast::JoinOperator
+{
     ast::JoinOperator::Join(join.unwrap_or(ast::JoinType::Inner))
 }
 
 #[allow(unused_variables)]
-fn __action61<'input>(
+fn __action61<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, join, _): (usize, ::std::option::Option<ast::JoinType>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::JoinOperator {
+) -> ast::JoinOperator
+{
     ast::JoinOperator::Natural(join.unwrap_or(ast::JoinType::Inner))
 }
 
 #[allow(unused_variables)]
-fn __action62<'input>(
+fn __action62<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, &'input str, usize),
-) -> ast::JoinOperator {
+) -> ast::JoinOperator
+{
     ast::JoinOperator::Cross
 }
 
 #[allow(unused_variables)]
-fn __action63<'input>(
+fn __action63<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, ::std::option::Option<&'input str>, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     ast::JoinType::Left
 }
 
 #[allow(unused_variables)]
-fn __action64<'input>(
+fn __action64<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, ::std::option::Option<&'input str>, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     ast::JoinType::Right
 }
 
 #[allow(unused_variables)]
-fn __action65<'input>(
+fn __action65<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, ::std::option::Option<&'input str>, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     ast::JoinType::Full
 }
 
 #[allow(unused_variables)]
-fn __action66<'input>(
+fn __action66<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     ast::JoinType::Inner
 }
 
 #[allow(unused_variables)]
-fn __action67<'input>(
+fn __action67<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::JoinConstraint {
+) -> ast::JoinConstraint
+{
     ast::JoinConstraint::Expr(expr)
 }
 
 #[allow(unused_variables)]
-fn __action68<'input>(
+fn __action68<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, ids, _): (usize, Vec<symbols::Name>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::JoinConstraint {
+) -> ast::JoinConstraint
+{
     ast::JoinConstraint::Columns(ast::ColumnsJoinConstraint { columns: ids })
 }
 
 #[allow(unused_variables)]
-fn __action69<'input>(
+fn __action69<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, symbols::Name, usize),
-) -> Vec<symbols::Name> {
+) -> Vec<symbols::Name>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action70<'input>(
+fn __action70<
+    'input,
+>(
     input: &'input str,
     (_, ids, _): (usize, Vec<symbols::Name>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, id, _): (usize, symbols::Name, usize),
-) -> Vec<symbols::Name> {
+) -> Vec<symbols::Name>
+{
     ast::append(ids, id)
 }
 
 #[allow(unused_variables)]
-fn __action71<'input>(
+fn __action71<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     expr
 }
 
 #[allow(unused_variables)]
-fn __action72<'input>(
+fn __action72<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, groupings, _): (usize, Vec<ast::Expression>, usize),
-) -> ast::GroupBy {
-    ast::GroupBy {
-        groupings,
-        having: None,
-    }
+) -> ast::GroupBy
+{
+    ast::GroupBy { groupings, having: None }
 }
 
 #[allow(unused_variables)]
-fn __action73<'input>(
+fn __action73<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, groupings, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::GroupBy {
-    ast::GroupBy {
-        groupings,
-        having: Some(expr),
-    }
+) -> ast::GroupBy
+{
+    ast::GroupBy { groupings, having: Some(expr) }
 }
 
 #[allow(unused_variables)]
-fn __action74<'input>(
+fn __action74<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, Vec<ast::Ordering>, usize),
-) -> Vec<ast::Ordering> {
+) -> Vec<ast::Ordering>
+{
     __0
 }
 
 #[allow(unused_variables)]
-fn __action75<'input>(
+fn __action75<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Ordering, usize),
-) -> Vec<ast::Ordering> {
+) -> Vec<ast::Ordering>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action76<'input>(
+fn __action76<
+    'input,
+>(
     input: &'input str,
     (_, terms, _): (usize, Vec<ast::Ordering>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, term, _): (usize, ast::Ordering, usize),
-) -> Vec<ast::Ordering> {
+) -> Vec<ast::Ordering>
+{
     ast::append(terms, term)
 }
 
 #[allow(unused_variables)]
-fn __action77<'input>(
+fn __action77<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, collation, _): (usize, ::std::option::Option<symbols::Name>, usize),
     (_, direction, _): (usize, ast::OrderingDirection, usize),
-) -> ast::Ordering {
-    ast::Ordering {
-        expr: expr,
-        collation: collation,
-        direction: direction,
-    }
+) -> ast::Ordering
+{
+    ast::Ordering { expr:expr, collation:collation, direction:direction }
 }
 
 #[allow(unused_variables)]
-fn __action78<'input>(
+fn __action78<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, name, _): (usize, symbols::Name, usize),
-) -> symbols::Name {
+) -> symbols::Name
+{
     name
 }
 
 #[allow(unused_variables)]
-fn __action79<'input>(
+fn __action79<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ::std::option::Option<&'input str>, usize),
-) -> ast::OrderingDirection {
+) -> ast::OrderingDirection
+{
     ast::OrderingDirection::Ascending
 }
 
 #[allow(unused_variables)]
-fn __action80<'input>(
+fn __action80<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::OrderingDirection {
+) -> ast::OrderingDirection
+{
     ast::OrderingDirection::Descending
 }
 
 #[allow(unused_variables)]
-fn __action81<'input>(
+fn __action81<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, number_rows, _): (usize, ast::Expression, usize),
-) -> Box<ast::Limit> {
-    Box::new(ast::Limit {
-        number_rows,
-        offset_value: None,
-    })
+) -> Box<ast::Limit>
+{
+    Box::new(ast::Limit { number_rows, offset_value: None })
 }
 
 #[allow(unused_variables)]
-fn __action82<'input>(
-    input: &'input str,
-    (_, _, _): (usize, &'input str, usize),
-    (_, number_rows, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, offset, _): (usize, ast::Expression, usize),
-) -> Box<ast::Limit> {
-    Box::new(ast::Limit {
-        number_rows,
-        offset_value: Some(offset),
-    })
-}
-
-#[allow(unused_variables)]
-fn __action83<'input>(
+fn __action82<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, number_rows, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, offset, _): (usize, ast::Expression, usize),
-) -> Box<ast::Limit> {
-    Box::new(ast::Limit {
-        number_rows,
-        offset_value: Some(offset),
-    })
+) -> Box<ast::Limit>
+{
+    Box::new(ast::Limit { number_rows, offset_value: Some(offset) })
 }
 
 #[allow(unused_variables)]
-fn __action84<'input>(
+fn __action83<
+    'input,
+>(
+    input: &'input str,
+    (_, _, _): (usize, &'input str, usize),
+    (_, number_rows, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, offset, _): (usize, ast::Expression, usize),
+) -> Box<ast::Limit>
+{
+    Box::new(ast::Limit { number_rows, offset_value: Some(offset) })
+}
+
+#[allow(unused_variables)]
+fn __action84<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -63853,54 +64043,70 @@ fn __action84<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, schema, _): (usize, ::std::option::Option<symbols::Name>, usize),
     (_, name, _): (usize, symbols::Name, usize),
-) -> ast::AttachStatement {
+) -> ast::AttachStatement
+{
     ast::AttachStatement::new(schema, name, path)
 }
 
 #[allow(unused_variables)]
-fn __action85<'input>(
+fn __action85<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, schema, _): (usize, ::std::option::Option<symbols::Name>, usize),
     (_, name, _): (usize, symbols::Name, usize),
-) -> ast::DescribeStatement {
+) -> ast::DescribeStatement
+{
     ast::DescribeStatement::new(schema, name)
 }
 
 #[allow(unused_variables)]
-fn __action86<'input>(
+fn __action86<
+    'input,
+>(
     input: &'input str,
     (_, schema, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> symbols::Name {
+) -> symbols::Name
+{
     schema
 }
 
 #[allow(unused_variables)]
-fn __action87<'input>(
+fn __action87<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> Vec<ast::Expression> {
+) -> Vec<ast::Expression>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action88<'input>(
+fn __action88<
+    'input,
+>(
     input: &'input str,
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> Vec<ast::Expression> {
+) -> Vec<ast::Expression>
+{
     ast::append(exprs, expr)
 }
 
 #[allow(unused_variables)]
-fn __action89<'input>(
+fn __action89<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     {
         if exprs.len() == 1 {
             let mut copy = exprs;
@@ -63912,539 +64118,666 @@ fn __action89<'input>(
 }
 
 #[allow(unused_variables)]
-fn __action90<'input>(
+fn __action90<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, ast::SelectStatement, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Select(__0)
 }
 
 #[allow(unused_variables)]
-fn __action91<'input>(
+fn __action91<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Literal, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Literal(__0)
 }
 
 #[allow(unused_variables)]
-fn __action92<'input>(
+fn __action92<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Vec<symbols::Name>, usize),
-) -> ast::Expression {
-    ast::Expression::QualifiedIdentifier(ast::QualifiedIdentifierExpression { identifiers: __0 })
+) -> ast::Expression
+{
+    ast::Expression::QualifiedIdentifier(ast::QualifiedIdentifierExpression {
+            identifiers: __0
+        })
 }
 
 #[allow(unused_variables)]
-fn __action93<'input>(
+fn __action93<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action94<'input>(
+fn __action94<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     expr
 }
 
 #[allow(unused_variables)]
-fn __action95<'input>(
+fn __action95<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Negate,
-        expr: Box::new(expr),
-    })
+            op: ast::UnaryOperator::Negate,
+            expr: Box::new(expr),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action96<'input>(
+fn __action96<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action97<'input>(
+fn __action97<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Multiply,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action98<'input>(
+fn __action98<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Multiply,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action99<'input>(
+fn __action99<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Multiply,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action100<'input>(
+fn __action100<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Multiply,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Multiply,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action101<'input>(
+fn __action101<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Divide,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action102<'input>(
+fn __action102<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Divide,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action103<'input>(
+fn __action103<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Divide,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action104<'input>(
+fn __action104<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Divide,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Divide,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action105<'input>(
+fn __action105<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action106<'input>(
+fn __action106<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Add,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action107<'input>(
+fn __action107<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Add,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action108<'input>(
+fn __action108<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Add,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action109<'input>(
+fn __action109<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Add,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Add,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action110<'input>(
+fn __action110<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Subtract,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action111<'input>(
+fn __action111<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Subtract,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action112<'input>(
+fn __action112<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Subtract,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action113<'input>(
+fn __action113<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Subtract,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Subtract,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action114<'input>(
+fn __action114<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Concat,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action115<'input>(
+fn __action115<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Concat,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action116<'input>(
+fn __action116<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Concat,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action117<'input>(
+fn __action117<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Concat,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Concat,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action118<'input>(
+fn __action118<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action119<'input>(
+fn __action119<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::Equal,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::Equal,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action120<'input>(
+fn __action120<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::Equal,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::Equal,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action121<'input>(
+fn __action121<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::Equal,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::Equal,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action122<'input>(
+fn __action122<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::NotEqual,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action123<'input>(
+fn __action123<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::NotEqual,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action124<'input>(
+fn __action124<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::NotEqual,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action125<'input>(
+fn __action125<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::NotEqual,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::NotEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action126<'input>(
+fn __action126<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::LessThan,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::LessThan,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action127<'input>(
+fn __action127<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::GreaterThan,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::GreaterThan,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action128<'input>(
+fn __action128<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::LessEqual,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::LessEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action129<'input>(
+fn __action129<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::GreaterEqual,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::GreaterEqual,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action130<'input>(
+fn __action130<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::IsNull,
-        expr: Box::new(left),
-    })
+            op: ast::UnaryOperator::IsNull, expr: Box::new(left)
+        })
 }
 
 #[allow(unused_variables)]
-fn __action131<'input>(
+fn __action131<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     {
         let not_null = ast::Expression::Unary(ast::UnaryExpression {
             op: ast::UnaryOperator::IsNull,
@@ -64458,372 +64791,464 @@ fn __action131<'input>(
 }
 
 #[allow(unused_variables)]
-fn __action132<'input>(
+fn __action132<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Comparison(ast::ComparisonExpression {
-        op: ast::ComparisonOperator::Like,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::ComparisonOperator::Like,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action133<'input>(
+fn __action133<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::IsNull,
-        expr: Box::new(expr),
-    })
+            op: ast::UnaryOperator::IsNull, expr: Box::new(expr),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action134<'input>(
+fn __action134<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::Unary(ast::UnaryExpression {
-            op: ast::UnaryOperator::IsNull,
-            expr: Box::new(expr),
-        })),
-    })
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::Unary(ast::UnaryExpression {
+                op: ast::UnaryOperator::IsNull, expr: Box::new(expr),
+            }))
+        })
 }
 
 #[allow(unused_variables)]
-fn __action135<'input>(
+fn __action135<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::Unary(ast::UnaryExpression {
-            op: ast::UnaryOperator::IsNull,
-            expr: Box::new(expr),
-        })),
-    })
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::Unary(ast::UnaryExpression {
+                op: ast::UnaryOperator::IsNull, expr: Box::new(expr),
+            }))
+        })
 }
 
 #[allow(unused_variables)]
-fn __action136<'input>(
+fn __action136<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::In(ast::InExpression {
-        expr: Box::new(expr),
-        set: ast::SetSpecification::List(Vec::new()),
-    })
-}
-
-#[allow(unused_variables)]
-fn __action137<'input>(
-    input: &'input str,
-    (_, expr, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
-    ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::In(ast::InExpression {
             expr: Box::new(expr),
             set: ast::SetSpecification::List(Vec::new()),
-        })),
-    })
+        })
 }
 
 #[allow(unused_variables)]
-fn __action138<'input>(
-    input: &'input str,
-    (_, expr, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, exprs, _): (usize, Vec<ast::Expression>, usize),
-    (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
-    ast::Expression::In(ast::InExpression {
-        expr: Box::new(expr),
-        set: ast::SetSpecification::List(exprs),
-    })
-}
-
-#[allow(unused_variables)]
-fn __action139<'input>(
+fn __action137<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-    (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::In(ast::InExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr: Box::new(expr),
+                set: ast::SetSpecification::List(Vec::new()),
+            }))
+        })
+}
+
+#[allow(unused_variables)]
+fn __action138<
+    'input,
+>(
+    input: &'input str,
+    (_, expr, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, exprs, _): (usize, Vec<ast::Expression>, usize),
+    (_, _, _): (usize, &'input str, usize),
+) -> ast::Expression
+{
+    ast::Expression::In(ast::InExpression {
             expr: Box::new(expr),
             set: ast::SetSpecification::List(exprs),
-        })),
-    })
+        })
 }
 
 #[allow(unused_variables)]
-fn __action140<'input>(
-    input: &'input str,
-    (_, expr, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, select, _): (usize, ast::SelectStatement, usize),
-    (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
-    ast::Expression::In(ast::InExpression {
-        expr: Box::new(expr),
-        set: ast::SetSpecification::Select(select),
-    })
-}
-
-#[allow(unused_variables)]
-fn __action141<'input>(
+fn __action139<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-    (_, select, _): (usize, ast::SelectStatement, usize),
+    (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::In(ast::InExpression {
-            expr: Box::new(expr),
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr: Box::new(expr),
+                set: ast::SetSpecification::List(exprs),
+            }))
+        })
+}
+
+#[allow(unused_variables)]
+fn __action140<
+    'input,
+>(
+    input: &'input str,
+    (_, expr, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, select, _): (usize, ast::SelectStatement, usize),
+    (_, _, _): (usize, &'input str, usize),
+) -> ast::Expression
+{
+    ast::Expression::In(ast::InExpression {
+            expr:Box::new(expr),
             set: ast::SetSpecification::Select(select),
-        })),
-    })
+        })
 }
 
 #[allow(unused_variables)]
-fn __action142<'input>(
-    input: &'input str,
-    (_, expr, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, name, _): (usize, Vec<symbols::Name>, usize),
-) -> ast::Expression {
-    ast::Expression::In(ast::InExpression {
-        expr: Box::new(expr),
-        set: ast::SetSpecification::Name(name),
-    })
-}
-
-#[allow(unused_variables)]
-fn __action143<'input>(
+fn __action141<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-    (_, name, _): (usize, Vec<symbols::Name>, usize),
-) -> ast::Expression {
+    (_, _, _): (usize, &'input str, usize),
+    (_, select, _): (usize, ast::SelectStatement, usize),
+    (_, _, _): (usize, &'input str, usize),
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::In(ast::InExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr:Box::new(expr),
+                set: ast::SetSpecification::Select(select),
+            }))
+        })
+}
+
+#[allow(unused_variables)]
+fn __action142<
+    'input,
+>(
+    input: &'input str,
+    (_, expr, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, name, _): (usize, Vec<symbols::Name>, usize),
+) -> ast::Expression
+{
+    ast::Expression::In(ast::InExpression {
             expr: Box::new(expr),
             set: ast::SetSpecification::Name(name),
-        })),
-    })
+        })
 }
 
 #[allow(unused_variables)]
-fn __action144<'input>(
-    input: &'input str,
-    (_, expr, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, lower, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, upper, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
-    ast::Expression::Between(ast::BetweenExpression {
-        expr: Box::new(expr),
-        lower: Box::new(lower),
-        upper: Box::new(upper),
-    })
-}
-
-#[allow(unused_variables)]
-fn __action145<'input>(
+fn __action143<
+    'input,
+>(
     input: &'input str,
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
-    (_, lower, _): (usize, ast::Expression, usize),
-    (_, _, _): (usize, &'input str, usize),
-    (_, upper, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+    (_, name, _): (usize, Vec<symbols::Name>, usize),
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(ast::Expression::Between(ast::BetweenExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::In(ast::InExpression {
+                expr: Box::new(expr),
+                set: ast::SetSpecification::Name(name),
+            }))
+        })
+}
+
+#[allow(unused_variables)]
+fn __action144<
+    'input,
+>(
+    input: &'input str,
+    (_, expr, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, lower, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, upper, _): (usize, ast::Expression, usize),
+) -> ast::Expression
+{
+    ast::Expression::Between(ast::BetweenExpression {
             expr: Box::new(expr),
             lower: Box::new(lower),
             upper: Box::new(upper),
-        })),
-    })
+        })
 }
 
 #[allow(unused_variables)]
-fn __action146<'input>(
+fn __action145<
+    'input,
+>(
+    input: &'input str,
+    (_, expr, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, lower, _): (usize, ast::Expression, usize),
+    (_, _, _): (usize, &'input str, usize),
+    (_, upper, _): (usize, ast::Expression, usize),
+) -> ast::Expression
+{
+    ast::Expression::Unary(ast::UnaryExpression {
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(ast::Expression::Between(ast::BetweenExpression {
+                expr: Box::new(expr),
+                lower: Box::new(lower),
+                upper: Box::new(upper),
+            }))
+        })
+}
+
+#[allow(unused_variables)]
+fn __action146<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action147<'input>(
+fn __action147<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action148<'input>(
+fn __action148<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action149<'input>(
+fn __action149<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action150<'input>(
+fn __action150<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action151<'input>(
+fn __action151<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action152<'input>(
+fn __action152<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action153<'input>(
+fn __action153<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action154<'input>(
+fn __action154<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action155<'input>(
+fn __action155<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action156<'input>(
+fn __action156<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action157<'input>(
+fn __action157<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action158<'input>(
+fn __action158<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action159<'input>(
+fn __action159<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action160<'input>(
+fn __action160<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action161<'input>(
+fn __action161<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action162<'input>(
+fn __action162<
+    'input,
+>(
     input: &'input str,
     (_, name, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unknown(ast::UnknownExpression {
-        name: vec![name],
-        exprs,
-    })
+            name: vec![name],
+            exprs,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action163<'input>(
+fn __action163<
+    'input,
+>(
     input: &'input str,
     (_, schema, _): (usize, symbols::Name, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -64831,45 +65256,51 @@ fn __action163<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unknown(ast::UnknownExpression {
-        name: vec![schema, name],
-        exprs,
-    })
+            name: vec![schema, name],
+            exprs,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action164<'input>(
+fn __action164<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, mode, _): (usize, ast::SelectMode, usize),
     (_, columns, _): (usize, ast::ResultColumns, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
-    ast::Expression::Count(ast::CountExpression {
-        mode: mode,
-        columns: columns,
-    })
+) -> ast::Expression
+{
+    ast::Expression::Count(ast::CountExpression { mode:mode, columns:columns })
 }
 
 #[allow(unused_variables)]
-fn __action165<'input>(
+fn __action165<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, mode, _): (usize, ast::SelectMode, usize),
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Sum(ast::SumExpression {
-        mode,
-        expr: Box::new(expr),
-    })
+            mode,
+            expr: Box::new(expr),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action166<'input>(
+fn __action166<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -64877,71 +65308,86 @@ fn __action166<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, data_type, _): (usize, ast::DataType, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Cast(ast::CastExpression {
-        expr: Box::new(expr),
-        data_type,
-    })
+            expr: Box::new(expr),
+            data_type,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action167<'input>(
+fn __action167<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
-    ast::Expression::Concat(ast::ConcatExpression { exprs: exprs })
+) -> ast::Expression
+{
+    ast::Expression::Concat(ast::ConcatExpression { exprs:exprs })
 }
 
 #[allow(unused_variables)]
-fn __action168<'input>(
+fn __action168<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, mode, _): (usize, ast::SelectMode, usize),
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Max(ast::MaxExpression {
-        mode,
-        expr: Box::new(expr),
-    })
+            mode,
+            expr: Box::new(expr),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action169<'input>(
+fn __action169<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, mode, _): (usize, ast::SelectMode, usize),
     (_, expr, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Min(ast::MinExpression {
-        mode,
-        expr: Box::new(expr),
-    })
+            mode,
+            expr: Box::new(expr),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action170<'input>(
+fn __action170<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, string, _): (usize, ast::Expression, usize),
     (_, format, _): (usize, ::std::option::Option<Box<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::ToDate(ast::ToDateExpression {
-        string: Box::new(string),
-        format,
-    })
+            string: Box::new(string),
+            format,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action171<'input>(
+fn __action171<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -64949,24 +65395,30 @@ fn __action171<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, exponent, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Power(ast::PowerExpression {
-        base: Box::new(base),
-        exponent: Box::new(exponent),
-    })
+            base:Box::new(base),
+            exponent: Box::new(exponent),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action172<'input>(
+fn __action172<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, ast::Expression, usize),
-) -> Box<ast::Expression> {
+) -> Box<ast::Expression>
+{
     Box::new(__0)
 }
 
 #[allow(unused_variables)]
-fn __action173<'input>(
+fn __action173<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -64974,15 +65426,18 @@ fn __action173<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, length, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Right(ast::RightExpression {
-        string: Box::new(string),
-        length: Box::new(length),
-    })
+            string: Box::new(string),
+            length: Box::new(length),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action174<'input>(
+fn __action174<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -64991,16 +65446,19 @@ fn __action174<'input>(
     (_, position, _): (usize, ast::Expression, usize),
     (_, length, _): (usize, ::std::option::Option<Box<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Substring(ast::SubstringExpression {
-        string: Box::new(string),
-        position: Box::new(position),
-        length,
-    })
+            string: Box::new(string),
+            position: Box::new(position),
+            length,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action175<'input>(
+fn __action175<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -65009,16 +65467,19 @@ fn __action175<'input>(
     (_, position, _): (usize, ast::Expression, usize),
     (_, length, _): (usize, ::std::option::Option<Box<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Substring(ast::SubstringExpression {
-        string: Box::new(string),
-        position: Box::new(position),
-        length,
-    })
+            string: Box::new(string),
+            position: Box::new(position),
+            length,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action176<'input>(
+fn __action176<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -65027,45 +65488,57 @@ fn __action176<'input>(
     (_, position, _): (usize, ast::Expression, usize),
     (_, length, _): (usize, ::std::option::Option<Box<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Substring(ast::SubstringExpression {
-        string: Box::new(string),
-        position: Box::new(position),
-        length,
-    })
+            string: Box::new(string),
+            position: Box::new(position),
+            length,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action177<'input>(
+fn __action177<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, ast::Expression, usize),
-) -> Box<ast::Expression> {
+) -> Box<ast::Expression>
+{
     Box::new(__0)
 }
 
 #[allow(unused_variables)]
-fn __action178<'input>(
+fn __action178<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, ast::Expression, usize),
-) -> Box<ast::Expression> {
+) -> Box<ast::Expression>
+{
     Box::new(__0)
 }
 
 #[allow(unused_variables)]
-fn __action179<'input>(
+fn __action179<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, exprs, _): (usize, Vec<ast::Expression>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
-    ast::Expression::Coalesce(ast::CoalesceExpression { exprs: exprs })
+) -> ast::Expression
+{
+    ast::Expression::Coalesce(ast::CoalesceExpression { exprs:exprs })
 }
 
 #[allow(unused_variables)]
-fn __action180<'input>(
+fn __action180<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -65074,163 +65547,205 @@ fn __action180<'input>(
     (_, search_string, _): (usize, ast::Expression, usize),
     (_, replace_string, _): (usize, ::std::option::Option<Box<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Replace(ast::ReplaceExpression {
-        string: Box::new(string),
-        search_string: Box::new(search_string),
-        replace_string,
-    })
+            string: Box::new(string),
+            search_string: Box::new(search_string),
+            replace_string,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action181<'input>(
+fn __action181<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, ast::Expression, usize),
-) -> Box<ast::Expression> {
+) -> Box<ast::Expression>
+{
     Box::new(__0)
 }
 
 #[allow(unused_variables)]
-fn __action182<'input>(
+fn __action182<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ::std::option::Option<ast::Expression>, usize),
     (_, when_part, _): (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     (_, else_part, _): (usize, ::std::option::Option<Box<ast::Expression>>, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Case(ast::CaseExpression {
-        expr: expr.map(|v| Box::new(v)),
-        when_part,
-        else_part,
-    })
+            expr: expr.map(|v| Box::new(v)),
+            when_part,
+            else_part,
+        })
 }
 
 #[allow(unused_variables)]
-fn __action183<'input>(
+fn __action183<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, when, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, then, _): (usize, ast::Expression, usize),
-) -> ast::WhenClause {
-    ast::WhenClause {
-        guard: when,
-        body: then,
-    }
+) -> ast::WhenClause
+{
+    ast::WhenClause { guard: when, body:then}
 }
 
 #[allow(unused_variables)]
-fn __action184<'input>(
+fn __action184<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, ast::Expression, usize),
-) -> Box<ast::Expression> {
+) -> Box<ast::Expression>
+{
     Box::new(__0)
 }
 
 #[allow(unused_variables)]
-fn __action185<'input>(
+fn __action185<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action186<'input>(
+fn __action186<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, expr, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Unary(ast::UnaryExpression {
-        op: ast::UnaryOperator::Not,
-        expr: Box::new(expr),
-    })
+            op: ast::UnaryOperator::Not,
+            expr: Box::new(expr),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action187<'input>(
+fn __action187<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action188<'input>(
+fn __action188<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::And,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::And,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action189<'input>(
+fn __action189<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action190<'input>(
+fn __action190<
+    'input,
+>(
     input: &'input str,
     (_, left, _): (usize, ast::Expression, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, right, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     ast::Expression::Binary(ast::BinaryExpression {
-        op: ast::BinaryOperator::Or,
-        left: Box::new(left),
-        right: Box::new(right),
-    })
+            op: ast::BinaryOperator::Or,
+            left: Box::new(left),
+            right: Box::new(right),
+        })
 }
 
 #[allow(unused_variables)]
-fn __action191<'input>(
+fn __action191<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     (__0)
 }
 
 #[allow(unused_variables)]
-fn __action192<'input>(
+fn __action192<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     ast::DataType::Boolean
 }
 
 #[allow(unused_variables)]
-fn __action193<'input>(
+fn __action193<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, __0, _): (usize, String, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::DataType {
-    ast::DataType::Char(ast::Literal::Numeric(__0))
+) -> ast::DataType
+{
+    ast::DataType::Char(ast::Literal::Numeric( __0 ))
 }
 
 #[allow(unused_variables)]
-fn __action194<'input>(
+fn __action194<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     ast::DataType::Date
 }
 
 #[allow(unused_variables)]
-fn __action195<'input>(
+fn __action195<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
@@ -65238,905 +65753,1432 @@ fn __action195<'input>(
     (_, _, _): (usize, &'input str, usize),
     (_, s, _): (usize, String, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     ast::DataType::Decimal {
-        p: ast::Literal::Numeric(p),
-        s: ast::Literal::Numeric(s),
-    }
+            p: ast::Literal::Numeric(p),
+            s: ast::Literal::Numeric(s),
+        }
 }
 
 #[allow(unused_variables)]
-fn __action196<'input>(
+fn __action196<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, &'input str, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     ast::DataType::DoublePrecision
 }
 
 #[allow(unused_variables)]
-fn __action197<'input>(
+fn __action197<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     ast::DataType::Timestamp
 }
 
 #[allow(unused_variables)]
-fn __action198<'input>(
+fn __action198<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, &'input str, usize),
     (_, __2, _): (usize, &'input str, usize),
     (_, __3, _): (usize, &'input str, usize),
     (_, __4, _): (usize, &'input str, usize),
-) -> ast::DataType {
+) -> ast::DataType
+{
     ast::DataType::LocalTimestamp
 }
 
 #[allow(unused_variables)]
-fn __action199<'input>(
+fn __action199<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, _, _): (usize, &'input str, usize),
     (_, n, _): (usize, String, usize),
     (_, _, _): (usize, &'input str, usize),
-) -> ast::DataType {
-    ast::DataType::Varchar(ast::Literal::Numeric(n))
+) -> ast::DataType
+{
+    ast::DataType::Varchar(ast::Literal::Numeric( n ))
 }
 
 #[allow(unused_variables)]
-fn __action200<'input>(input: &'input str, (_, __0, _): (usize, String, usize)) -> ast::Literal {
+fn __action200<
+    'input,
+>(
+    input: &'input str,
+    (_, __0, _): (usize, String, usize),
+) -> ast::Literal
+{
     ast::Literal::Numeric(__0)
 }
 
 #[allow(unused_variables)]
-fn __action201<'input>(input: &'input str, (_, __0, _): (usize, String, usize)) -> ast::Literal {
+fn __action201<
+    'input,
+>(
+    input: &'input str,
+    (_, __0, _): (usize, String, usize),
+) -> ast::Literal
+{
     ast::Literal::String(__0)
 }
 
 #[allow(unused_variables)]
-fn __action202<'input>(
+fn __action202<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::Null
 }
 
 #[allow(unused_variables)]
-fn __action203<'input>(
+fn __action203<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::CurrentTime
 }
 
 #[allow(unused_variables)]
-fn __action204<'input>(
+fn __action204<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::CurrentDate
 }
 
 #[allow(unused_variables)]
-fn __action205<'input>(
+fn __action205<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::CurrentTimestamp
 }
 
 #[allow(unused_variables)]
-fn __action206<'input>(
+fn __action206<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, s, _): (usize, String, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::Date(s)
 }
 
 #[allow(unused_variables)]
-fn __action207<'input>(
+fn __action207<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, s, _): (usize, String, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::Time(s)
 }
 
 #[allow(unused_variables)]
-fn __action208<'input>(
+fn __action208<
+    'input,
+>(
     input: &'input str,
     (_, _, _): (usize, &'input str, usize),
     (_, s, _): (usize, String, usize),
-) -> ast::Literal {
+) -> ast::Literal
+{
     ast::Literal::Timestamp(s)
 }
 
 #[allow(unused_variables)]
-fn __action209<'input>(
+fn __action209<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> symbols::Name {
+) -> symbols::Name
+{
     symbols::Name::from(__0)
 }
 
 #[allow(unused_variables)]
-fn __action210<'input>(input: &'input str, (_, __0, _): (usize, &'input str, usize)) -> String {
+fn __action210<
+    'input,
+>(
+    input: &'input str,
+    (_, __0, _): (usize, &'input str, usize),
+) -> String
+{
     __0.to_string()
 }
 
 #[allow(unused_variables)]
-fn __action211<'input>(input: &'input str, (_, __0, _): (usize, &'input str, usize)) -> String {
+fn __action211<
+    'input,
+>(
+    input: &'input str,
+    (_, __0, _): (usize, &'input str, usize),
+) -> String
+{
     __0.to_string()
 }
 
 #[allow(unused_variables)]
-fn __action212<'input>(input: &'input str, (_, __0, _): (usize, &'input str, usize)) -> String {
+fn __action212<
+    'input,
+>(
+    input: &'input str,
+    (_, __0, _): (usize, &'input str, usize),
+) -> String
+{
     __0.to_string()
 }
 
 #[allow(unused_variables)]
-fn __action213<'input>(input: &'input str, (_, __0, _): (usize, &'input str, usize)) -> String {
+fn __action213<
+    'input,
+>(
+    input: &'input str,
+    (_, __0, _): (usize, &'input str, usize),
+) -> String
+{
     __0[1..__0.len() - 1].to_string()
 }
 
 #[allow(unused_variables)]
-fn __action214<'input>(
+fn __action214<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Box<ast::Expression>, usize),
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action215<'input>(
+fn __action215<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action216<'input>(
+fn __action216<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::WhenClause, usize),
-) -> ::std::vec::Vec<ast::WhenClause> {
+) -> ::std::vec::Vec<ast::WhenClause>
+{
     vec![__0]
 }
 
 #[allow(unused_variables)]
-fn __action217<'input>(
+fn __action217<
+    'input,
+>(
     input: &'input str,
     (_, v, _): (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     (_, e, _): (usize, ast::WhenClause, usize),
-) -> ::std::vec::Vec<ast::WhenClause> {
-    {
-        let mut v = v;
-        v.push(e);
-        v
-    }
+) -> ::std::vec::Vec<ast::WhenClause>
+{
+    { let mut v = v; v.push(e); v }
 }
 
 #[allow(unused_variables)]
-fn __action218<'input>(
+fn __action218<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ::std::option::Option<ast::Expression> {
+) -> ::std::option::Option<ast::Expression>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action219<'input>(
+fn __action219<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<ast::Expression> {
+) -> ::std::option::Option<ast::Expression>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action220<'input>(
+fn __action220<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Box<ast::Expression>, usize),
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action221<'input>(
+fn __action221<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action222<'input>(
+fn __action222<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Box<ast::Expression>, usize),
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action223<'input>(
+fn __action223<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action224<'input>(
+fn __action224<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Box<ast::Expression>, usize),
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action225<'input>(
+fn __action225<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action226<'input>(
+fn __action226<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Box<ast::Expression>, usize),
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action227<'input>(
+fn __action227<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Box<ast::Expression>> {
+) -> ::std::option::Option<Box<ast::Expression>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action228<'input>(
+fn __action228<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, symbols::Name, usize),
-) -> ::std::option::Option<symbols::Name> {
+) -> ::std::option::Option<symbols::Name>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action229<'input>(
+fn __action229<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<symbols::Name> {
+) -> ::std::option::Option<symbols::Name>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action230<'input>(
+fn __action230<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action231<'input>(
+fn __action231<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action232<'input>(
+fn __action232<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, symbols::Name, usize),
-) -> ::std::option::Option<symbols::Name> {
+) -> ::std::option::Option<symbols::Name>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action233<'input>(
+fn __action233<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<symbols::Name> {
+) -> ::std::option::Option<symbols::Name>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action234<'input>(
+fn __action234<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action235<'input>(
+fn __action235<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action236<'input>(
+fn __action236<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::JoinType, usize),
-) -> ::std::option::Option<ast::JoinType> {
+) -> ::std::option::Option<ast::JoinType>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action237<'input>(
+fn __action237<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<ast::JoinType> {
+) -> ::std::option::Option<ast::JoinType>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action238<'input>(
+fn __action238<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, symbols::Name, usize),
-) -> ::std::option::Option<symbols::Name> {
+) -> ::std::option::Option<symbols::Name>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action239<'input>(
+fn __action239<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<symbols::Name> {
+) -> ::std::option::Option<symbols::Name>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action240<'input>(
+fn __action240<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action241<'input>(
+fn __action241<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action242<'input>(
+fn __action242<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action243<'input>(
+fn __action243<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<&'input str> {
+) -> ::std::option::Option<&'input str>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action244<'input>(
+fn __action244<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::GroupBy, usize),
-) -> ::std::option::Option<ast::GroupBy> {
+) -> ::std::option::Option<ast::GroupBy>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action245<'input>(
+fn __action245<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<ast::GroupBy> {
+) -> ::std::option::Option<ast::GroupBy>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action246<'input>(
+fn __action246<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Box<ast::Limit>, usize),
-) -> ::std::option::Option<Box<ast::Limit>> {
+) -> ::std::option::Option<Box<ast::Limit>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action247<'input>(
+fn __action247<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Box<ast::Limit>> {
+) -> ::std::option::Option<Box<ast::Limit>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action248<'input>(
+fn __action248<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Vec<ast::Ordering>, usize),
-) -> ::std::option::Option<Vec<ast::Ordering>> {
+) -> ::std::option::Option<Vec<ast::Ordering>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action249<'input>(
+fn __action249<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Vec<ast::Ordering>> {
+) -> ::std::option::Option<Vec<ast::Ordering>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action250<'input>(
+fn __action250<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, ast::Expression, usize),
-) -> ::std::option::Option<ast::Expression> {
+) -> ::std::option::Option<ast::Expression>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action251<'input>(
+fn __action251<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<ast::Expression> {
+) -> ::std::option::Option<ast::Expression>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action252<'input>(
+fn __action252<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Vec<symbols::Name>, usize),
-) -> ::std::option::Option<Vec<symbols::Name>> {
+) -> ::std::option::Option<Vec<symbols::Name>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action253<'input>(
+fn __action253<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Vec<symbols::Name>> {
+) -> ::std::option::Option<Vec<symbols::Name>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action254<'input>(
+fn __action254<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, Vec<ast::CommonTableExpression>, usize),
-) -> ::std::option::Option<Vec<ast::CommonTableExpression>> {
+) -> ::std::option::Option<Vec<ast::CommonTableExpression>>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action255<'input>(
+fn __action255<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<Vec<ast::CommonTableExpression>> {
+) -> ::std::option::Option<Vec<ast::CommonTableExpression>>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action256<'input>(
+fn __action256<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, (&'input str, &'input str), usize),
-) -> ::std::option::Option<(&'input str, &'input str)> {
+) -> ::std::option::Option<(&'input str, &'input str)>
+{
     Some(__0)
 }
 
 #[allow(unused_variables)]
-fn __action257<'input>(
+fn __action257<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ::std::option::Option<(&'input str, &'input str)> {
+) -> ::std::option::Option<(&'input str, &'input str)>
+{
     None
 }
 
 #[allow(unused_variables)]
-fn __action258<'input>(
+fn __action258<
+    'input,
+>(
     input: &'input str,
     (_, __0, _): (usize, &'input str, usize),
     (_, __1, _): (usize, &'input str, usize),
-) -> (&'input str, &'input str) {
+) -> (&'input str, &'input str)
+{
     (__0, __1)
 }
 
 #[allow(unused_variables)]
-fn __action259<'input>(input: &'input str, __0: (usize, &'input str, usize)) -> ast::SelectMode {
+fn __action259<
+    'input,
+>(
+    input: &'input str,
+    __0: (usize, &'input str, usize),
+) -> ast::SelectMode
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action242(input, __0);
+    let __temp0 = __action242(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action36(input, __temp0)
+    __action36(
+        input,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action260<'input>(
+fn __action260<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ast::SelectMode {
+) -> ast::SelectMode
+{
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
-    let __temp0 = __action243(input, &__start0, &__end0);
+    let __temp0 = __action243(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action36(input, __temp0)
+    __action36(
+        input,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action261<'input>(
+fn __action261<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::Expression, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, symbols::Name, usize),
-) -> ast::ResultColumn {
+) -> ast::ResultColumn
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action240(input, __1);
+    let __temp0 = __action240(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action46(input, __0, __temp0, __2)
+    __action46(
+        input,
+        __0,
+        __temp0,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action262<'input>(
+fn __action262<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::Expression, usize),
     __1: (usize, symbols::Name, usize),
-) -> ast::ResultColumn {
+) -> ast::ResultColumn
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action241(input, &__start0, &__end0);
+    let __temp0 = __action241(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action46(input, __0, __temp0, __1)
+    __action46(
+        input,
+        __0,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action263<'input>(
+fn __action263<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, symbols::Name, usize),
-) -> symbols::Name {
+) -> symbols::Name
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action240(input, __0);
+    let __temp0 = __action240(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action59(input, __temp0, __1)
+    __action59(
+        input,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action264<'input>(input: &'input str, __0: (usize, symbols::Name, usize)) -> symbols::Name {
+fn __action264<
+    'input,
+>(
+    input: &'input str,
+    __0: (usize, symbols::Name, usize),
+) -> symbols::Name
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
-    let __temp0 = __action241(input, &__start0, &__end0);
+    let __temp0 = __action241(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action59(input, __temp0, __0)
+    __action59(
+        input,
+        __temp0,
+        __0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action265<'input>(
+fn __action265<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
-) -> ast::OrderingDirection {
+) -> ast::OrderingDirection
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action230(input, __0);
+    let __temp0 = __action230(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action79(input, __temp0)
+    __action79(
+        input,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action266<'input>(
+fn __action266<
+    'input,
+>(
     input: &'input str,
     __lookbehind: &usize,
     __lookahead: &usize,
-) -> ast::OrderingDirection {
+) -> ast::OrderingDirection
+{
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
-    let __temp0 = __action231(input, &__start0, &__end0);
+    let __temp0 = __action231(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action79(input, __temp0)
+    __action79(
+        input,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action267<'input>(
+fn __action267<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action234(input, __1);
+    let __temp0 = __action234(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action63(input, __0, __temp0)
+    __action63(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action268<'input>(input: &'input str, __0: (usize, &'input str, usize)) -> ast::JoinType {
+fn __action268<
+    'input,
+>(
+    input: &'input str,
+    __0: (usize, &'input str, usize),
+) -> ast::JoinType
+{
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action235(input, &__start0, &__end0);
+    let __temp0 = __action235(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action63(input, __0, __temp0)
+    __action63(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action269<'input>(
+fn __action269<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action234(input, __1);
+    let __temp0 = __action234(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action64(input, __0, __temp0)
+    __action64(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action270<'input>(input: &'input str, __0: (usize, &'input str, usize)) -> ast::JoinType {
+fn __action270<
+    'input,
+>(
+    input: &'input str,
+    __0: (usize, &'input str, usize),
+) -> ast::JoinType
+{
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action235(input, &__start0, &__end0);
+    let __temp0 = __action235(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action64(input, __0, __temp0)
+    __action64(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action271<'input>(
+fn __action271<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
-) -> ast::JoinType {
+) -> ast::JoinType
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action234(input, __1);
+    let __temp0 = __action234(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action65(input, __0, __temp0)
+    __action65(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action272<'input>(input: &'input str, __0: (usize, &'input str, usize)) -> ast::JoinType {
+fn __action272<
+    'input,
+>(
+    input: &'input str,
+    __0: (usize, &'input str, usize),
+) -> ast::JoinType
+{
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action235(input, &__start0, &__end0);
+    let __temp0 = __action235(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action65(input, __0, __temp0)
+    __action65(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action273<'input>(
+fn __action273<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
-) -> ::std::option::Option<(&'input str, &'input str)> {
+) -> ::std::option::Option<(&'input str, &'input str)>
+{
     let __start0 = __0.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action258(input, __0, __1);
+    let __temp0 = __action258(
+        input,
+        __0,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action256(input, __temp0)
+    __action256(
+        input,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action274<'input>(
+fn __action274<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, ast::Statement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     let __start0 = __1.0.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action273(input, __1, __2);
+    let __temp0 = __action273(
+        input,
+        __1,
+        __2,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action6(input, __0, __temp0, __3)
+    __action6(
+        input,
+        __0,
+        __temp0,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action275<'input>(
+fn __action275<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::Statement, usize),
-) -> ast::SqlStatement {
+) -> ast::SqlStatement
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action257(input, &__start0, &__end0);
+    let __temp0 = __action257(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action6(input, __0, __temp0, __1)
+    __action6(
+        input,
+        __0,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action276<'input>(
+fn __action276<
+    'input,
+>(
     input: &'input str,
-    __0: (
-        usize,
-        ::std::option::Option<Vec<ast::CommonTableExpression>>,
-        usize,
-    ),
+    __0: (usize, ::std::option::Option<Vec<ast::CommonTableExpression>>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, Vec<symbols::Name>, usize),
     __5: (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
+) -> ast::InsertStatement
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action252(input, __4);
+    let __temp0 = __action252(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action13(input, __0, __1, __2, __3, __temp0, __5)
+    __action13(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action277<'input>(
+fn __action277<
+    'input,
+>(
     input: &'input str,
-    __0: (
-        usize,
-        ::std::option::Option<Vec<ast::CommonTableExpression>>,
-        usize,
-    ),
+    __0: (usize, ::std::option::Option<Vec<ast::CommonTableExpression>>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
+) -> ast::InsertStatement
+{
     let __start0 = __3.2.clone();
     let __end0 = __4.0.clone();
-    let __temp0 = __action253(input, &__start0, &__end0);
+    let __temp0 = __action253(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action13(input, __0, __1, __2, __3, __temp0, __4)
+    __action13(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action278<'input>(
+fn __action278<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ::std::option::Option<ast::Expression>, usize),
     __2: (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     __3: (usize, Box<ast::Expression>, usize),
     __4: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action214(input, __3);
+    let __temp0 = __action214(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action182(input, __0, __1, __2, __temp0, __4)
+    __action182(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action279<'input>(
+fn __action279<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ::std::option::Option<ast::Expression>, usize),
     __2: (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     __3: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __2.2.clone();
     let __end0 = __3.0.clone();
-    let __temp0 = __action215(input, &__start0, &__end0);
+    let __temp0 = __action215(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action182(input, __0, __1, __2, __temp0, __3)
+    __action182(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action280<'input>(
+fn __action280<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::Expression, usize),
     __2: (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     __3: (usize, Box<ast::Expression>, usize),
     __4: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action218(input, __1);
+    let __temp0 = __action218(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action278(input, __0, __temp0, __2, __3, __4)
+    __action278(
+        input,
+        __0,
+        __temp0,
+        __2,
+        __3,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action281<'input>(
+fn __action281<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     __2: (usize, Box<ast::Expression>, usize),
     __3: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action219(input, &__start0, &__end0);
+    let __temp0 = __action219(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action278(input, __0, __temp0, __1, __2, __3)
+    __action278(
+        input,
+        __0,
+        __temp0,
+        __1,
+        __2,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action282<'input>(
+fn __action282<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::Expression, usize),
     __2: (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     __3: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action218(input, __1);
+    let __temp0 = __action218(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action279(input, __0, __temp0, __2, __3)
+    __action279(
+        input,
+        __0,
+        __temp0,
+        __2,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action283<'input>(
+fn __action283<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ::std::vec::Vec<ast::WhenClause>, usize),
     __2: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action219(input, &__start0, &__end0);
+    let __temp0 = __action219(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action279(input, __0, __temp0, __1, __2)
+    __action279(
+        input,
+        __0,
+        __temp0,
+        __1,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action284<'input>(
+fn __action284<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, ::std::option::Option<ast::Expression>, usize),
     __4: (usize, ast::GroupBy, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action244(input, __4);
+    let __temp0 = __action244(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action33(input, __0, __1, __2, __3, __temp0)
+    __action33(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action285<'input>(
+fn __action285<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __3.2.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action245(input, &__start0, &__end0);
+    let __temp0 = __action245(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action33(input, __0, __1, __2, __3, __temp0)
+    __action33(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action286<'input>(
+fn __action286<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
@@ -66144,272 +67186,511 @@ fn __action286<'input>(
     __3: (usize, Vec<ast::TableExpression>, usize),
     __4: (usize, ::std::option::Option<ast::Expression>, usize),
     __5: (usize, ast::GroupBy, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __5.0.clone();
     let __end0 = __5.2.clone();
-    let __temp0 = __action244(input, __5);
+    let __temp0 = __action244(
+        input,
+        __5,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action34(input, __0, __1, __2, __3, __4, __temp0)
+    __action34(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action287<'input>(
+fn __action287<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, Vec<ast::TableExpression>, usize),
     __4: (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __4.2.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action245(input, &__start0, &__end0);
+    let __temp0 = __action245(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action34(input, __0, __1, __2, __3, __4, __temp0)
+    __action34(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action288<'input>(
+fn __action288<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::JoinType, usize),
     __1: (usize, &'input str, usize),
-) -> ast::JoinOperator {
+) -> ast::JoinOperator
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action236(input, __0);
+    let __temp0 = __action236(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action60(input, __temp0, __1)
+    __action60(
+        input,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action289<'input>(input: &'input str, __0: (usize, &'input str, usize)) -> ast::JoinOperator {
+fn __action289<
+    'input,
+>(
+    input: &'input str,
+    __0: (usize, &'input str, usize),
+) -> ast::JoinOperator
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
-    let __temp0 = __action237(input, &__start0, &__end0);
+    let __temp0 = __action237(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action60(input, __temp0, __0)
+    __action60(
+        input,
+        __temp0,
+        __0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action290<'input>(
+fn __action290<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::JoinType, usize),
     __2: (usize, &'input str, usize),
-) -> ast::JoinOperator {
+) -> ast::JoinOperator
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action236(input, __1);
+    let __temp0 = __action236(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action61(input, __0, __temp0, __2)
+    __action61(
+        input,
+        __0,
+        __temp0,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action291<'input>(
+fn __action291<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
-) -> ast::JoinOperator {
+) -> ast::JoinOperator
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action237(input, &__start0, &__end0);
+    let __temp0 = __action237(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action61(input, __0, __temp0, __1)
+    __action61(
+        input,
+        __0,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action292<'input>(
+fn __action292<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, ast::SetExpression, usize),
     __2: (usize, ::std::option::Option<Vec<ast::Ordering>>, usize),
     __3: (usize, Box<ast::Limit>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action246(input, __3);
+    let __temp0 = __action246(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action20(input, __0, __1, __2, __temp0)
+    __action20(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action293<'input>(
+fn __action293<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, ast::SetExpression, usize),
     __2: (usize, ::std::option::Option<Vec<ast::Ordering>>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __2.2.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action247(input, &__start0, &__end0);
+    let __temp0 = __action247(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action20(input, __0, __1, __2, __temp0)
+    __action20(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action294<'input>(
+fn __action294<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::SetExpression, usize),
     __1: (usize, ::std::option::Option<Vec<ast::Ordering>>, usize),
     __2: (usize, Box<ast::Limit>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action246(input, __2);
+    let __temp0 = __action246(
+        input,
+        __2,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action21(input, __0, __1, __temp0)
+    __action21(
+        input,
+        __0,
+        __1,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action295<'input>(
+fn __action295<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::SetExpression, usize),
     __1: (usize, ::std::option::Option<Vec<ast::Ordering>>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action247(input, &__start0, &__end0);
+    let __temp0 = __action247(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action21(input, __0, __1, __temp0)
+    __action21(
+        input,
+        __0,
+        __1,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action296<'input>(
+fn __action296<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, ast::SetExpression, usize),
     __2: (usize, Vec<ast::Ordering>, usize),
     __3: (usize, Box<ast::Limit>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action248(input, __2);
+    let __temp0 = __action248(
+        input,
+        __2,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action292(input, __0, __1, __temp0, __3)
+    __action292(
+        input,
+        __0,
+        __1,
+        __temp0,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action297<'input>(
+fn __action297<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, ast::SetExpression, usize),
     __2: (usize, Box<ast::Limit>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __1.2.clone();
     let __end0 = __2.0.clone();
-    let __temp0 = __action249(input, &__start0, &__end0);
+    let __temp0 = __action249(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action292(input, __0, __1, __temp0, __2)
+    __action292(
+        input,
+        __0,
+        __1,
+        __temp0,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action298<'input>(
+fn __action298<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, ast::SetExpression, usize),
     __2: (usize, Vec<ast::Ordering>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action248(input, __2);
+    let __temp0 = __action248(
+        input,
+        __2,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action293(input, __0, __1, __temp0)
+    __action293(
+        input,
+        __0,
+        __1,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action299<'input>(
+fn __action299<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, ast::SetExpression, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action249(input, &__start0, &__end0);
+    let __temp0 = __action249(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action293(input, __0, __1, __temp0)
+    __action293(
+        input,
+        __0,
+        __1,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action300<'input>(
+fn __action300<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::SetExpression, usize),
     __1: (usize, Vec<ast::Ordering>, usize),
     __2: (usize, Box<ast::Limit>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action248(input, __1);
+    let __temp0 = __action248(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action294(input, __0, __temp0, __2)
+    __action294(
+        input,
+        __0,
+        __temp0,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action301<'input>(
+fn __action301<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::SetExpression, usize),
     __1: (usize, Box<ast::Limit>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action249(input, &__start0, &__end0);
+    let __temp0 = __action249(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action294(input, __0, __temp0, __1)
+    __action294(
+        input,
+        __0,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action302<'input>(
+fn __action302<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::SetExpression, usize),
     __1: (usize, Vec<ast::Ordering>, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action248(input, __1);
+    let __temp0 = __action248(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action295(input, __0, __temp0)
+    __action295(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action303<'input>(
+fn __action303<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::SetExpression, usize),
-) -> ast::SelectStatement {
+) -> ast::SelectStatement
+{
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action249(input, &__start0, &__end0);
+    let __temp0 = __action249(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action295(input, __0, __temp0)
+    __action295(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action304<'input>(
+fn __action304<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::Expression, usize),
     __1: (usize, symbols::Name, usize),
     __2: (usize, ast::OrderingDirection, usize),
-) -> ast::Ordering {
+) -> ast::Ordering
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action232(input, __1);
+    let __temp0 = __action232(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action77(input, __0, __temp0, __2)
+    __action77(
+        input,
+        __0,
+        __temp0,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action305<'input>(
+fn __action305<
+    'input,
+>(
     input: &'input str,
     __0: (usize, ast::Expression, usize),
     __1: (usize, ast::OrderingDirection, usize),
-) -> ast::Ordering {
+) -> ast::Ordering
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action233(input, &__start0, &__end0);
+    let __temp0 = __action233(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action77(input, __0, __temp0, __1)
+    __action77(
+        input,
+        __0,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action306<'input>(
+fn __action306<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66418,16 +67699,31 @@ fn __action306<'input>(
     __4: (usize, ast::Expression, usize),
     __5: (usize, Box<ast::Expression>, usize),
     __6: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __5.0.clone();
     let __end0 = __5.2.clone();
-    let __temp0 = __action220(input, __5);
+    let __temp0 = __action220(
+        input,
+        __5,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action180(input, __0, __1, __2, __3, __4, __temp0, __6)
+    __action180(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __6,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action307<'input>(
+fn __action307<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66435,16 +67731,32 @@ fn __action307<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, ast::Expression, usize),
     __5: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __4.2.clone();
     let __end0 = __5.0.clone();
-    let __temp0 = __action221(input, &__start0, &__end0);
+    let __temp0 = __action221(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action180(input, __0, __1, __2, __3, __4, __temp0, __5)
+    __action180(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action308<'input>(
+fn __action308<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66452,59 +67764,111 @@ fn __action308<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, symbols::Name, usize),
     __5: (usize, symbols::Name, usize),
-) -> ast::AttachStatement {
+) -> ast::AttachStatement
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action228(input, __4);
+    let __temp0 = __action228(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action84(input, __0, __1, __2, __3, __temp0, __5)
+    __action84(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action309<'input>(
+fn __action309<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, String, usize),
     __3: (usize, &'input str, usize),
     __4: (usize, symbols::Name, usize),
-) -> ast::AttachStatement {
+) -> ast::AttachStatement
+{
     let __start0 = __3.2.clone();
     let __end0 = __4.0.clone();
-    let __temp0 = __action229(input, &__start0, &__end0);
+    let __temp0 = __action229(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action84(input, __0, __1, __2, __3, __temp0, __4)
+    __action84(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action310<'input>(
+fn __action310<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, symbols::Name, usize),
     __2: (usize, symbols::Name, usize),
-) -> ast::DescribeStatement {
+) -> ast::DescribeStatement
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action228(input, __1);
+    let __temp0 = __action228(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action85(input, __0, __temp0, __2)
+    __action85(
+        input,
+        __0,
+        __temp0,
+        __2,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action311<'input>(
+fn __action311<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, symbols::Name, usize),
-) -> ast::DescribeStatement {
+) -> ast::DescribeStatement
+{
     let __start0 = __0.2.clone();
     let __end0 = __1.0.clone();
-    let __temp0 = __action229(input, &__start0, &__end0);
+    let __temp0 = __action229(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action85(input, __0, __temp0, __1)
+    __action85(
+        input,
+        __0,
+        __temp0,
+        __1,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action312<'input>(
+fn __action312<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66513,16 +67877,31 @@ fn __action312<'input>(
     __4: (usize, ast::Expression, usize),
     __5: (usize, Box<ast::Expression>, usize),
     __6: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __5.0.clone();
     let __end0 = __5.2.clone();
-    let __temp0 = __action224(input, __5);
+    let __temp0 = __action224(
+        input,
+        __5,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action174(input, __0, __1, __2, __3, __4, __temp0, __6)
+    __action174(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __6,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action313<'input>(
+fn __action313<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66530,16 +67909,32 @@ fn __action313<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, ast::Expression, usize),
     __5: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __4.2.clone();
     let __end0 = __5.0.clone();
-    let __temp0 = __action225(input, &__start0, &__end0);
+    let __temp0 = __action225(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action174(input, __0, __1, __2, __3, __4, __temp0, __5)
+    __action174(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action314<'input>(
+fn __action314<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66548,16 +67943,31 @@ fn __action314<'input>(
     __4: (usize, ast::Expression, usize),
     __5: (usize, Box<ast::Expression>, usize),
     __6: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __5.0.clone();
     let __end0 = __5.2.clone();
-    let __temp0 = __action224(input, __5);
+    let __temp0 = __action224(
+        input,
+        __5,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action176(input, __0, __1, __2, __3, __4, __temp0, __6)
+    __action176(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __6,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action315<'input>(
+fn __action315<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66565,16 +67975,32 @@ fn __action315<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, ast::Expression, usize),
     __5: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __4.2.clone();
     let __end0 = __5.0.clone();
-    let __temp0 = __action225(input, &__start0, &__end0);
+    let __temp0 = __action225(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action176(input, __0, __1, __2, __3, __4, __temp0, __5)
+    __action176(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action316<'input>(
+fn __action316<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66583,16 +68009,31 @@ fn __action316<'input>(
     __4: (usize, ast::Expression, usize),
     __5: (usize, Box<ast::Expression>, usize),
     __6: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __5.0.clone();
     let __end0 = __5.2.clone();
-    let __temp0 = __action222(input, __5);
+    let __temp0 = __action222(
+        input,
+        __5,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action175(input, __0, __1, __2, __3, __4, __temp0, __6)
+    __action175(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __6,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action317<'input>(
+fn __action317<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
@@ -66600,101 +68041,190 @@ fn __action317<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, ast::Expression, usize),
     __5: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __4.2.clone();
     let __end0 = __5.0.clone();
-    let __temp0 = __action223(input, &__start0, &__end0);
+    let __temp0 = __action223(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action175(input, __0, __1, __2, __3, __4, __temp0, __5)
+    __action175(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action318<'input>(
+fn __action318<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<symbols::Name>, usize),
     __1: (usize, symbols::Name, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action238(input, __1);
+    let __temp0 = __action238(
+        input,
+        __1,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action56(input, __0, __temp0)
+    __action56(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action319<'input>(
+fn __action319<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<symbols::Name>, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action239(input, &__start0, &__end0);
+    let __temp0 = __action239(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action56(input, __0, __temp0)
+    __action56(
+        input,
+        __0,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action320<'input>(
+fn __action320<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectStatement, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, symbols::Name, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action238(input, __3);
+    let __temp0 = __action238(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action57(input, __0, __1, __2, __temp0)
+    __action57(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action321<'input>(
+fn __action321<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectStatement, usize),
     __2: (usize, &'input str, usize),
-) -> ast::TableExpression {
+) -> ast::TableExpression
+{
     let __start0 = __2.2.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action239(input, &__start0, &__end0);
+    let __temp0 = __action239(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action57(input, __0, __1, __2, __temp0)
+    __action57(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action322<'input>(
+fn __action322<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::DeleteStatement {
+) -> ast::DeleteStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action254(input, __0);
+    let __temp0 = __action254(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action15(input, __temp0, __1, __2, __3, __4)
+    __action15(
+        input,
+        __temp0,
+        __1,
+        __2,
+        __3,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action323<'input>(
+fn __action323<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, Vec<symbols::Name>, usize),
     __3: (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::DeleteStatement {
+) -> ast::DeleteStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
-    let __temp0 = __action255(input, &__start0, &__end0);
+    let __temp0 = __action255(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action15(input, __temp0, __0, __1, __2, __3)
+    __action15(
+        input,
+        __temp0,
+        __0,
+        __1,
+        __2,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action324<'input>(
+fn __action324<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
@@ -66702,63 +68232,119 @@ fn __action324<'input>(
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, Vec<symbols::Name>, usize),
     __5: (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
+) -> ast::InsertStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action254(input, __0);
+    let __temp0 = __action254(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action276(input, __temp0, __1, __2, __3, __4, __5)
+    __action276(
+        input,
+        __temp0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action325<'input>(
+fn __action325<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, Vec<symbols::Name>, usize),
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
+) -> ast::InsertStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
-    let __temp0 = __action255(input, &__start0, &__end0);
+    let __temp0 = __action255(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action276(input, __temp0, __0, __1, __2, __3, __4)
+    __action276(
+        input,
+        __temp0,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action326<'input>(
+fn __action326<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
+) -> ast::InsertStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action254(input, __0);
+    let __temp0 = __action254(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action277(input, __temp0, __1, __2, __3, __4)
+    __action277(
+        input,
+        __temp0,
+        __1,
+        __2,
+        __3,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action327<'input>(
+fn __action327<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, Vec<symbols::Name>, usize),
     __3: (usize, ast::SetExpression, usize),
-) -> ast::InsertStatement {
+) -> ast::InsertStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
-    let __temp0 = __action255(input, &__start0, &__end0);
+    let __temp0 = __action255(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action277(input, __temp0, __0, __1, __2, __3)
+    __action277(
+        input,
+        __temp0,
+        __0,
+        __1,
+        __2,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action328<'input>(
+fn __action328<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
@@ -66766,183 +68352,343 @@ fn __action328<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, Vec<ast::Assignment>, usize),
     __5: (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::UpdateStatement {
+) -> ast::UpdateStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
-    let __temp0 = __action254(input, __0);
+    let __temp0 = __action254(
+        input,
+        __0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action16(input, __temp0, __1, __2, __3, __4, __5)
+    __action16(
+        input,
+        __temp0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action329<'input>(
+fn __action329<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, Vec<symbols::Name>, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<ast::Assignment>, usize),
     __4: (usize, ::std::option::Option<ast::Expression>, usize),
-) -> ast::UpdateStatement {
+) -> ast::UpdateStatement
+{
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
-    let __temp0 = __action255(input, &__start0, &__end0);
+    let __temp0 = __action255(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action16(input, __temp0, __0, __1, __2, __3, __4)
+    __action16(
+        input,
+        __temp0,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action330<'input>(
+fn __action330<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, ast::Expression, usize),
     __3: (usize, Box<ast::Expression>, usize),
     __4: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action226(input, __3);
+    let __temp0 = __action226(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action170(input, __0, __1, __2, __temp0, __4)
+    __action170(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action331<'input>(
+fn __action331<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, ast::Expression, usize),
     __3: (usize, &'input str, usize),
-) -> ast::Expression {
+) -> ast::Expression
+{
     let __start0 = __2.2.clone();
     let __end0 = __3.0.clone();
-    let __temp0 = __action227(input, &__start0, &__end0);
+    let __temp0 = __action227(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action170(input, __0, __1, __2, __temp0, __3)
+    __action170(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action332<'input>(
+fn __action332<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<symbols::Name>, usize),
     __4: (usize, ast::Expression, usize),
-) -> ast::DeleteStatement {
+) -> ast::DeleteStatement
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action250(input, __4);
+    let __temp0 = __action250(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action322(input, __0, __1, __2, __3, __temp0)
+    __action322(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action333<'input>(
+fn __action333<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<symbols::Name>, usize),
-) -> ast::DeleteStatement {
+) -> ast::DeleteStatement
+{
     let __start0 = __3.2.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action322(input, __0, __1, __2, __3, __temp0)
+    __action322(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action334<'input>(
+fn __action334<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, Vec<symbols::Name>, usize),
     __3: (usize, ast::Expression, usize),
-) -> ast::DeleteStatement {
+) -> ast::DeleteStatement
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action250(input, __3);
+    let __temp0 = __action250(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action323(input, __0, __1, __2, __temp0)
+    __action323(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action335<'input>(
+fn __action335<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, Vec<symbols::Name>, usize),
-) -> ast::DeleteStatement {
+) -> ast::DeleteStatement
+{
     let __start0 = __2.2.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action323(input, __0, __1, __2, __temp0)
+    __action323(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action336<'input>(
+fn __action336<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, ast::Expression, usize),
     __4: (usize, ast::GroupBy, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action250(input, __3);
+    let __temp0 = __action250(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action284(input, __0, __1, __2, __temp0, __4)
+    __action284(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action337<'input>(
+fn __action337<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, ast::GroupBy, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __2.2.clone();
     let __end0 = __3.0.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action284(input, __0, __1, __2, __temp0, __3)
+    __action284(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+        __3,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action338<'input>(
+fn __action338<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, ast::Expression, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action250(input, __3);
+    let __temp0 = __action250(
+        input,
+        __3,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action285(input, __0, __1, __2, __temp0)
+    __action285(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action339<'input>(
+fn __action339<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __2.2.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action285(input, __0, __1, __2, __temp0)
+    __action285(
+        input,
+        __0,
+        __1,
+        __2,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action340<'input>(
+fn __action340<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
@@ -66950,63 +68696,119 @@ fn __action340<'input>(
     __3: (usize, Vec<ast::TableExpression>, usize),
     __4: (usize, ast::Expression, usize),
     __5: (usize, ast::GroupBy, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action250(input, __4);
+    let __temp0 = __action250(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action286(input, __0, __1, __2, __3, __temp0, __5)
+    __action286(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+        __5,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action341<'input>(
+fn __action341<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, Vec<ast::TableExpression>, usize),
     __4: (usize, ast::GroupBy, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __3.2.clone();
     let __end0 = __4.0.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action286(input, __0, __1, __2, __3, __temp0, __4)
+    __action286(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+        __4,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action342<'input>(
+fn __action342<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, Vec<ast::TableExpression>, usize),
     __4: (usize, ast::Expression, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action250(input, __4);
+    let __temp0 = __action250(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action287(input, __0, __1, __2, __3, __temp0)
+    __action287(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action343<'input>(
+fn __action343<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, ast::SelectMode, usize),
     __2: (usize, ast::ResultColumns, usize),
     __3: (usize, Vec<ast::TableExpression>, usize),
-) -> ast::SetExpression {
+) -> ast::SetExpression
+{
     let __start0 = __3.2.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action287(input, __0, __1, __2, __3, __temp0)
+    __action287(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action344<'input>(
+fn __action344<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
@@ -67014,87 +68816,126 @@ fn __action344<'input>(
     __3: (usize, &'input str, usize),
     __4: (usize, Vec<ast::Assignment>, usize),
     __5: (usize, ast::Expression, usize),
-) -> ast::UpdateStatement {
+) -> ast::UpdateStatement
+{
     let __start0 = __5.0.clone();
     let __end0 = __5.2.clone();
-    let __temp0 = __action250(input, __5);
+    let __temp0 = __action250(
+        input,
+        __5,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action328(input, __0, __1, __2, __3, __4, __temp0)
+    __action328(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action345<'input>(
+fn __action345<
+    'input,
+>(
     input: &'input str,
     __0: (usize, Vec<ast::CommonTableExpression>, usize),
     __1: (usize, &'input str, usize),
     __2: (usize, Vec<symbols::Name>, usize),
     __3: (usize, &'input str, usize),
     __4: (usize, Vec<ast::Assignment>, usize),
-) -> ast::UpdateStatement {
+) -> ast::UpdateStatement
+{
     let __start0 = __4.2.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action328(input, __0, __1, __2, __3, __4, __temp0)
+    __action328(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __4,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action346<'input>(
+fn __action346<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, Vec<symbols::Name>, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<ast::Assignment>, usize),
     __4: (usize, ast::Expression, usize),
-) -> ast::UpdateStatement {
+) -> ast::UpdateStatement
+{
     let __start0 = __4.0.clone();
     let __end0 = __4.2.clone();
-    let __temp0 = __action250(input, __4);
+    let __temp0 = __action250(
+        input,
+        __4,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action329(input, __0, __1, __2, __3, __temp0)
+    __action329(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
 #[allow(unused_variables)]
-fn __action347<'input>(
+fn __action347<
+    'input,
+>(
     input: &'input str,
     __0: (usize, &'input str, usize),
     __1: (usize, Vec<symbols::Name>, usize),
     __2: (usize, &'input str, usize),
     __3: (usize, Vec<ast::Assignment>, usize),
-) -> ast::UpdateStatement {
+) -> ast::UpdateStatement
+{
     let __start0 = __3.2.clone();
     let __end0 = __3.2.clone();
-    let __temp0 = __action251(input, &__start0, &__end0);
+    let __temp0 = __action251(
+        input,
+        &__start0,
+        &__end0,
+    );
     let __temp0 = (__start0, __temp0, __end0);
-    __action329(input, __0, __1, __2, __3, __temp0)
+    __action329(
+        input,
+        __0,
+        __1,
+        __2,
+        __3,
+        __temp0,
+    )
 }
 
-pub trait __ToTriple<'input> {
-    fn to_triple(
-        value: Self,
-    ) -> Result<
-        (usize, Token<'input>, usize),
-        __lalrpop_util::ParseError<usize, Token<'input>, &'static str>,
-    >;
+pub trait __ToTriple<'input, > {
+    fn to_triple(value: Self) -> Result<(usize,Token<'input>,usize), __lalrpop_util::ParseError<usize, Token<'input>, &'static str>>;
 }
 
-impl<'input> __ToTriple<'input> for (usize, Token<'input>, usize) {
-    fn to_triple(
-        value: Self,
-    ) -> Result<
-        (usize, Token<'input>, usize),
-        __lalrpop_util::ParseError<usize, Token<'input>, &'static str>,
-    > {
+impl<'input, > __ToTriple<'input, > for (usize, Token<'input>, usize) {
+    fn to_triple(value: Self) -> Result<(usize,Token<'input>,usize), __lalrpop_util::ParseError<usize, Token<'input>, &'static str>> {
         Ok(value)
     }
 }
-impl<'input> __ToTriple<'input> for Result<(usize, Token<'input>, usize), &'static str> {
-    fn to_triple(
-        value: Self,
-    ) -> Result<
-        (usize, Token<'input>, usize),
-        __lalrpop_util::ParseError<usize, Token<'input>, &'static str>,
-    > {
+impl<'input, > __ToTriple<'input, > for Result<(usize, Token<'input>, usize), &'static str> {
+    fn to_triple(value: Self) -> Result<(usize,Token<'input>,usize), __lalrpop_util::ParseError<usize, Token<'input>, &'static str>> {
         match value {
             Ok(v) => Ok(v),
             Err(error) => Err(__lalrpop_util::ParseError::User { error }),

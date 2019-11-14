@@ -1,5 +1,5 @@
 // auto-generated: "lalrpop 0.18.1"
-// sha256: 411c20d8806af666c71ca7d7e84c48e5c6d550738a6bbb6d17faa7d0602bea9
+// sha256: 571185e639c356895b27db4a633b81441919c83eeaa70d3906171c3646c
 use super::ast;
 use super::symbols;
 #[allow(unused_extern_crates)]

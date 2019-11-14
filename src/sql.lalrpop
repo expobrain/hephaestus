@@ -1018,3 +1018,39 @@ NumericLiteral: String = {
 };
 
 StringLiteral: String = STRING_LIT => <>[1..<>.len() - 1].to_string();
+
+//extern {
+//    type Location = usize;
+//    type Error = lexer::Error;
+//
+//    enum lexer::Tok {
+//        // Symbols
+//        "&" => lexer::Token::Ampersand,
+//        "!" => lexer::Token::Bang,
+//        "!=" => lexer::Token::BangEqual,
+//        ":" => lexer::Token::Colon,
+//        "," => lexer::Token::Comma,
+//        "." => lexer::Token::Dot,
+//        "=" => lexer::Token::Equal,
+//        "==" => lexer::Token::EqualEqual,
+//        "=>" => lexer::Token::EqualGreater,
+//        "/" => lexer::Token::ForwardSlash,
+//        ">" => lexer::Token::Greater,
+//        ">=" => lexer::Token::GreaterEqual,
+//        "<" => lexer::Token::Less,
+//        "<=" => lexer::Token::LessEqual,
+//        "-" => lexer::Token::Minus,
+//        "|" => lexer::Token::Pipe,
+//        "+" => lexer::Token::Plus,
+//        ";" => lexer::Token::Semi,
+//        "*" => lexer::Token::Star,
+//
+//        // Delimiters
+//        "(" => LParen,
+//        ")" => RParen,
+//        "{" => LBrace,
+//        "}" => RBrace,
+//        "[" => LBracket,
+//        "]" => RBracket,
+//    }
+//}

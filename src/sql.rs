@@ -62964,7 +62964,7 @@ fn __action0<
     (_, __0, _): (usize, ast::SqlStatement, usize),
 ) -> ast::SqlStatement
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -62975,7 +62975,7 @@ fn __action1<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -62986,7 +62986,7 @@ fn __action2<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -62997,7 +62997,7 @@ fn __action3<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -63008,7 +63008,7 @@ fn __action4<
     (_, __0, _): (usize, ast::DataType, usize),
 ) -> ast::DataType
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -63316,7 +63316,7 @@ fn __action27<
     (_, __0, _): (usize, ast::SetExpression, usize),
 ) -> ast::SetExpression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -63661,7 +63661,7 @@ fn __action54<
     (_, __0, _): (usize, ast::TableExpression, usize),
 ) -> ast::TableExpression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -64162,7 +64162,7 @@ fn __action93<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -64200,7 +64200,7 @@ fn __action96<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -64347,7 +64347,7 @@ fn __action105<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -64562,7 +64562,7 @@ fn __action118<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65060,7 +65060,7 @@ fn __action146<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65071,7 +65071,7 @@ fn __action147<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65082,7 +65082,7 @@ fn __action148<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65093,7 +65093,7 @@ fn __action149<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65104,7 +65104,7 @@ fn __action150<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65115,7 +65115,7 @@ fn __action151<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65126,7 +65126,7 @@ fn __action152<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65137,7 +65137,7 @@ fn __action153<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65148,7 +65148,7 @@ fn __action154<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65159,7 +65159,7 @@ fn __action155<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65170,7 +65170,7 @@ fn __action156<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65181,7 +65181,7 @@ fn __action157<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65192,7 +65192,7 @@ fn __action158<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65203,7 +65203,7 @@ fn __action159<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65214,7 +65214,7 @@ fn __action160<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65225,7 +65225,7 @@ fn __action161<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65621,7 +65621,7 @@ fn __action185<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65647,7 +65647,7 @@ fn __action187<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65675,7 +65675,7 @@ fn __action189<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]
@@ -65703,7 +65703,7 @@ fn __action191<
     (_, __0, _): (usize, ast::Expression, usize),
 ) -> ast::Expression
 {
-    (__0)
+    __0
 }
 
 #[allow(unused_variables)]

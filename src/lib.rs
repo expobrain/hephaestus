@@ -27,17 +27,20 @@ extern crate serde_derive;
 extern crate dict_derive;
 extern crate serde_json;
 
-use pyo3::exceptions;
-use pyo3::prelude::*;
-use pyo3::wrap_pyfunction;
-
 pub mod ast;
 pub mod error;
+pub mod format;
 pub mod sql;
 pub mod symbols;
 pub mod types;
 
 mod ast_py;
+
+use pyo3::exceptions;
+use pyo3::prelude::*;
+use pyo3::wrap_pyfunction;
+
+use format::FormatSql;
 
 fn strip_inline_comments(s: &str) -> String {
     match s.rfind("--") {
@@ -67,6 +70,11 @@ pub fn parse(sql_str: &str) -> PyResult<ast::SqlStatement> {
         Ok(r) => Ok(r),
         Err(e) => Err(PyErr::new::<exceptions::ValueError, _>(format!("{}", e))),
     }
+}
+
+#[pyfunction]
+pub fn format(sql_str: &str) -> PyResult<String> {
+    parse(sql_str).map(|node| node.format(&format::FormatOptions::default()))
 }
 
 #[pymodule]

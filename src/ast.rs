@@ -50,6 +50,40 @@ pub enum Statement {
     Insert(InsertStatement),
     Delete(DeleteStatement),
     Update(UpdateStatement),
+    Create(CreateStatement),
+}
+
+/// Representation of a create statement
+#[derive(IntoPyObject, Debug, PartialEq, Eq, Clone)]
+pub struct CreateStatement {
+    /// the name of the table to be created
+    pub table_name: Vec<symbols::Name>,
+
+    /// if true replace the target table
+    pub replace: bool,
+
+    /// if true create the table only if not exists
+    pub if_not_exists: bool,
+
+    /// definition of table's content
+    pub content: CreateTableContent,
+}
+
+/// Representation of the create table's content
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub enum CreateTableContent {
+    /// Column definitions
+    ColumnDefinitions(Vec<ColumnDefinition>),
+}
+
+/// Representation of a column definition
+#[derive(IntoPyObject, Debug, PartialEq, Eq, Clone)]
+pub struct ColumnDefinition {
+    // /// Name of the column
+    //pub id: symbols::Name,
+
+    // /// Column's data type
+    //pub data_type: DataType,
 }
 
 /// Representation of an insert statement

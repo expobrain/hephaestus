@@ -45,6 +45,7 @@ match {
     r"(?i)collate" => "COLLATE",
     r"(?i)concat" => "CONCAT",
     r"(?i)count" => "COUNT",
+    r"(?i)create" => "CREATE",
     r"(?i)cross" => "CROSS",
     r"(?i)current_date" => "CURRENT_DATE",
     r"(?i)current_time" => "CURRENT_TIME",
@@ -62,6 +63,7 @@ match {
     r"(?i)end" => "END",
     r"(?i)explain" => "EXPLAIN",
     r"(?i)except" => "EXCEPT",
+    r"(?i)exists" => "EXISTS",
 
     r"(?i)file" => "FILE",
     r"(?i)for" => "FOR",
@@ -72,6 +74,7 @@ match {
 
     r"(?i)having" => "HAVING",
 
+    r"(?i)if" => "IF",
     r"(?i)in" => "IN",
     r"(?i)inner" => "INNER",
     r"(?i)insert" => "INSERT",
@@ -160,16 +163,48 @@ match {
 
 pub SqlStatement: ast::SqlStatement = {
     <Statement> => ast::SqlStatement::Statement(<>),
-    "EXPLAIN" ("QUERY" "PLAN")? <Statement> => ast::SqlStatement::ExplainQueryPlan(<>),
-    <AttachStatement> => ast::SqlStatement::Attach(<>),
-    <DescribeStatement> => ast::SqlStatement::Describe(<>),
+    //"EXPLAIN" ("QUERY" "PLAN")? <Statement> => ast::SqlStatement::ExplainQueryPlan(<>),
+    //<AttachStatement> => ast::SqlStatement::Attach(<>),
+    //<DescribeStatement> => ast::SqlStatement::Describe(<>),
 };
 
 Statement: ast::Statement = {
-    SelectStatement => ast::Statement::Select(<>),
-    InsertStatement => ast::Statement::Insert(<>),
-    DeleteStatement => ast::Statement::Delete(<>),
-    UpdateStatement => ast::Statement::Update(<>),
+    //SelectStatement => ast::Statement::Select(<>),
+    //InsertStatement => ast::Statement::Insert(<>),
+    //DeleteStatement => ast::Statement::Delete(<>),
+    //UpdateStatement => ast::Statement::Update(<>),
+    CreateStatement => ast::Statement::Create(<>),
+};
+
+CreateStatement: ast::CreateStatement = {
+    "CREATE" <replace:OrReplace?> "TABLE" <if_not_exists: IfNotExists?> <table_name:QualifiedIdentifier> <content:CreateTableContent> =>
+        ast::CreateStatement {
+            replace: replace.is_some(),
+            if_not_exists: if_not_exists.is_some(),
+            table_name,
+            content
+        }
+};
+
+OrReplace: () = "OR" "REPLACE" => ();
+
+IfNotExists: () = "IF" "NOT" "EXISTS" => ();
+
+CreateTableContent: ast::CreateTableContent = {
+    "(" <column_defs:ColumnDefinitionList> ")" => ast::CreateTableContent::ColumnDefinitions(<>)
+};
+
+
+ColumnDefinitionList: Vec<ast::ColumnDefinition> = {
+    <a:ColumnDefinition> "," <b:ColumnDefinition> => vec![],
+    //ColumnDefinition => vec![<>],
+    //<column_defs:ColumnDefinitionList> "," <column_def:ColumnDefinition> =>
+    //    ast::append(column_defs, column_def),
+};
+
+ColumnDefinition: ast::ColumnDefinition = {
+    //<id:Identifier> <data_type:DataType> => ast::ColumnDefinition { <> }
+    Identifier DataType => ast::ColumnDefinition {  }
 };
 
 InsertStatement: ast::InsertStatement = {

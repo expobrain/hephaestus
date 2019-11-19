@@ -43,6 +43,22 @@ impl IntoPy<PyObject> for Statement {
             Statement::Insert(v) => IntoPy::<PyObject>::into_py(v, py),
             Statement::Delete(v) => IntoPy::<PyObject>::into_py(v, py),
             Statement::Update(v) => IntoPy::<PyObject>::into_py(v, py),
+            Statement::Create(v) => IntoPy::<PyObject>::into_py(v, py),
+        }
+    }
+}
+
+#[derive(IntoPyObject, Debug, PartialEq, Eq, Clone)]
+struct CreateTableColumnDefinitions {
+    pub column_defs: Vec<ColumnDefinition>,
+}
+
+impl IntoPy<PyObject> for CreateTableContent {
+    fn into_py(self, py: Python) -> PyObject {
+        match self {
+            CreateTableContent::ColumnDefinitions(d) => {
+                IntoPy::<PyObject>::into_py(CreateTableColumnDefinitions { column_defs: d }, py)
+            }
         }
     }
 }

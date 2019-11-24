@@ -66,16 +66,16 @@ impl fmt::Display for DataType {
     }
 }
 
-impl DataType {
-    /// Can values of this type be ordered?
-    pub fn is_ordered(self) -> bool {
-        match self {
-            DataType::Varchar
-            | DataType::Numeric
-            | DataType::Date
-            | DataType::Time
-            | DataType::Timestamp => true,
-            _ => false,
-        }
-    }
-}
+// impl DataType {
+//     /// Can values of this type be ordered?
+//     pub fn is_ordered(self) -> bool {
+//         match self {
+//             DataType::Varchar
+//             | DataType::Numeric
+//             | DataType::Date
+//             | DataType::Time
+//             | DataType::Timestamp => true,
+//             _ => false,
+//         }
+//     }
+// }

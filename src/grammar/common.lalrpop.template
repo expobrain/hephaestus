@@ -1,0 +1,200 @@
+// MIT License
+//
+// Copyright (c) 2018 Hans-Martin Will
+// Copyright (c) 2019 Daniele Esposti
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+use super::ast;
+use super::symbols;
+
+grammar;
+
+// Lexer specification, with the primary purpose of making language keywords case insensitive
+match {
+    r"(?i)all" => "ALL",
+    r"(?i)and" => "AND",
+    r"(?i)as" => "AS",
+    r"(?i)asc" => "ASC",
+    r"(?i)attach" => "ATTACH",
+
+    r"(?i)between" => "BETWEEN",
+    r"(?i)by" => "BY",
+    r"(?i)boolean" => "BOOLEAN",
+
+    r"(?i)case" => "CASE",
+    r"(?i)cast" => "CAST",
+    r"(?i)char" => "CHAR",
+    r"(?i)coalesce" => "COALESCE",
+    r"(?i)collate" => "COLLATE",
+    r"(?i)concat" => "CONCAT",
+    r"(?i)count" => "COUNT",
+    r"(?i)cross" => "CROSS",
+    r"(?i)current_date" => "CURRENT_DATE",
+    r"(?i)current_time" => "CURRENT_TIME",
+    r"(?i)current_timestamp" => "CURRENT_TIMESTAMP",
+
+    r"(?i)date" => "DATE",
+    r"(?i)decimal" => "DECIMAL",
+    r"(?i)delete" => "DELETE",
+    r"(?i)desc" => "DESC",
+    r"(?i)describe" => "DESCRIBE",
+    r"(?i)distinct" => "DISTINCT",
+    r"(?i)double" => "DOUBLE",
+
+    r"(?i)else" => "ELSE",
+    r"(?i)end" => "END",
+    r"(?i)explain" => "EXPLAIN",
+    r"(?i)except" => "EXCEPT",
+
+    r"(?i)file" => "FILE",
+    r"(?i)for" => "FOR",
+    r"(?i)from" => "FROM",
+    r"(?i)full" => "FULL",
+
+    r"(?i)group" => "GROUP",
+
+    r"(?i)having" => "HAVING",
+
+    r"(?i)in" => "IN",
+    r"(?i)inner" => "INNER",
+    r"(?i)insert" => "INSERT",
+    r"(?i)intersect" => "INTERSECT",
+    r"(?i)into" => "INTO",
+    r"(?i)is" => "IS",
+    r"(?i)isnull" => "ISNULL",
+
+    r"(?i)join" => "JOIN",
+
+    r"(?i)left" => "LEFT",
+    r"(?i)limit" => "LIMIT",
+    r"(?i)like" => "LIKE",
+    r"(?i)local" => "LOCAL",
+
+    r"(?i)max" => "MAX",
+    r"(?i)min" => "MIN",
+
+    r"(?i)natural" => "NATURAL",
+    r"(?i)not" => "NOT",
+    r"(?i)notnull" => "NOTNULL",
+    r"(?i)null" => "NULL",
+
+    r"(?i)offset" => "OFFSET",
+    r"(?i)on" => "ON",
+    r"(?i)or" => "OR",
+    r"(?i)order" => "ORDER",
+    r"(?i)outer" => "OUTER",
+
+    r"(?i)plan" => "PLAN",
+    r"(?i)power" => "POWER",
+    r"(?i)precision" => "PRECISION",
+
+    r"(?i)query" => "QUERY",
+
+    r"(?i)replace" => "REPLACE",
+    r"(?i)right" => "RIGHT",
+
+    r"(?i)select" => "SELECT",
+    r"(?i)set" => "SET",
+    r"(?i)substr" => "SUBSTR",
+    r"(?i)substring" => "SUBSTRING",
+    r"(?i)sum" => "SUM",
+
+    r"(?i)table" => "TABLE",
+    r"(?i)then" => "THEN",
+    r"(?i)time" => "TIME",
+    r"(?i)timestamp" => "TIMESTAMP",
+    r"(?i)to_date" => "TO_DATE",
+
+    r"(?i)update" => "UPDATE",
+    r"(?i)union" => "UNION",
+    r"(?i)using" => "USING",
+
+    r"(?i)values" => "VALUES",
+    r"(?i)varchar" => "VARCHAR",
+
+    r"(?i)when" => "WHEN",
+    r"(?i)where" => "WHERE",
+    r"(?i)with" => "WITH",
+
+    r"(?i)zone" => "ZONE",
+
+    "," => ",",
+    "." => ".",
+    "(" => "(",
+    ")" => ")",
+    "*" => "*",
+    "/" => "/",
+    "+" => "+",
+    "-" => "-",
+    "=" => "=",
+    "!=" => "!=",
+    "<" => "<",
+    "<=" => "<=",
+    ">" => ">",
+    ">=" => ">=",
+    "||" => "||"
+} else {
+    r"[A-Za-z_][A-Za-z0-9_]*" => ID,
+    r"[0-9]+(\.[0-9]*)?(E[+-]?[0-9]+)?" => NUMERIC_LIT_1,
+    r"\.[0-9]+(E[+-]?[0-9]+)?" => NUMERIC_LIT_2,
+    r"0x[0-9A-Fa-f]+" => HEX_LIT,
+    r"'[^[[:cntrl:]]']*'" => STRING_LIT
+}
+
+pub DataType: ast::DataType = {
+    "BOOLEAN" => ast::DataType::Boolean,
+    "CHAR" "(" <NumericLiteral> ")" => ast::DataType::Char(ast::Literal::Numeric( <> )),
+    "DATE" => ast::DataType::Date,
+    "DECIMAL" "(" <p:NumericLiteral> "," <s:NumericLiteral> ")" => ast::DataType::Decimal {
+            p: ast::Literal::Numeric(p),
+            s: ast::Literal::Numeric(s),
+        },
+    "DOUBLE" "PRECISION" => ast::DataType::DoublePrecision,
+    "TIMESTAMP" => ast::DataType::Timestamp,
+    "TIMESTAMP" "WITH" "LOCAL" "TIME" "ZONE" => ast::DataType::LocalTimestamp,
+    "VARCHAR" "(" <n:NumericLiteral> ")" =>
+        ast::DataType::Varchar(ast::Literal::Numeric( <> )),
+};
+
+//
+// Tokens
+//
+
+LiteralValue: ast::Literal = {
+    NumericLiteral => ast::Literal::Numeric(<>),
+    StringLiteral => ast::Literal::String(<>),
+    "NULL" => ast::Literal::Null,
+    "CURRENT_TIME" => ast::Literal::CurrentTime,
+    "CURRENT_DATE" => ast::Literal::CurrentDate,
+    "CURRENT_TIMESTAMP" => ast::Literal::CurrentTimestamp,
+    "DATE" <s:StringLiteral> => ast::Literal::Date(s),
+    "TIME" <s:StringLiteral> => ast::Literal::Time(s),
+    "TIMESTAMP" <s:StringLiteral> => ast::Literal::Timestamp(s),
+};
+
+Identifier: symbols::Name = ID => symbols::Name::from(<>);
+
+NumericLiteral: String = {
+    NUMERIC_LIT_1 => <>.to_string(),
+    NUMERIC_LIT_2 => <>.to_string(),
+    HEX_LIT => <>.to_string(),
+};
+
+StringLiteral: String = STRING_LIT => <>[1..<>.len() - 1].to_string();

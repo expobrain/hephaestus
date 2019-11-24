@@ -33,7 +33,7 @@ use pyo3::wrap_pyfunction;
 
 pub mod ast;
 pub mod error;
-pub mod sql;
+pub mod query;
 pub mod symbols;
 pub mod types;
 
@@ -61,7 +61,7 @@ pub fn parse(sql_str: &str) -> PyResult<ast::SqlStatement> {
         .map(strip_inline_comments)
         .collect::<String>();
 
-    let result = sql::SqlStatementParser::new().parse(&stripped_sql);
+    let result = query::SqlStatementParser::new().parse(&stripped_sql);
 
     match result {
         Ok(r) => Ok(r),

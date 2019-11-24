@@ -158,11 +158,72 @@ match {
     r"'[^[[:cntrl:]]']*'" => STRING_LIT
 }
 
+pub DataType: ast::DataType = {
+    "BOOLEAN" => ast::DataType::Boolean,
+    "CHAR" "(" <NumericLiteral> ")" => ast::DataType::Char(ast::Literal::Numeric( <> )),
+    "DATE" => ast::DataType::Date,
+    "DECIMAL" "(" <p:NumericLiteral> "," <s:NumericLiteral> ")" => ast::DataType::Decimal {
+            p: ast::Literal::Numeric(p),
+            s: ast::Literal::Numeric(s),
+        },
+    "DOUBLE" "PRECISION" => ast::DataType::DoublePrecision,
+    "TIMESTAMP" => ast::DataType::Timestamp,
+    "TIMESTAMP" "WITH" "LOCAL" "TIME" "ZONE" => ast::DataType::LocalTimestamp,
+    "VARCHAR" "(" <n:NumericLiteral> ")" =>
+        ast::DataType::Varchar(ast::Literal::Numeric( <> )),
+};
+
+//
+// Tokens
+//
+
+LiteralValue: ast::Literal = {
+    NumericLiteral => ast::Literal::Numeric(<>),
+    StringLiteral => ast::Literal::String(<>),
+    "NULL" => ast::Literal::Null,
+    "CURRENT_TIME" => ast::Literal::CurrentTime,
+    "CURRENT_DATE" => ast::Literal::CurrentDate,
+    "CURRENT_TIMESTAMP" => ast::Literal::CurrentTimestamp,
+    "DATE" <s:StringLiteral> => ast::Literal::Date(s),
+    "TIME" <s:StringLiteral> => ast::Literal::Time(s),
+    "TIMESTAMP" <s:StringLiteral> => ast::Literal::Timestamp(s),
+};
+
+Identifier: symbols::Name = ID => symbols::Name::from(<>);
+
+NumericLiteral: String = {
+    NUMERIC_LIT_1 => <>.to_string(),
+    NUMERIC_LIT_2 => <>.to_string(),
+    HEX_LIT => <>.to_string(),
+};
+
+StringLiteral: String = STRING_LIT => <>[1..<>.len() - 1].to_string();
+// MIT License
+//
+// Copyright (c) 2018 Hans-Martin Will
+// Copyright (c) 2019 Daniele Esposti
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 pub SqlStatement: ast::SqlStatement = {
     <Statement> => ast::SqlStatement::Statement(<>),
     "EXPLAIN" ("QUERY" "PLAN")? <Statement> => ast::SqlStatement::ExplainQueryPlan(<>),
-    <AttachStatement> => ast::SqlStatement::Attach(<>),
-    <DescribeStatement> => ast::SqlStatement::Describe(<>),
 };
 
 Statement: ast::Statement = {
@@ -977,44 +1038,3 @@ OrExpression: ast::Expression = {
 pub Expression: ast::Expression = {
     OrExpression,
 };
-
-pub DataType: ast::DataType = {
-    "BOOLEAN" => ast::DataType::Boolean,
-    "CHAR" "(" <NumericLiteral> ")" => ast::DataType::Char(ast::Literal::Numeric( <> )),
-    "DATE" => ast::DataType::Date,
-    "DECIMAL" "(" <p:NumericLiteral> "," <s:NumericLiteral> ")" => ast::DataType::Decimal {
-            p: ast::Literal::Numeric(p),
-            s: ast::Literal::Numeric(s),
-        },
-    "DOUBLE" "PRECISION" => ast::DataType::DoublePrecision,
-    "TIMESTAMP" => ast::DataType::Timestamp,
-    "TIMESTAMP" "WITH" "LOCAL" "TIME" "ZONE" => ast::DataType::LocalTimestamp,
-    "VARCHAR" "(" <n:NumericLiteral> ")" =>
-        ast::DataType::Varchar(ast::Literal::Numeric( <> )),
-};
-
-//
-// Tokens
-//
-
-LiteralValue: ast::Literal = {
-    NumericLiteral => ast::Literal::Numeric(<>),
-    StringLiteral => ast::Literal::String(<>),
-    "NULL" => ast::Literal::Null,
-    "CURRENT_TIME" => ast::Literal::CurrentTime,
-    "CURRENT_DATE" => ast::Literal::CurrentDate,
-    "CURRENT_TIMESTAMP" => ast::Literal::CurrentTimestamp,
-    "DATE" <s:StringLiteral> => ast::Literal::Date(s),
-    "TIME" <s:StringLiteral> => ast::Literal::Time(s),
-    "TIMESTAMP" <s:StringLiteral> => ast::Literal::Timestamp(s),
-};
-
-Identifier: symbols::Name = ID => symbols::Name::from(<>);
-
-NumericLiteral: String = {
-    NUMERIC_LIT_1 => <>.to_string(),
-    NUMERIC_LIT_2 => <>.to_string(),
-    HEX_LIT => <>.to_string(),
-};
-
-StringLiteral: String = STRING_LIT => <>[1..<>.len() - 1].to_string();

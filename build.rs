@@ -22,7 +22,42 @@
 
 extern crate lalrpop;
 
+use std::fs;
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::PathBuf;
+
+const GRAMMAR_FILES: [&str; 1] = ["query"];
+const GRAMMAR_DIR: &str = "src/grammar";
+const OUTPUT_DIR: &str = "src";
+const COMMON_GRAMMAR: &str = "common.lalrpop.template";
+
 fn main() {
+    let common_content;
+    {
+        let mut common_path = PathBuf::from(GRAMMAR_DIR);
+        common_path.push(COMMON_GRAMMAR);
+
+        common_content = fs::read(&common_path).unwrap_or_else(|_| panic!("Cannot read {:?}", common_path));
+    }
+
+    for grammar_file in GRAMMAR_FILES.iter() {
+        let mut src_path = PathBuf::from(GRAMMAR_DIR);
+        src_path.push(format!("{}.lalrpop.template", grammar_file));
+
+        let mut dst_path = PathBuf::from(OUTPUT_DIR);
+        dst_path.push(format!("{}.lalrpop", grammar_file));
+
+        let grammar_content = fs::read(&src_path).unwrap_or_else(|_| panic!("Cannot read {:?}", src_path));
+
+        let mut file =
+            File::create(&dst_path).unwrap_or_else(|_| panic!("Cannot create file {:?}", dst_path));
+        file.write_all(&common_content)
+            .unwrap_or_else(|_| panic!("Failed writing into {:?}", dst_path));
+        file.write_all(&grammar_content)
+            .unwrap_or_else(|_| panic!("Failed writing into {:?}", dst_path));
+    }
+
     lalrpop::Configuration::new()
         .generate_in_source_tree()
         .process()

@@ -8,13 +8,12 @@ matrix:
   fast_finish: true
   include:
     - name: "Rust supported nightly"
-      env: RUST_VERSION=nightly-2019-09-23
+      env: RUST_VERSION=nightly-2019-11-24
     - name: "Rust nightly"
       env: RUST_VERSION=nightly
     - name: "Rust stable"
       env: RUST_VERSION=stable
   allow_failures:
-    - name: "Rust nightly"
     - name: "Rust stable"
 
 before_install:

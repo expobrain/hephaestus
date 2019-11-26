@@ -7,7 +7,7 @@ extern crate lalrpop_util as __lalrpop_util;
 #[allow(unused_imports)]
 use self::__lalrpop_util::state_machine as __state_machine;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 mod __parse__CaseExpression {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports, unused_parens)]
 
@@ -74,7 +74,7 @@ mod __parse__CaseExpression {
         Variant50(ast::WhenClause),
         Variant51(::std::vec::Vec<ast::WhenClause>),
     }
-    const __ACTION: &'static [i16] = &[
+    const __ACTION: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -930,7 +930,7 @@ mod __parse__CaseExpression {
         // State 426
         0, 0, -130, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, -130, -130, 0, 0, -130, 0, -130, 0, 0, 0, -130, -130, 0, -130, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    const __EOF_ACTION: &'static [i16] = &[
+    const __EOF_ACTION: &[i16] = &[
         // State 0
         0,
         // State 1
@@ -1786,7 +1786,7 @@ mod __parse__CaseExpression {
         // State 426
         0,
     ];
-    const __GOTO: &'static [i16] = &[
+    const __GOTO: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -2643,7 +2643,7 @@ mod __parse__CaseExpression {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
     fn __expected_tokens(__state: usize) -> Vec<::std::string::String> {
-        const __TERMINAL: &'static [&'static str] = &[
+        const __TERMINAL: &[&str] = &[
             r###""!=""###,
             r###""(""###,
             r###"")""###,
@@ -2753,7 +2753,7 @@ mod __parse__CaseExpression {
             if state == 0 {
                 None
             } else {
-                Some(terminal.to_string())
+                Some((*terminal).to_string())
             }
         }).collect()
     }
@@ -12935,7 +12935,7 @@ mod __parse__CaseExpression {
 }
 pub use self::__parse__CaseExpression::CaseExpressionParser;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 mod __parse__DataType {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports, unused_parens)]
 
@@ -13002,7 +13002,7 @@ mod __parse__DataType {
         Variant50(ast::WhenClause),
         Variant51(::std::vec::Vec<ast::WhenClause>),
     }
-    const __ACTION: &'static [i16] = &[
+    const __ACTION: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -13060,7 +13060,7 @@ mod __parse__DataType {
         // State 27
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    const __EOF_ACTION: &'static [i16] = &[
+    const __EOF_ACTION: &[i16] = &[
         // State 0
         0,
         // State 1
@@ -13118,7 +13118,7 @@ mod __parse__DataType {
         // State 27
         -85,
     ];
-    const __GOTO: &'static [i16] = &[
+    const __GOTO: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -13177,7 +13177,7 @@ mod __parse__DataType {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
     fn __expected_tokens(__state: usize) -> Vec<::std::string::String> {
-        const __TERMINAL: &'static [&'static str] = &[
+        const __TERMINAL: &[&str] = &[
             r###""!=""###,
             r###""(""###,
             r###"")""###,
@@ -13287,7 +13287,7 @@ mod __parse__DataType {
             if state == 0 {
                 None
             } else {
-                Some(terminal.to_string())
+                Some((*terminal).to_string())
             }
         }).collect()
     }
@@ -23469,7 +23469,7 @@ mod __parse__DataType {
 }
 pub use self::__parse__DataType::DataTypeParser;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 mod __parse__Expression {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports, unused_parens)]
 
@@ -23536,7 +23536,7 @@ mod __parse__Expression {
         Variant50(ast::WhenClause),
         Variant51(::std::vec::Vec<ast::WhenClause>),
     }
-    const __ACTION: &'static [i16] = &[
+    const __ACTION: &[i16] = &[
         // State 0
         0, 32, 0, 0, 33, 0, 34, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 35, 36, 0, 37, 0, 38, 39, 0, 40, 41, 42, 43, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 45, 0, 46, 0, 47, 0, 0, 0, 0, 0, 0, 48, 0, 0, 49, 50, 0, 0, 51, 52, 53, 0, 0, 54, 55, 56, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 58, 59, 60, 61,
         // State 1
@@ -24392,7 +24392,7 @@ mod __parse__Expression {
         // State 426
         0, 0, -130, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, -130, -130, 0, 0, -130, 0, -130, 0, 0, 0, -130, -130, 0, -130, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    const __EOF_ACTION: &'static [i16] = &[
+    const __EOF_ACTION: &[i16] = &[
         // State 0
         0,
         // State 1
@@ -25248,7 +25248,7 @@ mod __parse__Expression {
         // State 426
         0,
     ];
-    const __GOTO: &'static [i16] = &[
+    const __GOTO: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 4, 5, 6, 0, 0, 0, 0, 7, 8, 0, 9, 10, 0, 0, 0, 0, 0, 11, 0, 0, 0, 12, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 18, 19, 20, 0, 0, 0, 0, 0, 0, 0, 21, 22, 23, 24, 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 27, 0, 0, 28, 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 30, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -26105,7 +26105,7 @@ mod __parse__Expression {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
     fn __expected_tokens(__state: usize) -> Vec<::std::string::String> {
-        const __TERMINAL: &'static [&'static str] = &[
+        const __TERMINAL: &[&str] = &[
             r###""!=""###,
             r###""(""###,
             r###"")""###,
@@ -26215,7 +26215,7 @@ mod __parse__Expression {
             if state == 0 {
                 None
             } else {
-                Some(terminal.to_string())
+                Some((*terminal).to_string())
             }
         }).collect()
     }
@@ -36397,7 +36397,7 @@ mod __parse__Expression {
 }
 pub use self::__parse__Expression::ExpressionParser;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 mod __parse__FunctionExpression {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports, unused_parens)]
 
@@ -36464,7 +36464,7 @@ mod __parse__FunctionExpression {
         Variant50(ast::WhenClause),
         Variant51(::std::vec::Vec<ast::WhenClause>),
     }
-    const __ACTION: &'static [i16] = &[
+    const __ACTION: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 18, 0, 19, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 23, 0, 0, 24, 25, 0, 0, 26, 27, 28, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0,
         // State 1
@@ -37326,7 +37326,7 @@ mod __parse__FunctionExpression {
         // State 429
         0, 0, -130, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, -130, -130, 0, 0, -130, 0, -130, 0, 0, 0, -130, -130, 0, -130, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, -130, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    const __EOF_ACTION: &'static [i16] = &[
+    const __EOF_ACTION: &[i16] = &[
         // State 0
         0,
         // State 1
@@ -38188,7 +38188,7 @@ mod __parse__FunctionExpression {
         // State 429
         0,
     ];
-    const __GOTO: &'static [i16] = &[
+    const __GOTO: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 0, 0, 0, 0, 0, 0, 4, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 11, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 14, 0, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -39051,7 +39051,7 @@ mod __parse__FunctionExpression {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
     fn __expected_tokens(__state: usize) -> Vec<::std::string::String> {
-        const __TERMINAL: &'static [&'static str] = &[
+        const __TERMINAL: &[&str] = &[
             r###""!=""###,
             r###""(""###,
             r###"")""###,
@@ -39161,7 +39161,7 @@ mod __parse__FunctionExpression {
             if state == 0 {
                 None
             } else {
-                Some(terminal.to_string())
+                Some((*terminal).to_string())
             }
         }).collect()
     }
@@ -49343,7 +49343,7 @@ mod __parse__FunctionExpression {
 }
 pub use self::__parse__FunctionExpression::FunctionExpressionParser;
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 mod __parse__SqlStatement {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports, unused_parens)]
 
@@ -49410,7 +49410,7 @@ mod __parse__SqlStatement {
         Variant50(ast::WhenClause),
         Variant51(::std::vec::Vec<ast::WhenClause>),
     }
-    const __ACTION: &'static [i16] = &[
+    const __ACTION: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 15, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0, 20, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -50394,7 +50394,7 @@ mod __parse__SqlStatement {
         // State 490
         0, 0, -85, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
-    const __EOF_ACTION: &'static [i16] = &[
+    const __EOF_ACTION: &[i16] = &[
         // State 0
         0,
         // State 1
@@ -51378,7 +51378,7 @@ mod __parse__SqlStatement {
         // State 490
         0,
     ];
-    const __GOTO: &'static [i16] = &[
+    const __GOTO: &[i16] = &[
         // State 0
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 7, 0, 8, 9, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         // State 1
@@ -52363,7 +52363,7 @@ mod __parse__SqlStatement {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
     fn __expected_tokens(__state: usize) -> Vec<::std::string::String> {
-        const __TERMINAL: &'static [&'static str] = &[
+        const __TERMINAL: &[&str] = &[
             r###""!=""###,
             r###""(""###,
             r###"")""###,
@@ -52473,7 +52473,7 @@ mod __parse__SqlStatement {
             if state == 0 {
                 None
             } else {
-                Some(terminal.to_string())
+                Some((*terminal).to_string())
             }
         }).collect()
     }
@@ -62654,7 +62654,7 @@ mod __parse__SqlStatement {
     }
 }
 pub use self::__parse__SqlStatement::SqlStatementParser;
-#[cfg_attr(rustfmt, rustfmt_skip)]
+#[rustfmt::skip]
 mod __intern_token {
     #![allow(unused_imports)]
     use super::ast;
@@ -63158,7 +63158,7 @@ fn __action16<
     (_, where_expr, _): (usize, ::std::option::Option<ast::Expression>, usize),
 ) -> ast::UpdateStatement
 {
-    ast::UpdateStatement { table_name:table_name, assignments:assignments, where_expr:where_expr }
+    ast::UpdateStatement { table_name, assignments, where_expr }
 }
 
 #[allow(unused_variables)]
@@ -63195,7 +63195,7 @@ fn __action19<
     (_, expr, _): (usize, ast::Expression, usize),
 ) -> ast::Assignment
 {
-    ast::Assignment { columns:columns, expr:expr }
+    ast::Assignment { columns, expr }
 }
 
 #[allow(unused_variables)]
@@ -63212,7 +63212,7 @@ fn __action20<
     ast::SelectStatement {
             common: ctl,
             expr: Box::new(expr),
-            order_by: ordering.unwrap_or(Vec::new()),
+            order_by: ordering.unwrap_or_default(),
             limit
         }
 }
@@ -63230,7 +63230,7 @@ fn __action21<
     ast::SelectStatement {
             common: vec![],
             expr: Box::new(expr),
-            order_by: ordering.unwrap_or(Vec::new()),
+            order_by: ordering.unwrap_or_default(),
             limit
         }
 }
@@ -63692,7 +63692,7 @@ fn __action56<
     (_, alias, _): (usize, ::std::option::Option<symbols::Name>, usize),
 ) -> ast::TableExpression
 {
-    ast::TableExpression::Named(ast::NamedTableExpression { name:name, alias:alias })
+    ast::TableExpression::Named(ast::NamedTableExpression { name, alias })
 }
 
 #[allow(unused_variables)]
@@ -63706,7 +63706,7 @@ fn __action57<
     (_, alias, _): (usize, ::std::option::Option<symbols::Name>, usize),
 ) -> ast::TableExpression
 {
-    ast::TableExpression::Select(ast::SelectTableExpression { select:select, alias:alias })
+    ast::TableExpression::Select(ast::SelectTableExpression { select, alias })
 }
 
 #[allow(unused_variables)]
@@ -63955,7 +63955,7 @@ fn __action77<
     (_, direction, _): (usize, ast::OrderingDirection, usize),
 ) -> ast::Ordering
 {
-    ast::Ordering { expr:expr, collation:collation, direction:direction }
+    ast::Ordering { expr, collation, direction }
 }
 
 #[allow(unused_variables)]
@@ -65276,7 +65276,7 @@ fn __action164<
     (_, _, _): (usize, &'input str, usize),
 ) -> ast::Expression
 {
-    ast::Expression::Count(ast::CountExpression { mode:mode, columns:columns })
+    ast::Expression::Count(ast::CountExpression { mode, columns })
 }
 
 #[allow(unused_variables)]
@@ -65327,7 +65327,7 @@ fn __action167<
     (_, _, _): (usize, &'input str, usize),
 ) -> ast::Expression
 {
-    ast::Expression::Concat(ast::ConcatExpression { exprs:exprs })
+    ast::Expression::Concat(ast::ConcatExpression { exprs })
 }
 
 #[allow(unused_variables)]
@@ -65532,7 +65532,7 @@ fn __action179<
     (_, _, _): (usize, &'input str, usize),
 ) -> ast::Expression
 {
-    ast::Expression::Coalesce(ast::CoalesceExpression { exprs:exprs })
+    ast::Expression::Coalesce(ast::CoalesceExpression { exprs })
 }
 
 #[allow(unused_variables)]
@@ -65581,7 +65581,7 @@ fn __action182<
 ) -> ast::Expression
 {
     ast::Expression::Case(ast::CaseExpression {
-            expr: expr.map(|v| Box::new(v)),
+            expr: expr.map(Box::new),
             when_part,
             else_part,
         })

@@ -460,7 +460,7 @@ pub struct QualifiedIdentifierExpression {
 
 #[derive(IntoPyObject, Debug, PartialEq, Eq, Clone)]
 pub struct MakeTupleExpression {
-    pub exprs: (Vec<Expression>),
+    pub exprs: Vec<Expression>,
 }
 
 #[derive(IntoPyObject, Debug, PartialEq, Eq, Clone)]

@@ -18,7 +18,7 @@ proc-macro2 = "1.0"
 
 [dev-dependencies]
 trybuild = "1.0"
-pyo3 = "0.8"
+pyo3 = "~0.8.3"
 
 [dependencies.syn]
 version = "1.0"

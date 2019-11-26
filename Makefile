@@ -19,3 +19,6 @@ fmt:
 	cargo fmt
 	isort -rc .
 	black .
+
+fix:
+	cargo fix -Z unstable-options --clippy

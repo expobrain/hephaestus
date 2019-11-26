@@ -274,7 +274,7 @@ dependencies = [
 
 [[package]]
 name = "hephaestus"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "dict_derive 0.2.0",
  "lalrpop 0.17.1 (registry+https://github.com/rust-lang/crates.io-index)",

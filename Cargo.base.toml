@@ -5,10 +5,10 @@ authors = ["Daniele Esposti"]
 edition = "2018"
 
 [build-dependencies]
-lalrpop = "0.17.1"
+lalrpop = "0.17.2"
 
 [dependencies]
-lalrpop-util = "0.17.1"
+lalrpop-util = "0.17.2"
 regex = "0.2.1"
 serde = "1.0"
 serde_derive = "1.0"

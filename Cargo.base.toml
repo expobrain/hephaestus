@@ -5,14 +5,14 @@ authors = ["Daniele Esposti"]
 edition = "2018"
 
 [build-dependencies]
-lalrpop = "0.17.2"
+lalrpop = "~0.17.2"
 
 [dependencies]
-lalrpop-util = "0.17.2"
-regex = "0.2.1"
-serde = "1.0"
-serde_derive = "1.0"
-serde_json = "1.0"
+lalrpop-util = "~0.17.2"
+regex = "~0.2.1"
+serde = "~1.0"
+serde_derive = "~1.0"
+serde_json = "~1.0"
 
 [dependencies.dict_derive]
 path = "./dict_derive"

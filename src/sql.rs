@@ -1,4 +1,4 @@
-// auto-generated: "lalrpop 0.17.1"
+// auto-generated: "lalrpop 0.17.2"
 // sha256: 411c20d8806af666c71ca7d7e84c48e5c6d550738a6bbb6d17faa7d0602bea9
 use super::ast;
 use super::symbols;

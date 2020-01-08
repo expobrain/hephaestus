@@ -740,10 +740,10 @@ pub struct Limit {
 }
 
 /// Helper function to append an item to a vector
-pub fn append<T>(list: Vec<T>, item: T) -> Vec<T> {
-    let mut result = list;
-    result.push(item);
-    result
+#[inline]
+pub fn append<T>(mut list: Vec<T>, item: T) -> Vec<T> {
+    list.push(item);
+    list
 }
 
 /// Supported data types

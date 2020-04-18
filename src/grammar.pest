@@ -1,0 +1,455 @@
+// ------------------------------------------------------------------
+// Keywords
+// ------------------------------------------------------------------
+
+WHITESPACE = _{ " " | NEWLINE }
+COMMENT = { "--" ~ (!NEWLINE ~ ANY)* ~ NEWLINE }
+
+ALL = _{ ^"ALL" }
+AND = _{ ^"AND" }
+AS = _{ ^"AS" }
+BOOLEAN = _{ ^"BOOLEAN" }
+BY = _{ ^"BY" }
+CASE = _{ ^"CASE" }
+CAST = _{ ^"CAST" }
+CHAR = _{ ^"CHAR" }
+COALESCE = _{ ^"COALESCE" }
+CONCAT = _{ ^"CONCAT" }
+COUNT = _{ ^"COUNT" }
+DATE = _{ ^"DATE" }
+DATE_TRUNC = _{ ^"DATE_TRUNC" }
+DAY = _{ ^"DAY" }
+DECIMAL = _{ ^"DECIMAL" }
+DISTINCT = _{ ^"DISTINCT" }
+DOUBLE = _{ ^"DOUBLE" }
+ELSE = _{ ^"ELSE" }
+END = _{ ^"END" }
+FALSE = _{ ^"FALSE" }
+FOR = _{ ^"FOR" }
+FROM = _{ ^"FROM" }
+FULL = _{ ^"FULL" }
+GROUP = _{ ^"GROUP" }
+HOUR = _{ ^"HOUR" }
+INNER = _{ ^"INNER" }
+INTERVAL = _{ ^"INTERVAL" }
+IS = _{ ^"IS" }
+JOIN = _{ ^"JOIN" }
+LEFT = _{ ^"LEFT" }
+LOCAL = _{ ^"LOCAL" }
+MAX = _{ ^"MAX" }
+MIN = _{ ^"MIN" }
+MINUTE = _{ ^"MINUTE" }
+MONTH = _{ ^"MONTH" }
+MONTHS_BETWEEN = _{ ^"MONTHS_BETWEEN" }
+NOT = _{ ^"NOT" }
+NULL = _{ ^"NULL" }
+ON = _{ ^"ON" }
+OR = _{ ^"OR" }
+OUTER = _{ ^"OUTER" }
+POWER = _{ ^"POWER" }
+REPLACE = _{ ^"REPLACE" }
+RIGHT = _{ ^"RIGHT" }
+SECOND = _{ ^"SECOND" }
+SELECT = _{ ^"SELECT" }
+SUBSTR = _{ ^"SUBSTR" }
+SUBSTRING = _{ ^"SUBSTRING" }
+SUM = _{ ^"SUM" }
+THEN = _{ ^"THEN" }
+TIME = _{ ^"TIME" }
+TIMESTAMP = _{ ^"TIMESTAMP" }
+TO = _{ ^"TO" }
+TO_DATE = _{ ^"TO_DATE" }
+TRUE = _{ ^"TRUE" }
+USING = _{ ^"USING" }
+VARCHAR = _{ ^"VARCHAR" }
+WHEN = _{ ^"WHEN" }
+WHERE = _{ ^"WHERE" }
+WITH = _{ ^"WITH" }
+YEAR = _{ ^"YEAR" }
+ZONE = _{ ^"ZONE" }
+
+// ------------------------------------------------------------------
+// Data types
+// ------------------------------------------------------------------
+
+boolean_type = { BOOLEAN }
+
+char_type  = { CHAR ~ "(" ~ integer_literal ~ ")" }
+
+date_type = { DATE }
+
+decimal_type = { DECIMAL ~ "(" ~ integer_literal ~ "," ~ integer_literal ~ ")" }
+
+double_type = { DOUBLE }
+
+timestamp_type = { TIMESTAMP }
+
+local_timestamp_type = { TIMESTAMP ~ WITH ~ LOCAL ~ TIME ~ ZONE }
+
+varchar_type = { VARCHAR ~ "(" ~ integer_literal ~ ")" }
+
+data_type = _{
+    boolean_type
+    | char_type
+    | decimal_type
+    | double_type
+    | date_type
+    | local_timestamp_type
+    | timestamp_type
+    | varchar_type
+}
+
+// ------------------------------------------------------------------
+// Identifiers
+// ------------------------------------------------------------------
+
+identifier = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+qualified_identifier = ${
+    identifier ~ "." ~ identifier ~ "." ~ identifier
+    | identifier ~ "." ~ identifier
+}
+
+// ------------------------------------------------------------------
+// Function expressions
+// ------------------------------------------------------------------
+
+unknown_function = {
+    qualified_identifier ~ function_arguments
+    | identifier ~ function_arguments
+}
+
+cast_function = { CAST ~ "(" ~ function_argument ~ AS ~ data_type ~ ")" }
+
+max_function = { MAX ~ "(" ~ select_mode? ~ function_argument ~ ")" }
+
+min_function = { MIN ~ "(" ~ select_mode? ~ function_argument ~ ")" }
+
+sum_function = { SUM ~ "(" ~ select_mode? ~ function_argument ~ ")" }
+
+concat_function = { CONCAT ~ function_arguments }
+
+coalesce_function = { COALESCE ~ function_arguments }
+
+count_function = {
+    COUNT ~ "(" ~ all_columns ~ ")"
+    | COUNT ~ "(" ~ select_mode? ~ "(" ~ function_argument ~ ("," ~ function_argument)* ~ ")" ~ ")"
+    | COUNT ~ "(" ~ select_mode? ~ function_argument ~ ")"
+}
+
+replace_function = {
+    REPLACE ~ "(" ~ function_argument ~ "," ~ function_argument ~ ("," ~ function_argument)? ~ ")"
+}
+
+substring_function = {
+    SUBSTR ~ "(" ~ function_argument ~ "," ~ function_argument ~ ("," ~ function_argument)? ~ ")"
+    | SUBSTRING ~ "(" ~ function_argument ~ FROM ~ function_argument ~ (FOR ~ function_argument)? ~ ")"
+
+    // Exasol can accept also this undocumented grammar for SUBSTRING
+    | SUBSTRING ~ "(" ~ function_argument ~ "," ~ function_argument ~ ("," ~ function_argument)? ~ ")"
+}
+
+to_date_function = {
+    TO_DATE ~ "(" ~ function_argument ~ ("," ~ function_argument)? ~ ")"
+    | DATE ~ function_argument
+}
+
+power_function = { POWER ~ "(" ~ function_argument ~ "," ~ function_argument ~ ")" }
+
+right_function = { RIGHT ~ "(" ~ function_argument ~ "," ~ function_argument ~ ")" }
+
+date_trunc_function = { DATE_TRUNC ~ "(" ~ function_argument ~ "," ~ function_argument ~ ")" }
+
+months_between_function = { MONTHS_BETWEEN ~ "(" ~ function_argument ~ "," ~ function_argument ~ ")" }
+
+function_expression = _{
+    coalesce_function
+    | right_function
+    | count_function
+    | cast_function
+    | max_function
+    | min_function
+    | sum_function
+    | concat_function
+    | power_function
+    | replace_function
+    | substring_function
+    | to_date_function
+    | date_trunc_function
+    | months_between_function
+    | unknown_function
+}
+
+function_argument = _{ expression }
+
+function_arguments = !{ "(" ~ expression ~ ("," ~ expression)* ~ ")" }
+
+// ------------------------------------------------------------------
+// Expressions
+// ------------------------------------------------------------------
+
+operation_add = { "+" }
+
+operation_subtract = { "-" }
+
+operation_multiply = { "*" }
+
+operation_divide = { "/" }
+
+operation_concat = { "||" }
+
+operation_and = { AND }
+
+operation_or = { OR }
+
+operation_equal = { "=" }
+
+operation_not_equal = { "!=" }
+
+operation_greater_or_equal = { ">=" }
+
+operation_greater_than = { ">" }
+
+operation_less_or_equal = { "<=" }
+
+operation_less_than = { "<" }
+
+operation = _{
+    operation_add
+    | operation_subtract
+    | operation_multiply
+    | operation_divide
+    | operation_concat
+    | operation_and
+    | operation_or
+    | operation_equal
+    | operation_not_equal
+    | operation_greater_or_equal
+    | operation_greater_than
+    | operation_less_than
+    | operation_less_or_equal
+}
+
+expression_sign = { "-" | "+" }
+
+negate = { NOT }
+
+else_clause = { ELSE ~ expression }
+
+when_clause = { WHEN ~ expression ~ THEN ~ expression }
+
+// This rule cannot be silent otherwise it will be difficult
+// to discriminate it in case_expression
+case_clause = { expression }
+
+case_expression = {
+    CASE ~ case_clause ~ when_clause+ ~ else_clause? ~ END
+    | CASE ~ when_clause+ ~ else_clause? ~ END
+}
+
+signed_expression = ${ expression_sign ~ expression }
+
+is_null_expression = { ( identifier | literal_value ) ~ IS ~ negate? ~ NULL }
+
+expression = { term ~ ( operation ~ term )* }
+
+term = _{ expression_value | "(" ~ expression ~ ")" }
+
+expression_value = _{
+    unary_expression
+    | case_expression
+    | function_expression
+    | signed_expression
+    | literal_value
+    | qualified_identifier
+    | identifier
+}
+
+unary_expression = _{ is_null_expression }
+
+// ------------------------------------------------------------------
+// String literals
+// ------------------------------------------------------------------
+
+char = _{ !"'" ~ ANY }
+
+string = @{ char* }
+
+string_literal = ${ "'" ~ string ~ "'" }
+
+// ------------------------------------------------------------------
+// Interval literals
+// ------------------------------------------------------------------
+
+interval_precision = { "(" ~ integer_literal ~ ")" }
+
+interval_fractional_precision = _{ "(" ~ integer_literal ~ ")" }
+
+interval_precision_with_fractional = { "(" ~ integer_literal ~ ( "," ~ integer_literal )? ~ ")" }
+
+interval_year = { YEAR }
+
+interval_month = { MONTH }
+
+interval_day = { DAY }
+
+interval_hour = { HOUR }
+
+interval_minute = { MINUTE }
+
+interval_second = { SECOND }
+
+interval_day_conversion = {
+    TO ~ ( interval_hour | interval_minute )
+    | TO ~ interval_second ~ interval_fractional_precision?
+}
+
+interval_year_to_month = {
+    INTERVAL ~ string_literal ~ interval_year ~ interval_precision? ~ TO ~ interval_month
+    | INTERVAL ~ string_literal ~ ( interval_year | interval_month ) ~ interval_precision?
+}
+
+interval_day_to_second = {
+    INTERVAL ~ string_literal ~ ( interval_day | interval_hour | interval_minute ) ~ interval_precision? ~ interval_day_conversion?
+    | INTERVAL ~ string_literal ~ interval_second ~ interval_precision_with_fractional? ~ interval_day_conversion?
+}
+
+interval_literal = _{ interval_year_to_month | interval_day_to_second }
+
+// ------------------------------------------------------------------
+// Numeric literals
+// ------------------------------------------------------------------
+
+numeric_sign = _{ "-" | "+" }
+
+numeric_exponenct = _{ ("E" ~ numeric_sign? ~ NUMBER+) }
+
+integer_literal = @{ numeric_sign? ~ NUMBER+ }
+
+decimal_literal = @{
+    numeric_sign? ~ NUMBER+ ~ "." ~ NUMBER*
+    | numeric_sign? ~ "." ~ NUMBER*
+}
+
+float_literal = @{
+    numeric_sign? ~ NUMBER+ ~ ("." ~ NUMBER*)? ~ numeric_exponenct
+    | numeric_sign? ~ "." ~ NUMBER* ~ numeric_exponenct
+}
+
+numeric_literal = _{ float_literal | decimal_literal | integer_literal }
+
+boolean_literal = { TRUE | FALSE }
+
+literal_value = _{ boolean_literal | numeric_literal | string_literal }
+
+// ------------------------------------------------------------------
+// Columns
+// ------------------------------------------------------------------
+
+all_columns = { "*" }
+
+named_column = { expression ~ AS ~ identifier }
+
+all_columns_from = ${ identifier ~ "." ~ "*"}
+
+column = _{
+    named_column
+    | all_columns_from
+    | all_columns
+    | unary_expression
+    // | complex_expression
+    | expression
+}
+
+columns = { column ~ ("," ~ column)* }
+
+// ------------------------------------------------------------------
+// Join clause
+// ------------------------------------------------------------------
+
+inner_join_type = { INNER? ~ JOIN }
+
+left_outer_join_type = { LEFT ~ OUTER? ~ JOIN }
+
+right_outer_join_type = { RIGHT ~ OUTER? ~ JOIN }
+
+full_outer_join_type = { FULL ~ OUTER ~ JOIN }
+
+join_type = _{
+    left_outer_join_type
+    | right_outer_join_type
+    | full_outer_join_type
+    | inner_join_type
+}
+
+join_constraint_on = { ON ~ expression }
+
+join_constraint_using = {
+    USING ~ "(" ~ identifier ~ ( "," ~ identifier )* ~ ")"
+}
+
+join_constraint = _{
+    join_constraint_on
+    | join_constraint_using
+}
+
+join_clause = { join_type ~ table_or_subquery ~ join_constraint }
+
+// ------------------------------------------------------------------
+// Table expressions
+// ------------------------------------------------------------------
+
+// Note: negative lookahead is necessary to avoid parsing
+// join types or constraints as table aliases
+
+table_identifier = _{ qualified_identifier | identifier }
+
+joins_and_clauses = _{ join_type | join_constraint | where_clause }
+
+named_table_expression = { table_identifier ~ (AS? ~ !joins_and_clauses ~ identifier)? }
+
+table_or_subquery = _{
+    named_table_expression
+    //| qualified_identifier
+    //| identifier
+    //| "(" ~ select_statement ~ ")" ~ AS ~ identifier
+    //| "(" ~ table_expression ~ ")"
+}
+
+table_expression = _{ table_or_subquery ~ join_clause* }
+
+table_expressions = { table_expression ~ (","? ~ !WHERE ~ table_expression)* }
+
+from_clause = _{ FROM ~ table_expressions }
+
+// ------------------------------------------------------------------
+// CTE statement
+// ------------------------------------------------------------------
+
+with_clause = { identifier ~ AS ~ "(" ~ select_statement ~ ")" }
+
+ctes = { WITH ~ with_clause ~ ("," ~ with_clause)* }
+
+// ------------------------------------------------------------------
+// Select statement
+// ------------------------------------------------------------------
+
+select_mode = { ALL | DISTINCT }
+
+where_clause = { WHERE ~ ( expression | unary_expression ) }
+
+group_by = { GROUP ~ BY ~ expression ~ ( "," ~ expression)* }
+
+select_statement = {
+    ctes?
+    ~ SELECT ~ select_mode? ~ columns
+    ~ from_clause?
+    ~ where_clause?
+    ~ group_by?
+}
+
+// ------------------------------------------------------------------
+// SQL statement
+// ------------------------------------------------------------------
+
+sql_statement = _{ SOI ~ select_statement? ~ EOI }

@@ -8,14 +8,7 @@ def test_iter_node_attributes():
     result = list(iter_node_attributes(parse("SELECT 1")))
     result_types = [n["_type"] for n in result]
 
-    expected = [
-        "SelectStatement",
-        "QuerySetExpression",
-        "SelectAll",
-        "ListResultColumn",
-        "ExprResultColumn",
-        "NumericLiteral",
-    ]
+    expected = ["SelectStatement", "IntegerLiteral"]
 
     assert result_types == expected
 

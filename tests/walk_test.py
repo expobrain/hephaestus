@@ -19,7 +19,7 @@ def test_traverse_node_in_list():
         has_dual_table = False
 
         def visit_NamedTableExpression(self, attr, node):
-            self.has_dual_table = node["name"] == ["dual"]
+            self.has_dual_table = node["name"]["s"] == "dual"
 
     visitor = MyVisitor("SELECT 1 FROM dual")
     visitor.walk()

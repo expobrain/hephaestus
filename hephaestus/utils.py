@@ -17,11 +17,18 @@ def iter_node_attributes(root_node: object) -> Iterator[object]:
 def iter_tables(sql_ast: Dict) -> Iterator[str]:
     for node in iter_node_attributes(sql_ast):
         if node["_type"] == "NamedTableExpression":
-            for name in node["name"]:
-                yield name
+            name_node = node["name"]
+            name_type = name_node["_type"]
+
+            if name_type == "Identifier":
+                yield name_node["s"]
+            elif name_type == "QualifiedIdentifier":
+                yield from name_node["s"]
+            else:
+                raise NotImplementedError(name_node)
 
 
 def iter_ctes(sql_ast: Dict) -> Iterator[str]:
     for node in iter_node_attributes(sql_ast):
-        if node["_type"] == "CommonTableExpression":
+        if node["_type"] == "WithClause":
             yield node["identifier"]

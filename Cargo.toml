@@ -1,0 +1,22 @@
+[package]
+name = "hephaestus"
+version = "0.2.0-0"
+authors = ["Daniele Esposti"]
+edition = "2018"
+
+[lib]
+name = "hephaestus"
+crate-type = ["cdylib"]
+
+[dependencies]
+pest = "~2.1"
+pest_derive = "~2.1"
+dict_derive = "~0.2.0"
+lazy_static = "~1.4.0"
+
+[dependencies.pyo3]
+version = "~0.10.1"
+# git = "https://github.com/expobrain/pyo3.git"
+# branch = "python3_bin"
+# features = []
+features = ["extension-module"]

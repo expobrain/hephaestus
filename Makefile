@@ -1,18 +1,8 @@
-rust:
-	cp Cargo.base.toml Cargo.toml
-	cat Cargo.test.toml >> Cargo.toml
-
-py:
-	cp Cargo.base.toml Cargo.toml
-	cat Cargo.setuptools.toml >> Cargo.toml
-
-develop: py
+develop:
 	pip install -e .
 
-test_rust: rust
+test:
 	cargo test
-
-test_py: develop
 	pytest tests/
 
 fmt:

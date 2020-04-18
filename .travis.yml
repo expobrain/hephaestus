@@ -25,14 +25,9 @@ install:
 
 script:
   - rustc --version
-  - make test_rust
   - make develop
-  - pytest -vv tests
+  - make test
   - black --check .
-  - safety check
-
-before_deploy:
-  - make py
 
 deploy:
   provider: pypi

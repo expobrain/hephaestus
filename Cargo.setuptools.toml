@@ -1,7 +1,0 @@
-[lib]
-name = "hephaestus"
-crate-type = ["cdylib"]
-
-[dependencies.pyo3]
-version = "0.8.0"
-features = ["extension-module"]

@@ -9,6 +9,14 @@ use crate::parser_pest::*;
 lazy_static! {
     static ref PREC_CLIMBER: PrecClimber<Rule> = {
         PrecClimber::new(vec![
+
+            // Algebric
+            Operator::new(Rule::operation_add, Assoc::Left)
+            | Operator::new(Rule::operation_subtract, Assoc::Left),
+            Operator::new(Rule::operation_concat, Assoc::Left),
+            Operator::new(Rule::operation_multiply, Assoc::Left)
+            | Operator::new(Rule::operation_divide, Assoc::Left),
+
             // Comparison
             Operator::new(Rule::operation_equal, Assoc::Right)
             | Operator::new(Rule::operation_not_equal, Assoc::Right)
@@ -17,12 +25,6 @@ lazy_static! {
             | Operator::new(Rule::operation_less_or_equal, Assoc::Right)
             | Operator::new(Rule::operation_less_than, Assoc::Right),
 
-            // Algebric
-            Operator::new(Rule::operation_add, Assoc::Left)
-                | Operator::new(Rule::operation_subtract, Assoc::Left),
-            Operator::new(Rule::operation_multiply, Assoc::Left)
-                | Operator::new(Rule::operation_divide, Assoc::Left),
-            Operator::new(Rule::operation_concat, Assoc::Left),
             Operator::new(Rule::operation_or, Assoc::Left),
             Operator::new(Rule::operation_and, Assoc::Left),
         ])
@@ -197,7 +199,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
             mode: SelectMode::from_str(pair.as_str()),
         },
         Rule::where_clause => {
-            eprintln!("{:#?}", pair.clone());
+            // eprintln!("{:#?}", pair.clone());
             parse_value(pair.into_inner())
         }
         Rule::group_by => AstNode::GroupBy {

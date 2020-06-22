@@ -226,8 +226,8 @@ operation = _{
     | operation_not_equal
     | operation_greater_or_equal
     | operation_greater_than
-    | operation_less_than
     | operation_less_or_equal
+    | operation_less_than
 }
 
 expression_sign = { "-" | "+" }
@@ -249,7 +249,9 @@ case_expression = {
 
 signed_expression = ${ expression_sign ~ expression }
 
-is_null_expression = { ( identifier | literal_value ) ~ IS ~ negate? ~ NULL }
+is_null_expression = {
+    ( qualified_identifier | identifier | literal_value ) ~ IS ~ negate? ~ NULL
+}
 
 expression = { term ~ ( operation ~ term )* }
 

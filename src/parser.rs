@@ -8,25 +8,26 @@ use crate::parser_pest::*;
 
 lazy_static! {
     static ref PREC_CLIMBER: PrecClimber<Rule> = {
+        use Rule::*;
+
         PrecClimber::new(vec![
+            // Comparison
+            Operator::new(operation_equal, Assoc::Left)
+            | Operator::new(operation_not_equal, Assoc::Left)
+            | Operator::new(operation_greater_or_equal, Assoc::Left)
+            | Operator::new(operation_greater_than, Assoc::Left)
+            | Operator::new(operation_less_or_equal, Assoc::Left)
+            | Operator::new(operation_less_than, Assoc::Left),
 
             // Algebric
-            Operator::new(Rule::operation_add, Assoc::Left)
-            | Operator::new(Rule::operation_subtract, Assoc::Left),
-            Operator::new(Rule::operation_concat, Assoc::Left),
-            Operator::new(Rule::operation_multiply, Assoc::Left)
-            | Operator::new(Rule::operation_divide, Assoc::Left),
+            Operator::new(operation_add, Assoc::Left)
+            | Operator::new(operation_subtract, Assoc::Left),
+            Operator::new(operation_concat, Assoc::Left),
+            Operator::new(operation_multiply, Assoc::Left)
+            | Operator::new(operation_divide, Assoc::Left),
 
-            // Comparison
-            Operator::new(Rule::operation_equal, Assoc::Right)
-            | Operator::new(Rule::operation_not_equal, Assoc::Right)
-            | Operator::new(Rule::operation_greater_or_equal, Assoc::Right)
-            | Operator::new(Rule::operation_greater_than, Assoc::Right)
-            | Operator::new(Rule::operation_less_or_equal, Assoc::Right)
-            | Operator::new(Rule::operation_less_than, Assoc::Right),
-
-            Operator::new(Rule::operation_or, Assoc::Left),
-            Operator::new(Rule::operation_and, Assoc::Left),
+            Operator::new(operation_or, Assoc::Left),
+            Operator::new(operation_and, Assoc::Left),
         ])
     };
 }
@@ -1229,7 +1230,7 @@ mod tests {
     }
 
     #[test]
-    fn expression_expression() {
+    fn expression_prec_climber_equality() {
         parse_rule! {
             rule: Rule::expression,
             input: "a = b - c",

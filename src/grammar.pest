@@ -259,6 +259,7 @@ term = _{ expression_value | "(" ~ expression ~ ")" }
 
 expression_value = _{
     unary_expression
+    | interval_literal
     | case_expression
     | function_expression
     | signed_expression

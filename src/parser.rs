@@ -1246,12 +1246,32 @@ mod tests {
             }
         };
     }
+
+    #[test]
+    fn expression_with_interval_literal() {
+        parse_rule! {
+            rule: Rule::expression,
+            input: "a - INTERVAL '1' MONTH",
+            expected: AstNode::Expression {
+                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                op: Operation::Subtract,
+                right: Box::new(AstNode::IntervalLiteral {
+                    interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+                    period: Interval::Month,
+                    precision: vec![],
+                    convert_to: None,
+                    convert_precision: None,
+                })
+            }
+        };
+    }
+
     // ------------------------------------------------------------------
     // Rule::unary_expression
     // ------------------------------------------------------------------
 
     #[test]
-    fn expression_is_null() {
+    fn unary_expression_is_null() {
         parse_rule! {
             rule: Rule::unary_expression,
             input: "a IS NULL",
@@ -1263,7 +1283,7 @@ mod tests {
     }
 
     #[test]
-    fn expression_is_not_null() {
+    fn unary_expression_is_not_null() {
         parse_rule! {
             rule: Rule::unary_expression,
             input: "a IS NOT NULL",

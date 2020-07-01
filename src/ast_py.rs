@@ -229,10 +229,10 @@ impl IntoPy<PyObject> for AstNode {
                 "JoinClause";
                 join_type -> "join_type", table_expr -> "table_expr", constraint -> "constraint"
             ],
-            AstNode::InnerJoin => py_dict![py; "JoinClause"],
-            AstNode::LeftOuterJoin => py_dict![py; "JoinClause"],
-            AstNode::RightOuterJoin => py_dict![py; "JoinClause"],
-            AstNode::FullOuterJoin => py_dict![py; "JoinClause"],
+            AstNode::InnerJoin => py_dict![py; "InnerJoin"],
+            AstNode::LeftOuterJoin => py_dict![py; "LeftOuterJoin"],
+            AstNode::RightOuterJoin => py_dict![py; "RightOuterJoin"],
+            AstNode::FullOuterJoin => py_dict![py; "FullOuterJoin"],
             AstNode::JoinConstraintOn { expr } => {
                 py_dict![ py; "JoinConstraintOn"; expr -> "expr" ]
             }

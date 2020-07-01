@@ -59,21 +59,4 @@ mod tests {
             ]
         };
     }
-
-    #[test]
-    fn columns_qualified_identifier() {
-        parses_to! {
-            parser: SqlParser,
-            input: "a.b",
-            rule: Rule::columns,
-            tokens: [
-                columns(0, 3, [
-                        qualified_identifier(0, 3, [
-                            identifier(0, 1),
-                            identifier(2, 3),
-                        ])
-                ])
-            ]
-        };
-    }
 }

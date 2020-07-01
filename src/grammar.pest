@@ -24,6 +24,7 @@ DISTINCT = _{ ^"DISTINCT" }
 DOUBLE = _{ ^"DOUBLE" }
 ELSE = _{ ^"ELSE" }
 END = _{ ^"END" }
+EXCEPT = _{ ^"EXCEPT" }
 FALSE = _{ ^"FALSE" }
 FOR = _{ ^"FOR" }
 FROM = _{ ^"FROM" }
@@ -32,12 +33,14 @@ GROUP = _{ ^"GROUP" }
 HOUR = _{ ^"HOUR" }
 INNER = _{ ^"INNER" }
 INTERVAL = _{ ^"INTERVAL" }
+INTERSECT = _{ ^"INTERSECT" }
 IS = _{ ^"IS" }
 JOIN = _{ ^"JOIN" }
 LEFT = _{ ^"LEFT" }
 LOCAL = _{ ^"LOCAL" }
 MAX = _{ ^"MAX" }
 MIN = _{ ^"MIN" }
+MINUS = _{ ^"MINUS" }
 MINUTE = _{ ^"MINUTE" }
 MONTH = _{ ^"MONTH" }
 MONTHS_BETWEEN = _{ ^"MONTHS_BETWEEN" }
@@ -60,6 +63,7 @@ TIMESTAMP = _{ ^"TIMESTAMP" }
 TO = _{ ^"TO" }
 TO_DATE = _{ ^"TO_DATE" }
 TRUE = _{ ^"TRUE" }
+UNION = _{ ^"UNION" }
 USING = _{ ^"USING" }
 VARCHAR = _{ ^"VARCHAR" }
 WHEN = _{ ^"WHEN" }
@@ -439,6 +443,13 @@ ctes = { WITH ~ with_clause ~ ("," ~ with_clause)* }
 
 select_mode = { ALL | DISTINCT }
 
+union_type = _{
+    UNION ~ ALL?
+    | INTERSECT
+    | MINUS
+    | EXCEPT
+}
+
 where_clause = { WHERE ~ ( expression | unary_expression ) }
 
 group_by = { GROUP ~ BY ~ expression ~ ( "," ~ expression)* }
@@ -451,8 +462,12 @@ select_statement = {
     ~ group_by?
 }
 
+select_union_statement = {
+    select_statement ~ union_type ~ ( select_union_statement | select_statement )
+}
+
 // ------------------------------------------------------------------
 // SQL statement
 // ------------------------------------------------------------------
 
-sql_statement = _{ SOI ~ select_statement? ~ EOI }
+sql_statement = _{ SOI ~ ( select_union_statement | select_statement )? ~ EOI }

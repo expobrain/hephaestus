@@ -55,6 +55,26 @@ impl Interval {
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]
+pub enum Union {
+    UnionAll,
+    Intersect,
+    Minus,
+    Except,
+}
+
+impl Union {
+    pub fn from_str(s: &str) -> Self {
+        match s.to_uppercase().split(' ').collect::<Vec<_>>()[..] {
+            ["UNION", "ALL"] => Self::UnionAll,
+            ["INTERSECT"] => Self::Intersect,
+            ["MINUS"] => Self::Minus,
+            ["EXCEPT"] => Self::Except,
+            _ => unreachable!(format!("Union: symbol {} not supported", s)),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Operation {
     /// Numeric multiplication
     Multiply,
@@ -136,6 +156,11 @@ pub enum AstNode {
         table_exprs: Vec<AstNode>,
         where_expr: Option<Box<AstNode>>,
         group_by: Option<Box<AstNode>>,
+    },
+    SelectUnionStatement {
+        left: Box<AstNode>,
+        op: Union,
+        right: Box<AstNode>,
     },
     SelectMode {
         mode: SelectMode,

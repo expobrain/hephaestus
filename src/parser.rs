@@ -198,13 +198,15 @@ fn primary(pair: Pair<Rule>) -> AstNode {
                 .map(parse_value)
                 .map(Box::new),
         },
+        Rule::select_union_statement => AstNode::SelectUnionStatement {
+            left: Box::new(parse_value(inner_iter.clone().next().unwrap().into_inner())),
+            op: Union::from_str(inner_iter.clone().nth(1).unwrap().as_str()),
+            right: Box::new(parse_value(inner_iter.clone().nth(2).unwrap().into_inner())),
+        },
         Rule::select_mode => AstNode::SelectMode {
             mode: SelectMode::from_str(pair.as_str()),
         },
-        Rule::where_clause => {
-            // eprintln!("{:#?}", pair.clone());
-            parse_value(pair.into_inner())
-        }
+        Rule::where_clause => parse_value(pair.into_inner()),
         Rule::group_by => AstNode::GroupBy {
             groupings: inner_iter.map(Pairs::single).map(parse_value).collect(),
             having: None,
@@ -2486,6 +2488,144 @@ mod tests {
                     op: Operation::Equal,
                     right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
                 })
+            }
+        };
+    }
+
+    // ------------------------------------------------------------------
+    // Rule::select_union_statement
+    // ------------------------------------------------------------------
+
+    #[test]
+    fn select_union() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT 1 UNION SELECT 2",
+            expected: AstNode::SelectUnionStatement {
+                left: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+                op: Union::UnionAll,
+                right: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+            }
+        };
+    }
+
+    #[test]
+    fn select_union_all() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT 1 UNION ALL SELECT 2",
+            expected: AstNode::SelectUnionStatement {
+                left: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+                op: Union::UnionAll,
+                right: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+            }
+        };
+    }
+
+    #[test]
+    fn select_union_intersect() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT 1 INTERSECT SELECT 2",
+            expected: AstNode::SelectUnionStatement {
+                left: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+                op: Union::Intersect,
+                right: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+            }
+        };
+    }
+
+    #[test]
+    fn select_union_minus() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT 1 MINUS SELECT 2",
+            expected: AstNode::SelectUnionStatement {
+                left: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+                op: Union::Minus,
+                right: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+            }
+        };
+    }
+    #[test]
+    fn select_union_except() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT 1 Except SELECT 2",
+            expected: AstNode::SelectUnionStatement {
+                left: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
+                op: Union::Except,
+                right: Box::new(AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }),
             }
         };
     }

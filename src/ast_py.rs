@@ -18,7 +18,7 @@ macro_rules! py_attr {
             .unwrap();
     };
 
-    // Converts a Box<T> into a Pytohn object
+    // Converts a Box<T> into a Python object
     ( $py:ident; $dict:ident; $attr:ident -> $key:expr ) => {
         $dict
             .set_item::<&str, PyObject>($key, (*$attr).into_py($py))
@@ -130,6 +130,18 @@ impl IntoPy<PyObject> for Interval {
     }
 }
 
+impl IntoPy<PyObject> for Union {
+    fn into_py(self, py: Python) -> PyObject {
+        match self {
+            Self::UnionAll => PyString::new(py, "UNION ALL"),
+            Self::Intersect => PyString::new(py, "INTERSECT"),
+            Self::Minus => PyString::new(py, "MINUS"),
+            Self::Except => PyString::new(py, "EXCEPT"),
+        }
+        .to_object(py)
+    }
+}
+
 impl IntoPy<PyObject> for AstNode {
     fn into_py(self, py: Python) -> PyObject {
         match self {
@@ -156,6 +168,12 @@ impl IntoPy<PyObject> for AstNode {
                 table_exprs => "table_exprs",
                 where_expr ? "where_expr",
                 group_by ? "group_by"
+            ],
+            AstNode::SelectUnionStatement { left, op, right } => py_dict![py;
+                "SelectUnionStatement";
+                left -> "left",
+                op >> "op",
+                right -> "right"
             ],
             AstNode::SelectMode { mode } => py_dict![py; "SelectMode"; mode >> "mode"],
             AstNode::WithClause {

@@ -31,4 +31,4 @@ def iter_tables(sql_ast: Dict) -> Iterator[str]:
 def iter_ctes(sql_ast: Dict) -> Iterator[str]:
     for node in iter_node_attributes(sql_ast):
         if node["_type"] == "WithClause":
-            yield node["identifier"]
+            yield node["identifier"]["s"]

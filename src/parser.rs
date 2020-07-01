@@ -11,6 +11,10 @@ lazy_static! {
         use Rule::*;
 
         PrecClimber::new(vec![
+            // Binary algebra
+            Operator::new(operation_or, Assoc::Left),
+            Operator::new(operation_and, Assoc::Left),
+
             // Comparison
             Operator::new(operation_equal, Assoc::Left)
             | Operator::new(operation_not_equal, Assoc::Left)
@@ -26,8 +30,6 @@ lazy_static! {
             Operator::new(operation_multiply, Assoc::Left)
             | Operator::new(operation_divide, Assoc::Left),
 
-            Operator::new(operation_or, Assoc::Left),
-            Operator::new(operation_and, Assoc::Left),
         ])
     };
 }

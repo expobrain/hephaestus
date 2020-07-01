@@ -876,7 +876,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn join_clause_with_and() {
         parse_rule! {
             rule: Rule::join_clause,

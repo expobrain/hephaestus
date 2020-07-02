@@ -202,7 +202,7 @@ impl IntoPy<PyObject> for AstNode {
             AstNode::NamedColumn { expr, alias } => py_dict![
                 py;
                 "NamedColumn";
-                expr -> "expr", alias ? "alias"
+                expr -> "expr", alias >> "alias"
             ],
 
             // ------------------------------------------------------------------

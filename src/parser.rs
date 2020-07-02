@@ -53,7 +53,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
         },
         Rule::named_column => AstNode::NamedColumn {
             expr: Box::new(parse_value(pair.into_inner())),
-            alias: inner_iter.nth(1).map(|v| v.as_str().to_string()),
+            alias: inner_iter.nth(1).map(|v| v.as_str().to_string()).unwrap(),
         },
 
         // ------------------------------------------------------------------
@@ -774,7 +774,7 @@ mod tests {
             input: "a AS b",
             expected: AstNode::NamedColumn {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                alias: Some("b".to_string())
+                alias: "b".to_string(),
             }
         };
     }
@@ -791,7 +791,7 @@ mod tests {
                         AstNode::Identifier { s: "b".to_string() }
                     ]
                 }),
-                alias: Some("c".to_string())
+                alias: "c".to_string(),
             }
         };
     }
@@ -808,7 +808,7 @@ mod tests {
                         AstNode::IntegerLiteral { s: "2".to_string() }
                     ]
                 }),
-                alias: Some("a".to_string())
+                alias: "a".to_string(),
             }
         };
     }
@@ -858,7 +858,7 @@ mod tests {
                 join_type: Box::new(AstNode::InnerJoin),
                 table_expr: Box::new(AstNode::NamedTableExpression {
                     name: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    alias: Some("t2".to_string())
+                    alias: Some("t2".to_string()),
                 }),
                 constraint: Box::new(AstNode::JoinConstraintOn {
                     expr: Box::new(AstNode::Expression {
@@ -2668,7 +2668,7 @@ mod tests {
                         mode: SelectMode::All,
                         columns: vec![AstNode::NamedColumn {
                             expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                            alias: Some("c".to_string())
+                            alias: "c".to_string(),
                         }],
                         table_exprs: vec![],
                         where_expr: None,
@@ -2702,7 +2702,7 @@ mod tests {
                             mode: SelectMode::All,
                             columns: vec![AstNode::NamedColumn {
                                 expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                                alias: Some("a".to_string())
+                                alias: "a".to_string(),
                             }],
                             table_exprs: vec![],
                             where_expr: None,
@@ -2717,7 +2717,7 @@ mod tests {
                             mode: SelectMode::All,
                             columns: vec![AstNode::NamedColumn {
                                 expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                                alias: Some("b".to_string())
+                                alias: "b".to_string(),
                             }],
                             table_exprs: vec![],
                             where_expr: None,
@@ -2752,7 +2752,7 @@ mod tests {
                             mode: SelectMode::All,
                             columns: vec![AstNode::NamedColumn {
                                 expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                                alias: Some("a".to_string())
+                                alias: "a".to_string(),
                             }],
                             table_exprs: vec![],
                             where_expr: None,
@@ -2764,7 +2764,7 @@ mod tests {
                             mode: SelectMode::All,
                             columns: vec![AstNode::NamedColumn {
                                 expr: Box::new(AstNode::IntegerLiteral { s: "2".to_string() }),
-                                alias: Some("a".to_string())
+                                alias: "a".to_string(),
                             }],
                             table_exprs: vec![],
                             where_expr: None,
@@ -2850,7 +2850,7 @@ mod tests {
                 table_exprs: vec![
                     AstNode::NamedTableExpression{
                         name: Box::new(AstNode::Identifier { s: "table".to_string() }),
-                        alias: Some("alias".to_string())
+                        alias: Some("alias".to_string()),
                     },
                 ],
                 where_expr: None,
@@ -2881,7 +2881,7 @@ mod tests {
                                 ]
                             }
                         ),
-                        alias: Some("alias".to_string())
+                        alias: Some("alias".to_string()),
                     },
                 ],
                 where_expr: None,
@@ -2909,7 +2909,7 @@ mod tests {
                                 ]
                             }
                         ),
-                        alias: Some("alias".to_string())
+                        alias: Some("alias".to_string()),
                     },
                 ],
                 where_expr: None,

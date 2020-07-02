@@ -192,7 +192,7 @@ pub enum AstNode {
     },
     NamedColumn {
         expr: Box<AstNode>,
-        alias: Option<String>,
+        alias: String,
     },
 
     // ------------------------------------------------------------------

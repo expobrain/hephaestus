@@ -258,7 +258,10 @@ is_null_expression = {
     ( qualified_identifier | identifier | literal_value ) ~ IS ~ negate? ~ NULL
 }
 
-in_expression_expressions = { expression ~ ( "," ~ expression )* }
+in_expression_expressions = {
+    select_statement
+    | expression ~ ( "," ~ expression )*
+}
 
 in_expression = {
     ( qualified_identifier | identifier | literal_value ) ~ negate? ~ IN ~ "(" ~

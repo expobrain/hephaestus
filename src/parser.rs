@@ -243,7 +243,8 @@ fn primary(pair: Pair<Rule>) -> AstNode {
                 })
                 .unwrap()
                 .into_inner()
-                .map(|p| parse_value(p.into_inner()))
+                .map(Pairs::single)
+                .map(parse_value)
                 .collect(),
             not_in: inner_iter
                 .find_map(|p| match p.as_rule() {
@@ -1650,6 +1651,42 @@ mod tests {
             expected: AstNode::InExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                not_in: false,
+            }
+        };
+    }
+
+    #[test]
+    fn expression_in_expressions() {
+        parse_rule! {
+            rule: Rule::expression,
+            input: "a IN (1, 2)",
+            expected: AstNode::InExpression {
+                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                exprs: vec![
+                    AstNode::IntegerLiteral { s: "1".to_string() },
+                    AstNode::IntegerLiteral { s: "2".to_string() },
+                ],
+                not_in: false,
+            }
+        };
+    }
+
+    #[test]
+    fn expression_in_select_statement() {
+        parse_rule! {
+            rule: Rule::expression,
+            input: "a IN (SELECT 1)",
+            expected: AstNode::InExpression {
+                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                exprs: vec![AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }],
                 not_in: false,
             }
         };

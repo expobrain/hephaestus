@@ -292,6 +292,15 @@ impl IntoPy<PyObject> for AstNode {
                 "IsNullExpression";
                 expr -> "expr", is_null >> "is_null"
             ],
+            AstNode::InExpression {
+                expr,
+                exprs,
+                not_in,
+            } => py_dict![
+                py;
+                "InExpression";
+                expr -> "expr", exprs => "exprs", not_in >> "not_in"
+            ],
             AstNode::WhenClause { guard, body } => py_dict![
                 py;
                 "WhenClause";

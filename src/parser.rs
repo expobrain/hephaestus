@@ -232,11 +232,26 @@ fn primary(pair: Pair<Rule>) -> AstNode {
             expr: Box::new(parse_value(inner_iter.nth(1).unwrap().into_inner())),
         },
         Rule::expression => parse_value(pair.into_inner()),
-        // Rule::comparative_expression => AstNode::Expression {
-        //     left: Box::new(parse_value(pair.into_inner())),
-        //     op: Operation::from_str(inner_iter.clone().nth(1).unwrap().as_str()),
-        //     right: Box::new(parse_value(inner_iter.clone().nth(2).unwrap().into_inner())),
-        // },
+        Rule::in_expression => AstNode::InExpression {
+            expr: Box::new(parse_value(Pairs::single(
+                inner_iter.clone().next().unwrap(),
+            ))),
+            exprs: inner_iter
+                .find(|p| match p.as_rule() {
+                    Rule::in_expression_expressions => true,
+                    _ => false,
+                })
+                .unwrap()
+                .into_inner()
+                .map(|p| parse_value(p.into_inner()))
+                .collect(),
+            not_in: inner_iter
+                .find_map(|p| match p.as_rule() {
+                    Rule::negate => Some(true),
+                    _ => None,
+                })
+                .unwrap_or(false),
+        },
         Rule::is_null_expression => AstNode::IsNullExpression {
             expr: Box::new(parse_value(pair.into_inner())),
             is_null: inner_iter
@@ -1623,6 +1638,19 @@ mod tests {
                 }),
                 op: Operation::And,
                 right: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
+            }
+        };
+    }
+
+    #[test]
+    fn expression_in_expression() {
+        parse_rule! {
+            rule: Rule::expression,
+            input: "a IN (1)",
+            expected: AstNode::InExpression {
+                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                not_in: false,
             }
         };
     }

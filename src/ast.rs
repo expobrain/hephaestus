@@ -67,7 +67,7 @@ impl Union {
         match s
             .to_uppercase()
             .split(' ')
-            .filter(|v| v.len() > 0)
+            .filter(|v| !v.is_empty())
             .collect::<Vec<_>>()[..]
         {
             ["UNION", "ALL"] | ["UNION"] => Self::UnionAll,
@@ -278,6 +278,11 @@ pub enum AstNode {
     IsNullExpression {
         expr: Box<AstNode>,
         is_null: bool,
+    },
+    InExpression {
+        expr: Box<AstNode>,
+        exprs: Vec<AstNode>,
+        not_in: bool,
     },
     WhenClause {
         guard: Box<AstNode>,

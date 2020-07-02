@@ -199,9 +199,13 @@ fn primary(pair: Pair<Rule>) -> AstNode {
                 .map(Box::new),
         },
         Rule::select_union_statement => AstNode::SelectUnionStatement {
-            left: Box::new(parse_value(inner_iter.clone().next().unwrap().into_inner())),
+            left: Box::new(parse_value(Pairs::single(
+                inner_iter.clone().next().unwrap(),
+            ))),
             op: Union::from_str(inner_iter.clone().nth(1).unwrap().as_str()),
-            right: Box::new(parse_value(inner_iter.clone().nth(2).unwrap().into_inner())),
+            right: Box::new(parse_value(Pairs::single(
+                inner_iter.clone().nth(2).unwrap(),
+            ))),
         },
         Rule::select_mode => AstNode::SelectMode {
             mode: SelectMode::from_str(pair.as_str()),
@@ -2499,7 +2503,7 @@ mod tests {
     #[test]
     fn select_union() {
         parse_rule! {
-            rule: Rule::select_statement,
+            rule: Rule::select_union_statement,
             input: "SELECT 1 UNION SELECT 2",
             expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
@@ -2526,7 +2530,7 @@ mod tests {
     #[test]
     fn select_union_all() {
         parse_rule! {
-            rule: Rule::select_statement,
+            rule: Rule::select_union_statement,
             input: "SELECT 1 UNION ALL SELECT 2",
             expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
@@ -2553,7 +2557,7 @@ mod tests {
     #[test]
     fn select_union_intersect() {
         parse_rule! {
-            rule: Rule::select_statement,
+            rule: Rule::select_union_statement,
             input: "SELECT 1 INTERSECT SELECT 2",
             expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
@@ -2580,7 +2584,7 @@ mod tests {
     #[test]
     fn select_union_minus() {
         parse_rule! {
-            rule: Rule::select_statement,
+            rule: Rule::select_union_statement,
             input: "SELECT 1 MINUS SELECT 2",
             expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
@@ -2606,8 +2610,8 @@ mod tests {
     #[test]
     fn select_union_except() {
         parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT 1 Except SELECT 2",
+            rule: Rule::select_union_statement,
+            input: "SELECT 1 EXCEPT SELECT 2",
             expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
                     common: vec![],

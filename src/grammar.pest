@@ -443,7 +443,7 @@ ctes = { WITH ~ with_clause ~ ("," ~ with_clause)* }
 
 select_mode = { ALL | DISTINCT }
 
-union_type = _{
+union_type = {
     UNION ~ ALL?
     | INTERSECT
     | MINUS

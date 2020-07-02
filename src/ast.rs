@@ -64,12 +64,17 @@ pub enum Union {
 
 impl Union {
     pub fn from_str(s: &str) -> Self {
-        match s.to_uppercase().split(' ').collect::<Vec<_>>()[..] {
-            ["UNION", "ALL"] => Self::UnionAll,
+        match s
+            .to_uppercase()
+            .split(' ')
+            .filter(|v| v.len() > 0)
+            .collect::<Vec<_>>()[..]
+        {
+            ["UNION", "ALL"] | ["UNION"] => Self::UnionAll,
             ["INTERSECT"] => Self::Intersect,
             ["MINUS"] => Self::Minus,
             ["EXCEPT"] => Self::Except,
-            _ => unreachable!(format!("Union: symbol {} not supported", s)),
+            _ => unreachable!(format!("Union: symbol '{}' not supported", s)),
         }
     }
 }

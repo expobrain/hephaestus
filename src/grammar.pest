@@ -461,7 +461,9 @@ union_type = {
 
 where_clause = { WHERE ~ ( expression | unary_expression ) }
 
-group_by = { GROUP ~ BY ~ expression ~ ( "," ~ expression)* }
+group_by = { GROUP ~ BY ~ group_by_term ~ ( "," ~ group_by_term)* }
+
+group_by_term = _{ integer_literal | qualified_identifier | identifier }
 
 select_single_statement = {
     ctes?

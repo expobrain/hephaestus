@@ -3138,6 +3138,25 @@ mod tests {
     }
 
     #[test]
+    fn select_group_by_positional() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT a GROUP BY 1",
+            expected: AstNode::SelectStatement {
+                common: vec![],
+                mode: SelectMode::All,
+                columns: vec![AstNode::Identifier { s: "a".to_string() }],
+                table_exprs: vec![],
+                where_expr: None,
+                group_by: Some(Box::new(AstNode::GroupBy {
+                    groupings: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    having: None
+                }))
+            }
+        };
+    }
+
+    #[test]
     fn select_from_subquery() {
         parse_rule! {
             rule: Rule::select_statement,

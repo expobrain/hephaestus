@@ -3119,6 +3119,28 @@ mod tests {
     }
 
     #[test]
+    fn select_from_group_by() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT a FROM t GROUP BY a",
+            expected: AstNode::SelectStatement {
+                common: vec![],
+                mode: SelectMode::All,
+                columns: vec![AstNode::Identifier { s: "a".to_string() }],
+                table_exprs: vec![AstNode::NamedTableExpression {
+                    name: Box::new(AstNode::Identifier { s: "t".to_string() }),
+                    alias: None
+                }],
+                where_expr: None,
+                group_by: Some(Box::new(AstNode::GroupBy {
+                    groupings: vec![AstNode::Identifier { s: "a".to_string() }],
+                    having: None
+                }))
+            }
+        };
+    }
+
+    #[test]
     fn select_group_by() {
         parse_rule! {
             rule: Rule::select_statement,

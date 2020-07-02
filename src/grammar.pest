@@ -423,7 +423,7 @@ join_clause = { join_type ~ table_or_subquery ~ join_constraint }
 
 table_identifier = _{ qualified_identifier | identifier }
 
-joins_and_clauses = _{ join_type | join_constraint | where_clause }
+joins_and_clauses = _{ join_type | join_constraint | where_clause | group_by }
 
 named_table_expression = { table_identifier ~ (AS? ~ !joins_and_clauses ~ identifier)? }
 
@@ -434,7 +434,7 @@ table_or_subquery = _{
 
 table_expression = _{ table_or_subquery ~ join_clause* }
 
-table_expressions = { table_expression ~ (","? ~ !WHERE ~ table_expression)* }
+table_expressions = { table_expression ~ (","? ~ !(WHERE | (GROUP ~ BY) ) ~ table_expression)* }
 
 from_clause = _{ FROM ~ table_expressions }
 

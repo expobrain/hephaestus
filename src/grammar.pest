@@ -433,7 +433,7 @@ from_clause = _{ FROM ~ table_expressions }
 // CTE statement
 // ------------------------------------------------------------------
 
-with_clause = { identifier ~ AS ~ "(" ~ select_statement ~ ")" }
+with_clause = { identifier ~ AS ~ "(" ~ ( select_union_statement | select_statement ) ~ ")" }
 
 ctes = { WITH ~ with_clause ~ ("," ~ with_clause)* }
 

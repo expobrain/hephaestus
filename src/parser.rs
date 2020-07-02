@@ -490,7 +490,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
             let query = Pairs::single(
                 inner_iter
                     .find(|p| match p.as_rule() {
-                        Rule::select_statement => true,
+                        Rule::select_statement | Rule::select_union_statement => true,
                         _ => false,
                     })
                     .unwrap(),
@@ -2729,6 +2729,53 @@ mod tests {
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
                 table_exprs: vec![AstNode::NamedTableExpression {
                     name: Box::new(AstNode::Identifier{ s: "cte_1".to_string() }),
+                    alias: None,
+                }],
+                where_expr: None,
+                group_by: None,
+            }
+        };
+    }
+
+    #[test]
+    fn select_with_cte_with_union() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "WITH cte AS ( SELECT 1 AS a UNION SELECT 2 AS a ) SELECT a FROM cte",
+            expected: AstNode::SelectStatement {
+                common: vec![AstNode::WithClause {
+                    identifier: Box::new(AstNode::Identifier { s: "cte".to_string() }),
+                    columns: vec![],
+                    query: Box::new(AstNode::SelectUnionStatement {
+                        left: Box::new(AstNode::SelectStatement {
+                            common: vec![],
+                            mode: SelectMode::All,
+                            columns: vec![AstNode::NamedColumn {
+                                expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+                                alias: Some("a".to_string())
+                            }],
+                            table_exprs: vec![],
+                            where_expr: None,
+                            group_by: None,
+                        }),
+                        op: Union::UnionAll,
+                        right: Box::new(AstNode::SelectStatement {
+                            common: vec![],
+                            mode: SelectMode::All,
+                            columns: vec![AstNode::NamedColumn {
+                                expr: Box::new(AstNode::IntegerLiteral { s: "2".to_string() }),
+                                alias: Some("a".to_string())
+                            }],
+                            table_exprs: vec![],
+                            where_expr: None,
+                            group_by: None,
+                        }),
+                    }),
+                }],
+                mode: SelectMode::All,
+                columns: vec![AstNode::Identifier { s: "a".to_string() }],
+                table_exprs: vec![AstNode::NamedTableExpression {
+                    name: Box::new(AstNode::Identifier{ s: "cte".to_string() }),
                     alias: None,
                 }],
                 where_expr: None,

@@ -3138,6 +3138,29 @@ mod tests {
     }
 
     #[test]
+    fn select_from_subquery() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT 1 FROM (SELECT 1)",
+            expected: AstNode::SelectStatement {
+                common: vec![],
+                mode: SelectMode::All,
+                columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                table_exprs: vec![AstNode::SelectStatement {
+                    common: vec![],
+                    mode: SelectMode::All,
+                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                    table_exprs: vec![],
+                    where_expr: None,
+                    group_by: None,
+                }],
+                where_expr: None,
+                group_by: None,
+            }
+        };
+    }
+
+    #[test]
     fn select_join_clause_multiple() {
         parse_rule! {
             rule: Rule::select_statement,

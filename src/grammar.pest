@@ -428,11 +428,8 @@ joins_and_clauses = _{ join_type | join_constraint | where_clause }
 named_table_expression = { table_identifier ~ (AS? ~ !joins_and_clauses ~ identifier)? }
 
 table_or_subquery = _{
-    named_table_expression
-    //| qualified_identifier
-    //| identifier
-    //| "(" ~ select_statement ~ ")" ~ AS ~ identifier
-    //| "(" ~ table_expression ~ ")"
+    "(" ~ select_statement ~ ")"
+    | named_table_expression
 }
 
 table_expression = _{ table_or_subquery ~ join_clause* }

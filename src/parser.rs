@@ -237,6 +237,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
                 inner_iter.clone().next().unwrap(),
             ))),
             exprs: inner_iter
+                .clone()
                 .find(|p| match p.as_rule() {
                     Rule::in_expression_expressions => true,
                     _ => false,
@@ -247,6 +248,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
                 .map(parse_value)
                 .collect(),
             not_in: inner_iter
+                .clone()
                 .find_map(|p| match p.as_rule() {
                     Rule::negate => Some(true),
                     _ => None,
@@ -1652,6 +1654,19 @@ mod tests {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 not_in: false,
+            }
+        };
+    }
+
+    #[test]
+    fn expression_in_not_expression() {
+        parse_rule! {
+            rule: Rule::expression,
+            input: "a NOT IN (1)",
+            expected: AstNode::InExpression {
+                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+                not_in: true,
             }
         };
     }

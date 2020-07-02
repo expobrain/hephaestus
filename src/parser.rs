@@ -146,7 +146,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
         // ------------------------------------------------------------------
         // Select statement
         // ------------------------------------------------------------------
-        Rule::select_statement => AstNode::SelectStatement {
+        Rule::select_single_statement => AstNode::SelectStatement {
             common: inner_iter
                 .clone()
                 .find(|p| match p.as_rule() {
@@ -490,7 +490,7 @@ fn primary(pair: Pair<Rule>) -> AstNode {
             let query = Pairs::single(
                 inner_iter
                     .find(|p| match p.as_rule() {
-                        Rule::select_statement | Rule::select_union_statement => true,
+                        Rule::select_single_statement | Rule::select_union_statement => true,
                         _ => false,
                     })
                     .unwrap(),
@@ -2635,7 +2635,7 @@ mod tests {
     }
 
     // ------------------------------------------------------------------
-    // Rule::select_statement
+    // Rule::select_single_statement
     // ------------------------------------------------------------------
 
     #[test]

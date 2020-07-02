@@ -433,7 +433,7 @@ from_clause = _{ FROM ~ table_expressions }
 // CTE statement
 // ------------------------------------------------------------------
 
-with_clause = { identifier ~ AS ~ "(" ~ ( select_union_statement | select_statement ) ~ ")" }
+with_clause = { identifier ~ AS ~ "(" ~ select_statement ~ ")" }
 
 ctes = { WITH ~ with_clause ~ ("," ~ with_clause)* }
 
@@ -454,7 +454,7 @@ where_clause = { WHERE ~ ( expression | unary_expression ) }
 
 group_by = { GROUP ~ BY ~ expression ~ ( "," ~ expression)* }
 
-select_statement = {
+select_single_statement = {
     ctes?
     ~ SELECT ~ select_mode? ~ columns
     ~ from_clause?
@@ -462,12 +462,12 @@ select_statement = {
     ~ group_by?
 }
 
-select_union_statement = {
-    select_statement ~ union_type ~ ( select_union_statement | select_statement )
-}
+select_union_statement = { select_single_statement ~ union_type ~ select_statement }
+
+select_statement = _{ select_union_statement | select_single_statement }
 
 // ------------------------------------------------------------------
 // SQL statement
 // ------------------------------------------------------------------
 
-sql_statement = _{ SOI ~ ( select_union_statement | select_statement )? ~ EOI }
+sql_statement = _{ SOI ~ ( select_statement )? ~ EOI }

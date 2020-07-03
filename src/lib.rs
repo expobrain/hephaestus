@@ -17,7 +17,7 @@ mod parser;
 mod parser_pest;
 
 #[pyfunction]
-pub fn parse(sql_str: &str) -> PyResult<ast::AstNode> {
+pub fn parse(sql_str: &str) -> PyResult<Option<ast::AstNode>> {
     let result = parser::parse(sql_str);
 
     match result {

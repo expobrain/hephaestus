@@ -598,14 +598,18 @@ fn parse_value(pairs: Pairs<Rule>) -> AstNode {
     )
 }
 
-fn parse_str_to_pairs(sql: &str) -> Pairs<Rule> {
-    SqlParser::parse(Rule::sql_statement, sql).unwrap()
+fn parse_str_to_pairs(rule: Rule,sql: &str) -> Pairs<Rule> {
+    SqlParser::parse(rule, sql).unwrap()
 }
 
-pub fn parse(sql: &str) -> Result<AstNode, Error<Rule>> {
-    let pair = parse_str_to_pairs(sql);
+fn parse_pairs_to_ast(pairs: Pairs<Rule>) -> Option<AstNode> {
+    Some(parse_value(pairs))
+}
 
-    Ok(parse_value(pair))
+pub fn parse(sql: &str) -> Result<Option<AstNode>, Error<Rule>> {
+    let pairs = parse_str_to_pairs(Rule::sql_statement, sql);
+
+    Ok(parse_pairs_to_ast(pairs))
 }
 
 #[cfg(test)]
@@ -615,10 +619,10 @@ mod tests {
     #[allow(unused_macros)]
     macro_rules! parse_rule {
         (rule: $rule:expr, input: $sql:expr, expected: $expected:expr) => {
-            let pair = SqlParser::parse($rule, $sql).unwrap();
-            let node = parse_value(pair.clone());
+            let pairs = parse_str_to_pairs($rule, $sql);
+            let node = parse_pairs_to_ast(pairs.clone());
 
-            eprintln!("{:#?}", pair);
+            eprintln!("{:#?}", pairs);
             eprintln!("{}", $sql);
 
             assert_eq!(node, $expected);
@@ -634,2715 +638,2715 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "BOOLEAN",
-            expected: AstNode::BooleanType
-        };
-    }
-
-    #[test]
-    fn data_type_double() {
-        parse_rule! {
-            rule: Rule::data_type,
-            input: "DOUBLE",
-            expected: AstNode::DoubleType
-        };
-    }
-
-    #[test]
-    fn data_type_local_timestamp() {
-        parse_rule! {
-            rule: Rule::data_type,
-            input: "TIMESTAMP",
-            expected: AstNode::TimestampType
-        };
-    }
-
-    #[test]
-    fn data_type_timestamp() {
-        parse_rule! {
-            rule: Rule::data_type,
-            input: "TIMESTAMP",
-            expected: AstNode::TimestampType
-        };
-    }
-
-    #[test]
-    fn data_type_decimal() {
-        parse_rule! {
-            rule: Rule::data_type,
-            input: "DECIMAL(10, 2)",
-            expected: AstNode::DecimalType{
-                p: Box::new(AstNode::IntegerLiteral { s: "10".to_string() }),
-                s: Box::new(AstNode::IntegerLiteral { s: "2".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn data_type_char() {
-        parse_rule! {
-            rule: Rule::data_type,
-            input: "CHAR(1)",
-            expected: AstNode::CharType {
-                n: Box::new(
-                AstNode::IntegerLiteral { s: "1".to_string() }
-            )}
-        };
-    }
-
-    #[test]
-    fn data_type_date() {
-        parse_rule! {
-            rule: Rule::data_type,
-            input: "DATE",
-            expected: AstNode::DateType
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::coalesce_function
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn coalesce_function() {
-        parse_rule! {
-            rule: Rule::coalesce_function,
-            input: "COALESCE(a, b)",
-            expected: AstNode::CoalesceFunction {
-                exprs: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() },
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn coalesce_function_3() {
-        parse_rule! {
-            rule: Rule::coalesce_function,
-            input: "COALESCE(a, b, c)",
-            expected: AstNode::CoalesceFunction {
-                exprs: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() },
-                    AstNode::Identifier { s: "c".to_string() },
-                ]
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::cast_function
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn cast_function() {
-        parse_rule! {
-            rule: Rule::cast_function,
-            input: "CAST(a AS BOOLEAN)",
-            expected: AstNode::CastFunction{
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                data_type: Box::new(AstNode::BooleanType)
-            }
-        };
-    }
-
-    #[test]
-    fn cast_function_with_expression() {
-        parse_rule! {
-            rule: Rule::cast_function,
-            input: "CAST(a / b AS BOOLEAN)",
-            expected: AstNode::CastFunction{
-                expr: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    op: Operation::Divide,
-                    right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                }),
-                data_type: Box::new(AstNode::BooleanType)
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::column
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn column_identifier() {
-        parse_rule! {
-            rule: Rule::column,
-            input: "a",
-            expected: AstNode::Identifier { s: "a".to_string() }
-        };
-    }
-
-    #[test]
-    fn column_integer() {
-        parse_rule! {
-            rule: Rule::column,
-            input: "42",
-            expected: AstNode::IntegerLiteral { s: "42".to_string() }
-        };
-    }
-
-    #[test]
-    fn column_named_column() {
-        parse_rule! {
-            rule: Rule::column,
-            input: "a AS b",
-            expected: AstNode::NamedColumn {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                alias: "b".to_string(),
-            }
-        };
-    }
-
-    #[test]
-    fn column_named_column_2() {
-        parse_rule! {
-            rule: Rule::column,
-            input: "a.b AS c",
-            expected: AstNode::NamedColumn {
-                expr: Box::new(AstNode::QualifiedIdentifier {
-                    s: vec![
-                        AstNode::Identifier { s: "a".to_string() },
-                        AstNode::Identifier { s: "b".to_string() }
-                    ]
-                }),
-                alias: "c".to_string(),
-            }
-        };
-    }
-
-    #[test]
-    fn column_named_column_function_expression() {
-        parse_rule! {
-            rule: Rule::column,
-            input: "COALESCE(1, 2) AS a",
-            expected: AstNode::NamedColumn {
-                expr: Box::new(AstNode::CoalesceFunction {
-                    exprs: vec![
-                        AstNode::IntegerLiteral { s: "1".to_string() },
-                        AstNode::IntegerLiteral { s: "2".to_string() }
-                    ]
-                }),
-                alias: "a".to_string(),
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::join_clause
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn join_clause() {
-        parse_rule! {
-            rule: Rule::join_clause,
-            input: "JOIN b ON a.id = b.id",
-            expected: AstNode::JoinClause {
-                join_type: Box::new(AstNode::InnerJoin),
-                table_expr: Box::new(AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    alias: None,
-                }),
-                constraint: Box::new(AstNode::JoinConstraintOn {
-                    expr: Box::new(AstNode::Expression {
-                        left: Box::new(AstNode::QualifiedIdentifier {
-                            s: vec![
-                                AstNode::Identifier { s: "a".to_string() },
-                                AstNode::Identifier { s: "id".to_string() }
-                            ]
-                        }),
-                        op: Operation::Equal,
-                        right: Box::new(AstNode::QualifiedIdentifier {
-                            s: vec![
-                                AstNode::Identifier { s: "b".to_string() },
-                                AstNode::Identifier { s: "id".to_string() }
-                            ]
-                        }),
-                    })}
-                ),
-            }
-        };
-    }
-
-    #[test]
-    fn join_clause_named_tables() {
-        parse_rule! {
-            rule: Rule::join_clause,
-            input: "JOIN b t2 ON t1.id = t2.id",
-            expected: AstNode::JoinClause {
-                join_type: Box::new(AstNode::InnerJoin),
-                table_expr: Box::new(AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    alias: Some("t2".to_string()),
-                }),
-                constraint: Box::new(AstNode::JoinConstraintOn {
-                    expr: Box::new(AstNode::Expression {
-                        left: Box::new(AstNode::QualifiedIdentifier {
-                            s: vec![
-                                AstNode::Identifier { s: "t1".to_string() },
-                                AstNode::Identifier { s: "id".to_string() }
-                            ]
-                        }),
-                        op: Operation::Equal,
-                        right: Box::new(AstNode::QualifiedIdentifier {
-                            s: vec![
-                                AstNode::Identifier { s: "t2".to_string() },
-                                AstNode::Identifier { s: "id".to_string() }
-                            ]
-                        }),
-                    })}
-                ),
-            }
-        };
-    }
-
-    #[test]
-    fn join_clause_with_and() {
-        parse_rule! {
-            rule: Rule::join_clause,
-            input: "JOIN b ON a.id = b.id AND a.field = b.field",
-            expected: AstNode::JoinClause {
-                join_type: Box::new(AstNode::InnerJoin),
-                table_expr: Box::new(AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    alias: None,
-                }),
-                constraint: Box::new(AstNode::JoinConstraintOn {
-                    expr: Box::new(AstNode::Expression {
-                        left: Box::new(AstNode::Expression {
-                            left: Box::new(AstNode::QualifiedIdentifier {
-                                s: vec![
-                                    AstNode::Identifier { s: "a".to_string() },
-                                    AstNode::Identifier { s: "id".to_string() }
-                                ]
-                            }),
-                            op: Operation::Equal,
-                            right: Box::new(AstNode::QualifiedIdentifier {
-                                s: vec![
-                                    AstNode::Identifier { s: "b".to_string() },
-                                    AstNode::Identifier { s: "id".to_string() }
-                                ]
-                            }),
-                        }),
-                        op: Operation::And,
-                        right: Box::new(AstNode::Expression {
-                            left: Box::new(AstNode::QualifiedIdentifier {
-                                s: vec![
-                                    AstNode::Identifier { s: "a".to_string() },
-                                    AstNode::Identifier { s: "field".to_string() }
-                                ]
-                            }),
-                            op: Operation::Equal,
-                            right: Box::new(AstNode::QualifiedIdentifier {
-                                s: vec![
-                                    AstNode::Identifier { s: "b".to_string() },
-                                    AstNode::Identifier { s: "field".to_string() }
-                                ]
-                            }),
-                        })
-                    })
-                }),
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::join_type
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn join_type_inner_join() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "JOIN",
-            expected: AstNode::InnerJoin
-        };
-    }
-
-    #[test]
-    fn join_type_inner_join_2() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "INNER JOIN",
-            expected: AstNode::InnerJoin
-        };
-    }
-
-    #[test]
-    fn join_type_left_outer_join() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "LEFT JOIN",
-            expected: AstNode::LeftOuterJoin
-        };
-    }
-
-    #[test]
-    fn join_type_left_outer_join_2() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "LEFT OUTER JOIN",
-            expected: AstNode::LeftOuterJoin
-        };
-    }
-
-    #[test]
-    fn join_type_right_outer_join() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "RIGHT JOIN",
-            expected: AstNode::RightOuterJoin
-        };
-    }
-
-    #[test]
-    fn join_type_right_outer_join_2() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "RIGHT OUTER JOIN",
-            expected: AstNode::RightOuterJoin
-        };
-    }
-
-    #[test]
-    fn join_type_full_outer() {
-        parse_rule! {
-            rule: Rule::join_type,
-            input: "FULL OUTER JOIN",
-            expected: AstNode::FullOuterJoin
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::join_constraint
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn join_constraint_on() {
-        parse_rule! {
-            rule: Rule::join_constraint,
-            input: "ON a = b",
-            expected: AstNode::JoinConstraintOn {
-                expr: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    op: Operation::Equal,
-                    right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                })
-            }
-        };
-    }
-
-    #[test]
-    fn join_constraint_using() {
-        parse_rule! {
-            rule: Rule::join_constraint,
-            input: "USING (a)",
-            expected: AstNode::JoinConstraintUsing {
-                columns: vec![AstNode::Identifier { s: "a".to_string() }]
-            }
-        };
-    }
-
-    #[test]
-    fn join_constraint_using_2() {
-        parse_rule! {
-            rule: Rule::join_constraint,
-            input: "USING (a, b)",
-            expected: AstNode::JoinConstraintUsing {
-                columns: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() },
-                ]
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::expression
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn expression_identifier() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a",
-            expected: AstNode::Identifier { s: "a".to_string() }
-        };
-    }
-
-    #[test]
-    fn expression_qualified_identifier() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a.b",
-            expected: AstNode::QualifiedIdentifier {
-                s: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn expression_integer() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "42",
-            expected: AstNode::IntegerLiteral { s: "42".to_string() }
-        };
-    }
-
-    #[test]
-    fn expression_signed_expression() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "-42",
-            expected: AstNode::SignedExpression{
-                sign: Sign::Negative,
-                expr: Box::new(AstNode::IntegerLiteral { s: "42".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_with_comment() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: r#"
-                a
-                -- comment
-                AND b
-            "#.trim(),
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::And,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_equals() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a = b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Equal,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_equals_literal() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a = 1",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Equal,
-                right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_not_equal() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a != b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::NotEqual,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_greater_than() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a > b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::GreaterThan,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_greater_or_equal_than() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a >= b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::GreaterOrEqualThan,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_less_than() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a < b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::LessThan,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_less_or_equal_than() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a <= b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::LessOrEqualThan,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_qualified_identifier_equals() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a.b = c",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::QualifiedIdentifier {
-                    s: vec![
-                        AstNode::Identifier { s: "a".to_string() },
-                        AstNode::Identifier { s: "b".to_string() },
-                    ]
-                }),
-                op: Operation::Equal,
-                right: Box::new(AstNode::Identifier { s: "c".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_case_expression() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a = CASE WHEN 1 THEN 'one' END",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Equal,
-                right: Box::new(AstNode::CaseExpression {
-                    expr: None,
-                    when_expr: vec![AstNode::WhenClause{
-                        guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                        body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                    }],
-                    else_expr: None
-                })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_prec_climber_equality() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a = b - c",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Equal,
-                right: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    op: Operation::Subtract,
-                    right: Box::new(AstNode::Identifier { s: "c".to_string() })
-                })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_with_interval_literal() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a - INTERVAL '1' MONTH",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Subtract,
-                right: Box::new(AstNode::IntervalLiteral {
-                    interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                    period: Interval::Month,
-                    precision: vec![],
-                    convert_to: None,
-                    convert_precision: None,
-                })
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::unary_expression
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn unary_expression_is_null() {
-        parse_rule! {
-            rule: Rule::unary_expression,
-            input: "a IS NULL",
-            expected: AstNode::IsNullExpression {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                is_null: true,
-            }
-        };
-    }
-
-    #[test]
-    fn unary_expression_is_not_null() {
-        parse_rule! {
-            rule: Rule::unary_expression,
-            input: "a IS NOT NULL",
-            expected: AstNode::IsNullExpression {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                is_null: false,
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::case_expression
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn case_expression() {
-        parse_rule! {
-            rule: Rule::case_expression,
-            input: "CASE a WHEN 1 THEN 'one' END",
-            expected: AstNode::CaseExpression {
-                expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
-                when_expr: vec![AstNode::WhenClause{
-                    guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                    body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                }],
-                else_expr: None
-            }
-        };
-    }
-
-    #[test]
-    fn case_expression_when_with_function() {
-        parse_rule! {
-            rule: Rule::case_expression,
-            input: "CASE WHEN SUBSTR('abc', 1) THEN 'one' END",
-            expected: AstNode::CaseExpression {
-                expr: None,
-                when_expr: vec![AstNode::WhenClause{
-                    guard: Box::new(AstNode::SubstringFunction {
-                        string: Box::new(AstNode::StringLiteral { s: "abc".to_string() }),
-                        position: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                        length: None
-                    }),
-                    body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                }],
-                else_expr: None
-            }
-        };
-    }
-
-    #[test]
-    fn case_expression_no_case_expression() {
-        parse_rule! {
-            rule: Rule::case_expression,
-            input: "CASE WHEN 1 THEN 'one' END",
-            expected: AstNode::CaseExpression {
-                expr: None,
-                when_expr: vec![AstNode::WhenClause{
-                    guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                    body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                }],
-                else_expr: None
-            }
-        };
-    }
-
-    #[test]
-    fn case_expression_with_else() {
-        parse_rule! {
-            rule: Rule::case_expression,
-            input: "CASE a WHEN 1 THEN 'one' ELSE 'zero' END",
-            expected: AstNode::CaseExpression {
-                expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
-                when_expr: vec![AstNode::WhenClause {
-                    guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                    body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                }],
-                else_expr: Some(Box::new(AstNode::StringLiteral { s: "zero".to_string() }))
-            }
-        };
-    }
-
-    #[test]
-    fn case_expression_else_with_function() {
-        parse_rule! {
-            rule: Rule::case_expression,
-            input: "CASE WHEN 1 THEN 'one' ELSE SUBSTR('abc', 1) END",
-            expected: AstNode::CaseExpression {
-                expr: None,
-                when_expr: vec![AstNode::WhenClause {
-                    guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                    body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                }],
-                else_expr: Some(Box::new(AstNode::SubstringFunction {
-                    string: Box::new(AstNode::StringLiteral { s: "abc".to_string() }),
-                    position: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                    length: None
-                }))
-            }
-        };
-    }
-
-    #[test]
-    fn case_expression_more_cases() {
-        parse_rule! {
-            rule: Rule::case_expression,
-            input: "CASE a WHEN 1 THEN 'one' WHEN 2 THEN 'two' END",
-            expected: AstNode::CaseExpression {
-                expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
-                when_expr: vec![
-                    AstNode::WhenClause {
-                        guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                        body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
-                    },
-                    AstNode::WhenClause {
-                        guard: Box::new(AstNode::IntegerLiteral { s: "2".to_string() }),
-                        body: Box::new(AstNode::StringLiteral { s: "two".to_string() }),
-                    },
-                ],
-                else_expr: None
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::expression
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn expression_concat_operator() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a || b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Concat,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_and_operator() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a AND b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::And,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_or_operator() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a OR b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Or,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn expression_binary_concat() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "COALESCE(1) || b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::CoalesceFunction{
-                    exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
-                }),
-                right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                op: Operation::Concat
-            }
-        };
-    }
-
-    #[test]
-    fn expression_binary_concat_2() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "b || COALESCE(1)",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                right: Box::new(AstNode::CoalesceFunction{
-                    exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
-                }),
-                op: Operation::Concat
-            }
-        };
-    }
-
-    #[test]
-    fn expression_binary_concat_3() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "COALESCE(1) || COALESCE(2)",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::CoalesceFunction{
-                    exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
-                }),
-                right: Box::new(AstNode::CoalesceFunction{
-                    exprs: vec![AstNode::IntegerLiteral { s: "2".to_string() }]
-                }),
-                op: Operation::Concat
-            }
-        };
-    }
-
-    #[test]
-    fn expression_binary_concat_4() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "COALESCE(1) || a || COALESCE(2)",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::CoalesceFunction{
-                        exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
-                    }),
-                    op: Operation::Concat,
-                    right: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                }),
-                op: Operation::Concat,
-                right: Box::new(AstNode::CoalesceFunction{
-                    exprs: vec![AstNode::IntegerLiteral { s: "2".to_string() }]
-                }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_parens() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a + (b + c)",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Add,
-                right: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    op: Operation::Add,
-                    right: Box::new(AstNode::Identifier { s: "c".to_string() }),
-                }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_parens_2() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "(a + b) + c",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    op: Operation::Add,
-                    right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                }),
-                op: Operation::Add,
-                right: Box::new(AstNode::Identifier { s: "c".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_multiply() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a * b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Multiply,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_divide() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a / b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Divide,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_subtract() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a - b",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Subtract,
-                right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_and_boolean_literal() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "TRUE AND a",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
-                op: Operation::And,
-                right: Box::new(AstNode::Identifier { s: "a".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_unary_expression() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a IS NULL AND TRUE",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::IsNullExpression {
-                   expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                   is_null: true,
-                }),
-                op: Operation::And,
-                right: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn expression_in_expression() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a IN (1)",
-            expected: AstNode::InExpression {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                not_in: false,
-            }
-        };
-    }
-
-    #[test]
-    fn expression_in_not_expression() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a NOT IN (1)",
-            expected: AstNode::InExpression {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                not_in: true,
-            }
-        };
-    }
-
-    #[test]
-    fn expression_in_expressions() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a IN (1, 2)",
-            expected: AstNode::InExpression {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                exprs: vec![
-                    AstNode::IntegerLiteral { s: "1".to_string() },
-                    AstNode::IntegerLiteral { s: "2".to_string() },
-                ],
-                not_in: false,
-            }
-        };
-    }
-
-    #[test]
-    fn expression_in_select_statement() {
-        parse_rule! {
-            rule: Rule::expression,
-            input: "a IN (SELECT 1)",
-            expected: AstNode::InExpression {
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                exprs: vec![AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }],
-                not_in: false,
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::boolean_literal
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn boolean_literal() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "TRUE",
-            expected: AstNode::BooleanLiteral { s: "TRUE".to_string() }
-        };
-    }
-
-    #[test]
-    fn boolean_literal_false() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "FALSE",
-            expected: AstNode::BooleanLiteral { s: "FALSE".to_string() }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::integer_literal
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn integer_literal() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "42",
-            expected: AstNode::IntegerLiteral { s: "42".to_string() }
-        };
-    }
-
-    #[test]
-    fn integer_literal_negative() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "-42",
-            expected: AstNode::IntegerLiteral { s: "-42".to_string() }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::float_literal
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn float_literal() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "42.0E10",
-            expected: AstNode::FloatLiteral { s: "42.0E10".to_string() }
-        };
-    }
-
-    #[test]
-    fn float_literal_no_leading_zero() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: ".42E10",
-            expected: AstNode::FloatLiteral { s: ".42E10".to_string() }
-        };
-    }
-
-    #[test]
-    fn float_literal_negative_esponent() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "42.0E-10",
-            expected: AstNode::FloatLiteral { s: "42.0E-10".to_string() }
-        };
-    }
-
-    #[test]
-    fn float_literal_negative_with_negative_esponent() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "-42.0E-10",
-            expected: AstNode::FloatLiteral { s: "-42.0E-10".to_string() }
-        };
-    }
-
-    #[test]
-    fn float_literal_negative_with_negative_esponent_no_leading_zero() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "-.42E-10",
-            expected: AstNode::FloatLiteral { s: "-.42E-10".to_string() }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::decimal_literal
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn decimal_literal() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "42.0",
-            expected: AstNode::DecimalLiteral { s: "42.0".to_string() }
-        };
-    }
-
-    #[test]
-    fn decimal_literal_no_leading_zero() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: ".42",
-            expected: AstNode::DecimalLiteral { s: ".42".to_string() }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::string_literal
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn string_literal() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "'text'",
-            expected: AstNode::StringLiteral { s: "text".to_string() }
-        };
-    }
-
-    #[test]
-    fn string_literal_empty() {
-        parse_rule! {
-            rule: Rule::literal_value,
-            input: "''",
-            expected: AstNode::StringLiteral { s: "".to_string() }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::interval_literal
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn interval_literal_month() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' MONTH",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Month,
-                precision: vec![],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_month_with_precision() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' MONTH (3)",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Month,
-                precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_year() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' YEAR",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Year,
-                precision: vec![],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_year_with_precision() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' YEAR (3)",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Year,
-                precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_year_to_month() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' YEAR TO MONTH",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Year,
-                precision: vec![],
-                convert_to: Some(Interval::Month),
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_year_to_month_with_precision() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' YEAR (3) TO MONTH",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Year,
-                precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
-                convert_to: Some(Interval::Month),
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_day() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' DAY",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Day,
-                precision: vec![],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_day_with_precision() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' DAY (3)",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Day,
-                precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_day_with_precision_to_hour() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' DAY (3) TO HOUR",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Day,
-                precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
-                convert_to: Some(Interval::Hour),
-                convert_precision: None,
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_day_with_precision_to_second_with_precision() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' DAY (3) TO SECOND (4)",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Day,
-                precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
-                convert_to: Some(Interval::Second),
-                convert_precision:Some(Box::new(AstNode::IntegerLiteral { s: "4".to_string() }))
-            }
-        };
-    }
-
-    #[test]
-    fn interval_literal_second_with_precision_fractional() {
-        parse_rule! {
-            rule: Rule::interval_literal,
-            input: "INTERVAL '1' SECOND (3, 1)",
-            expected: AstNode::IntervalLiteral {
-                interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
-                period: Interval::Second,
-                precision: vec![
-                    AstNode::IntegerLiteral { s: "3".to_string() },
-                    AstNode::IntegerLiteral { s: "1".to_string() },
-                ],
-                convert_to: None,
-                convert_precision: None,
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::function_expression
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn function_expression_unknown() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "my_function(a)",
-            expected: AstNode::UnknownFunction {
-                name: Box::new(AstNode::Identifier { s: "my_function".to_string() }),
-                exprs: vec![AstNode::Identifier { s: "a".to_string() }]
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_unknown_2() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "my_function(a, b)",
-            expected: AstNode::UnknownFunction {
-                name: Box::new(AstNode::Identifier { s: "my_function".to_string() }),
-                exprs: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_unknown_3() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SCHEMA.MY_FUNCTION(a, b)",
-            expected: AstNode::UnknownFunction {
-                name: Box::new(AstNode::QualifiedIdentifier {
-                    s: vec![
-                        AstNode::Identifier { s: "SCHEMA".to_string() },
-                        AstNode::Identifier { s: "MY_FUNCTION".to_string() }
-                    ]
-                }),
-                exprs: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_coalesce() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COALESCE(a, b)",
-            expected: AstNode::CoalesceFunction {
-                exprs: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_replace() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "REPLACE(a, b)",
-            expected: AstNode::ReplaceFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                search_string: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                replace_string: None,
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_replace_with_replace_string() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "REPLACE(a, b, c)",
-            expected: AstNode::ReplaceFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                search_string: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                replace_string: Some(Box::new(AstNode::Identifier { s: "c".to_string() })),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_right() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "RIGHT(a, 3)",
-            expected: AstNode::RightFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                length: Box::new(AstNode::IntegerLiteral { s: "3".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_count() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COUNT(*)",
-            expected: AstNode::CountFunction {
-                columns: vec![AstNode::AllColumns],
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_count_column() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COUNT(a)",
-            expected: AstNode::CountFunction {
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_count_column_all() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COUNT(ALL a)",
-            expected: AstNode::CountFunction {
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_count_column_distinct() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COUNT(DISTINCT a)",
-            expected: AstNode::CountFunction {
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_count_columns() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COUNT((a, b))",
-            expected: AstNode::CountFunction {
-                columns: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ],
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_substring_short() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUBSTR(a, b)",
-            expected: AstNode::SubstringFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                position: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                length: None,
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_substring() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUBSTRING(a, b)",
-            expected: AstNode::SubstringFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                position: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                length: None,
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_substring_3() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUBSTRING(a, b, c)",
-            expected: AstNode::SubstringFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                position: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                length: Some(Box::new(AstNode::Identifier { s: "c".to_string() }))
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_substring_from() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUBSTRING(a FROM b)",
-            expected: AstNode::SubstringFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                position: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                length: None
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_substring_from_for() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUBSTRING(a FROM b FOR c)",
-            expected: AstNode::SubstringFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                position: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                length: Some(Box::new(AstNode::Identifier { s: "c".to_string() }))
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_to_date() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "TO_DATE(a)",
-            expected: AstNode::ToDateFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                format: None
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_to_date_short() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "DATE a",
-            expected: AstNode::ToDateFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                format: None
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_to_date_format() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "TO_DATE(a, b)",
-            expected: AstNode::ToDateFunction {
-                string: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                format: Some(Box::new(AstNode::Identifier { s: "b".to_string() }))
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_power() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "POWER(a, b)",
-            expected: AstNode::PowerFunction {
-                base: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                exponent: Box::new(AstNode::Identifier { s: "b".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_concat() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "CONCAT(a, b)",
-            expected: AstNode::ConcatFunction {
-                exprs: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_max() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MAX(a)",
-            expected: AstNode::MaxFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_max_all() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MAX(ALL a)",
-            expected: AstNode::MaxFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_max_distinct() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MAX(DISTINCT a)",
-            expected: AstNode::MaxFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_min() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MIN(a)",
-            expected: AstNode::MinFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_min_all() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MIN(ALL a)",
-            expected: AstNode::MinFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_min_distinct() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MIN(DISTINCT a)",
-            expected: AstNode::MinFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_sum() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUM(a)",
-            expected: AstNode::SumFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_sum_all() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUM(ALL a)",
-            expected: AstNode::SumFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_sum_distinct() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "SUM(DISTINCT a)",
-            expected: AstNode::SumFunction {
-                mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
-                expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_nested_function() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "COALESCE(POWER(1, 2), 3)",
-            expected: AstNode::CoalesceFunction{
-                exprs: vec![
-                    AstNode::PowerFunction{
-                        base: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                        exponent: Box::new(AstNode::IntegerLiteral { s: "2".to_string() })
-                    },
-                    AstNode::IntegerLiteral { s: "3".to_string() }
-                ]
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_date_trunc_function() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "DATE_TRUNC('month', '2020-06-01')",
-            expected: AstNode::DateTruncFunction{
-                format: Box::new(AstNode::StringLiteral { s: "month".to_string() }),
-                datetime: Box::new(AstNode::StringLiteral { s: "2020-06-01".to_string() }),
-            }
-        };
-    }
-
-    #[test]
-    fn function_expression_months_between_function() {
-        parse_rule! {
-            rule: Rule::function_expression,
-            input: "MONTHS_BETWEEN('2020-05-01', '2020-06-01')",
-            expected: AstNode::MonthsBetweenFunction{
-                datetime1: Box::new(AstNode::StringLiteral { s: "2020-05-01".to_string() }),
-                datetime2: Box::new(AstNode::StringLiteral { s: "2020-06-01".to_string() }),
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::identifier
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn identifier() {
-        parse_rule! {
-            rule: Rule::identifier,
-            input: "name",
-            expected: AstNode::Identifier { s: "name".to_string() }
-        };
-    }
-
-    #[test]
-    fn identifier_upper() {
-        parse_rule! {
-            rule: Rule::identifier,
-            input: "NAME",
-            expected: AstNode::Identifier { s: "NAME".to_string() }
-        };
-    }
-
-    #[test]
-    fn idenfier_alphanumeric() {
-        parse_rule! {
-            rule: Rule::identifier,
-            input: "name4",
-            expected: AstNode::Identifier { s: "name4".to_string() }
-        };
-    }
-
-    #[test]
-    fn idenfier_underscore() {
-        parse_rule! {
-            rule: Rule::identifier,
-            input: "my_name",
-            expected: AstNode::Identifier { s: "my_name".to_string() }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::with_clause
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn with_clause() {
-        parse_rule! {
-            rule: Rule::with_clause,
-            input:  "my_cte AS ( SELECT 1 )",
-            expected: AstNode::WithClause {
-                identifier: Box::new(AstNode::Identifier { s: "my_cte".to_string() }),
-                columns: vec![],
-                query: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::where_clause
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn where_with_expression() {
-        parse_rule! {
-            rule: Rule::where_clause,
-            input: "WHERE a = 1",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                op: Operation::Equal,
-                right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-            }
-        };
-    }
-
-    #[test]
-    fn where_with_expression_multi() {
-        parse_rule! {
-            rule: Rule::where_clause,
-            input: "WHERE TRUE AND a = 1",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
-                op: Operation::And,
-                right: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    op: Operation::Equal,
-                    right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-                })
-            }
-        };
-    }
-
-    #[test]
-    fn where_with_unary_expression() {
-        parse_rule! {
-            rule: Rule::where_clause,
-            input: "WHERE a IS NULL AND a = 1",
-            expected: AstNode::Expression {
-                left: Box::new(AstNode::IsNullExpression {
-                    expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    is_null: true,
-                }),
-                op: Operation::And,
-                right: Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    op: Operation::Equal,
-                    right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-                })
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::select_union_statement
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn select_union() {
-        parse_rule! {
-            rule: Rule::select_union_statement,
-            input: "SELECT 1 UNION SELECT 2",
-            expected: AstNode::SelectUnionStatement {
-                left: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-                op: Union::UnionAll,
-                right: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-            }
-        };
-    }
-
-    #[test]
-    fn select_union_all() {
-        parse_rule! {
-            rule: Rule::select_union_statement,
-            input: "SELECT 1 UNION ALL SELECT 2",
-            expected: AstNode::SelectUnionStatement {
-                left: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-                op: Union::UnionAll,
-                right: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-            }
-        };
-    }
-
-    #[test]
-    fn select_union_intersect() {
-        parse_rule! {
-            rule: Rule::select_union_statement,
-            input: "SELECT 1 INTERSECT SELECT 2",
-            expected: AstNode::SelectUnionStatement {
-                left: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-                op: Union::Intersect,
-                right: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-            }
-        };
-    }
-
-    #[test]
-    fn select_union_minus() {
-        parse_rule! {
-            rule: Rule::select_union_statement,
-            input: "SELECT 1 MINUS SELECT 2",
-            expected: AstNode::SelectUnionStatement {
-                left: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-                op: Union::Minus,
-                right: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-            }
-        };
-    }
-    #[test]
-    fn select_union_except() {
-        parse_rule! {
-            rule: Rule::select_union_statement,
-            input: "SELECT 1 EXCEPT SELECT 2",
-            expected: AstNode::SelectUnionStatement {
-                left: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-                op: Union::Except,
-                right: Box::new(AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }),
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::select_single_statement
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn select_literal() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT 1",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_with_cte() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "WITH my_cte AS ( SELECT 1 AS c ) SELECT c FROM my_cte",
-            expected: AstNode::SelectStatement {
-                common: vec![AstNode::WithClause {
-                    identifier: Box::new(AstNode::Identifier { s: "my_cte".to_string() }),
-                    columns: vec![],
-                    query: Box::new(AstNode::SelectStatement {
-                        common: vec![],
-                        mode: SelectMode::All,
-                        columns: vec![AstNode::NamedColumn {
-                            expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                            alias: "c".to_string(),
-                        }],
-                        table_exprs: vec![],
-                        where_expr: None,
-                        group_by: None,
-                    }),
-                }],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "c".to_string() }],
-                table_exprs: vec![AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier{ s: "my_cte".to_string() }),
-                    alias: None,
-                }],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_with_cte_2() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "WITH cte_1 AS ( SELECT 1 AS a ), cte_2 AS ( SELECT 1 AS b ) SELECT a FROM cte_1",
-            expected: AstNode::SelectStatement {
-                common: vec![
-                    AstNode::WithClause {
-                        identifier: Box::new(AstNode::Identifier { s: "cte_1".to_string() }),
-                        columns: vec![],
-                        query: Box::new(AstNode::SelectStatement {
-                            common: vec![],
-                            mode: SelectMode::All,
-                            columns: vec![AstNode::NamedColumn {
-                                expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                                alias: "a".to_string(),
-                            }],
-                            table_exprs: vec![],
-                            where_expr: None,
-                            group_by: None,
-                        }),
-                    },
-                    AstNode::WithClause {
-                        identifier: Box::new(AstNode::Identifier { s: "cte_2".to_string() }),
-                        columns: vec![],
-                        query: Box::new(AstNode::SelectStatement {
-                            common: vec![],
-                            mode: SelectMode::All,
-                            columns: vec![AstNode::NamedColumn {
-                                expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                                alias: "b".to_string(),
-                            }],
-                            table_exprs: vec![],
-                            where_expr: None,
-                            group_by: None,
-                        }),
-                    }
-                ],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier{ s: "cte_1".to_string() }),
-                    alias: None,
-                }],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_with_cte_with_union() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "WITH cte AS ( SELECT 1 AS a UNION SELECT 2 AS a ) SELECT a FROM cte",
-            expected: AstNode::SelectStatement {
-                common: vec![AstNode::WithClause {
-                    identifier: Box::new(AstNode::Identifier { s: "cte".to_string() }),
-                    columns: vec![],
-                    query: Box::new(AstNode::SelectUnionStatement {
-                        left: Box::new(AstNode::SelectStatement {
-                            common: vec![],
-                            mode: SelectMode::All,
-                            columns: vec![AstNode::NamedColumn {
-                                expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                                alias: "a".to_string(),
-                            }],
-                            table_exprs: vec![],
-                            where_expr: None,
-                            group_by: None,
-                        }),
-                        op: Union::UnionAll,
-                        right: Box::new(AstNode::SelectStatement {
-                            common: vec![],
-                            mode: SelectMode::All,
-                            columns: vec![AstNode::NamedColumn {
-                                expr: Box::new(AstNode::IntegerLiteral { s: "2".to_string() }),
-                                alias: "a".to_string(),
-                            }],
-                            table_exprs: vec![],
-                            where_expr: None,
-                            group_by: None,
-                        }),
-                    }),
-                }],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier{ s: "cte".to_string() }),
-                    alias: None,
-                }],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_two_fields_from_table() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a, b FROM table",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ],
-                table_exprs: vec![
-                    AstNode::NamedTableExpression {
-                        name: Box::new(AstNode::Identifier{ s: "table".to_string() }),
-                        alias: None,
-                    }
-                ],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_two_fields_from_table_with_schema() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a, b FROM schema.table",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ],
-                table_exprs: vec![AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::QualifiedIdentifier {
-                        s: vec![
-                            AstNode::Identifier { s: "schema".to_string() },
-                            AstNode::Identifier { s: "table".to_string() }
-                        ]
-                    }),
-                    alias: None,
-                }],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_two_fields_from_named_table() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a, b FROM table AS alias",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ],
-                table_exprs: vec![
-                    AstNode::NamedTableExpression{
-                        name: Box::new(AstNode::Identifier { s: "table".to_string() }),
-                        alias: Some("alias".to_string()),
-                    },
-                ],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_two_fields_from_named_table_2() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a, b FROM schema.table AS alias",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![
-                    AstNode::Identifier { s: "a".to_string() },
-                    AstNode::Identifier { s: "b".to_string() }
-                ],
-                table_exprs: vec![
-                    AstNode::NamedTableExpression{
-                        name: Box::new(
-                            AstNode::QualifiedIdentifier {
-                                s: vec![
-                                    AstNode::Identifier { s: "schema".to_string() },
-                                    AstNode::Identifier { s: "table".to_string() }
-                                ]
-                            }
-                        ),
-                        alias: Some("alias".to_string()),
-                    },
-                ],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_all_from_named_table_short() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT * FROM schema.table alias",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::AllColumns],
-                table_exprs: vec![
-                    AstNode::NamedTableExpression{
-                        name: Box::new(
-                            AstNode::QualifiedIdentifier {
-                                s: vec![
-                                    AstNode::Identifier { s: "schema".to_string() },
-                                    AstNode::Identifier { s: "table".to_string() }
-                                ]
-                            }
-                        ),
-                        alias: Some("alias".to_string()),
-                    },
-                ],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_join() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT * FROM a JOIN b ON a.id = b.id",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::AllColumns],
-                table_exprs: vec![
-                    AstNode::NamedTableExpression {
-                        name: Box::new(AstNode::Identifier{ s: "a".to_string() }),
-                        alias: None,
-                    },
-                    AstNode::JoinClause {
-                        join_type: Box::new(AstNode::InnerJoin),
-                        table_expr: Box::new(AstNode::NamedTableExpression {
-                            name: Box::new(AstNode::Identifier{ s: "b".to_string() }),
-                            alias: None,
-                        }),
-                        constraint: Box::new(AstNode::JoinConstraintOn {
-                            expr: Box::new(AstNode::Expression {
-                                left: Box::new(AstNode::QualifiedIdentifier {
-                                    s: vec![
-                                        AstNode::Identifier { s: "a".to_string() },
-                                        AstNode::Identifier { s: "id".to_string() }
-                                    ]
-                                }),
-                                op: Operation::Equal,
-                                right: Box::new(AstNode::QualifiedIdentifier {
-                                    s: vec![
-                                        AstNode::Identifier { s: "b".to_string() },
-                                        AstNode::Identifier { s: "id".to_string() }
-                                    ]
-                                }),
-                            })
-                        }),
-                    }
-                ],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_where_clause() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT * WHERE a = 1",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::AllColumns],
-                table_exprs: vec![],
-                where_expr: Some(Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                    op: Operation::Equal,
-                    right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                })),
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_where_clause_from_table() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT * FROM a WHERE b = 1",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::AllColumns],
-                table_exprs: vec![AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier{ s: "a".to_string() }),
-                    alias: None,
-                }],
-                where_expr: Some(Box::new(AstNode::Expression {
-                    left: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                    op: Operation::Equal,
-                    right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
-                })),
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_distinct() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT DISTINCT a",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::Distinct,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_all() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT ALL a",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_from_group_by() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a FROM t GROUP BY a",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![AstNode::NamedTableExpression {
-                    name: Box::new(AstNode::Identifier { s: "t".to_string() }),
-                    alias: None
-                }],
-                where_expr: None,
-                group_by: Some(Box::new(AstNode::GroupBy {
-                    groupings: vec![AstNode::Identifier { s: "a".to_string() }],
-                    having: None
-                }))
-            }
-        };
-    }
-
-    #[test]
-    fn select_group_by() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a GROUP BY a",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: Some(Box::new(AstNode::GroupBy {
-                    groupings: vec![AstNode::Identifier { s: "a".to_string() }],
-                    having: None
-                }))
-            }
-        };
-    }
-
-    #[test]
-    fn select_group_by_positional() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT a GROUP BY 1",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::Identifier { s: "a".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: Some(Box::new(AstNode::GroupBy {
-                    groupings: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    having: None
-                }))
-            }
-        };
-    }
-
-    #[test]
-    fn select_from_subquery() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT 1 FROM (SELECT 1)",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                table_exprs: vec![AstNode::SelectStatement {
-                    common: vec![],
-                    mode: SelectMode::All,
-                    columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                    table_exprs: vec![],
-                    where_expr: None,
-                    group_by: None,
-                }],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn select_join_clause_multiple() {
-        parse_rule! {
-            rule: Rule::select_statement,
-            input: "SELECT * FROM a JOIN b ON a.id = b.id JOIN c ON a.id = c.id",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::AllColumns],
-                table_exprs: vec![
-                    AstNode::NamedTableExpression {
-                        name: Box::new(AstNode::Identifier { s: "a".to_string() }),
-                        alias: None,
-                    },
-                    AstNode::JoinClause {
-                        join_type: Box::new(AstNode::InnerJoin),
-                        table_expr: Box::new(AstNode::NamedTableExpression {
-                            name: Box::new(AstNode::Identifier { s: "b".to_string() }),
-                            alias: None,
-                        }),
-                        constraint: Box::new(AstNode::JoinConstraintOn {
-                            expr: Box::new(AstNode::Expression {
-                                left: Box::new(AstNode::QualifiedIdentifier {
-                                    s: vec![
-                                        AstNode::Identifier { s: "a".to_string() },
-                                        AstNode::Identifier { s: "id".to_string() }
-                                    ]
-                                }),
-                                op: Operation::Equal,
-                                right: Box::new(AstNode::QualifiedIdentifier {
-                                    s: vec![
-                                        AstNode::Identifier { s: "b".to_string() },
-                                        AstNode::Identifier { s: "id".to_string() }
-                                    ]
-                                }),
-                            })
-                        }),
-                    },
-                    AstNode::JoinClause {
-                        join_type: Box::new(AstNode::InnerJoin),
-                        table_expr: Box::new(AstNode::NamedTableExpression {
-                            name: Box::new(AstNode::Identifier { s: "c".to_string() }),
-                            alias: None,
-                        }),
-                        constraint: Box::new(AstNode::JoinConstraintOn {
-                            expr: Box::new(AstNode::Expression {
-                                left: Box::new(AstNode::QualifiedIdentifier {
-                                    s: vec![
-                                        AstNode::Identifier { s: "a".to_string() },
-                                        AstNode::Identifier { s: "id".to_string() }
-                                    ]
-                                }),
-                                op: Operation::Equal,
-                                right: Box::new(AstNode::QualifiedIdentifier {
-                                    s: vec![
-                                        AstNode::Identifier { s: "c".to_string() },
-                                        AstNode::Identifier { s: "id".to_string() }
-                                    ]
-                                }),
-                            })
-                        }),
-                    }
-                ],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    // ------------------------------------------------------------------
-    // Rule::sql_statement
-    // ------------------------------------------------------------------
-
-    #[test]
-    fn sql_statement_comment_before_statement() {
-        parse_rule! {
-            rule: Rule::sql_statement,
-            input:
-            r#"
-                -- comment
-                SELECT 1
-            "#.trim(),
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn sql_statement_comment_after_statement() {
-        parse_rule! {
-            rule: Rule::sql_statement,
-            input:
-            r#"
-                SELECT 1
-                -- comment
-            "#.trim(),
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn sql_statement_comment_inline() {
-        parse_rule! {
-            rule: Rule::sql_statement,
-            input: "SELECT 1 -- comment",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
-
-    #[test]
-    fn not_a_comment() {
-        parse_rule! {
-            rule: Rule::sql_statement,
-            input: "SELECT '--'",
-            expected: AstNode::SelectStatement {
-                common: vec![],
-                mode: SelectMode::All,
-                columns: vec![AstNode::StringLiteral { s: "--".to_string() }],
-                table_exprs: vec![],
-                where_expr: None,
-                group_by: None,
-            }
-        };
-    }
+            expected: Some(AstNode::BooleanType)
+        };
+    }
+
+    // #[test]
+    // fn data_type_double() {
+    //     parse_rule! {
+    //         rule: Rule::data_type,
+    //         input: "DOUBLE",
+    //         expected: AstNode::DoubleType
+    //     };
+    // }
+
+    // #[test]
+    // fn data_type_local_timestamp() {
+    //     parse_rule! {
+    //         rule: Rule::data_type,
+    //         input: "TIMESTAMP",
+    //         expected: AstNode::TimestampType
+    //     };
+    // }
+
+    // #[test]
+    // fn data_type_timestamp() {
+    //     parse_rule! {
+    //         rule: Rule::data_type,
+    //         input: "TIMESTAMP",
+    //         expected: AstNode::TimestampType
+    //     };
+    // }
+
+    // #[test]
+    // fn data_type_decimal() {
+    //     parse_rule! {
+    //         rule: Rule::data_type,
+    //         input: "DECIMAL(10, 2)",
+    //         expected: AstNode::DecimalType{
+    //             p: Box::new(AstNode::IntegerLiteral { s: "10".to_string() }),
+    //             s: Box::new(AstNode::IntegerLiteral { s: "2".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn data_type_char() {
+    //     parse_rule! {
+    //         rule: Rule::data_type,
+    //         input: "CHAR(1)",
+    //         expected: AstNode::CharType {
+    //             n: Box::new(
+    //             AstNode::IntegerLiteral { s: "1".to_string() }
+    //         )}
+    //     };
+    // }
+
+    // #[test]
+    // fn data_type_date() {
+    //     parse_rule! {
+    //         rule: Rule::data_type,
+    //         input: "DATE",
+    //         expected: AstNode::DateType
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::coalesce_function
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn coalesce_function() {
+    //     parse_rule! {
+    //         rule: Rule::coalesce_function,
+    //         input: "COALESCE(a, b)",
+    //         expected: AstNode::CoalesceFunction {
+    //             exprs: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() },
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn coalesce_function_3() {
+    //     parse_rule! {
+    //         rule: Rule::coalesce_function,
+    //         input: "COALESCE(a, b, c)",
+    //         expected: AstNode::CoalesceFunction {
+    //             exprs: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() },
+    //                 AstNode::Identifier { s: "c".to_string() },
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::cast_function
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn cast_function() {
+    //     parse_rule! {
+    //         rule: Rule::cast_function,
+    //         input: "CAST(a AS BOOLEAN)",
+    //         expected: AstNode::CastFunction{
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             data_type: Box::new(AstNode::BooleanType)
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn cast_function_with_expression() {
+    //     parse_rule! {
+    //         rule: Rule::cast_function,
+    //         input: "CAST(a / b AS BOOLEAN)",
+    //         expected: AstNode::CastFunction{
+    //             expr: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 op: Operation::Divide,
+    //                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             }),
+    //             data_type: Box::new(AstNode::BooleanType)
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::column
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn column_identifier() {
+    //     parse_rule! {
+    //         rule: Rule::column,
+    //         input: "a",
+    //         expected: AstNode::Identifier { s: "a".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn column_integer() {
+    //     parse_rule! {
+    //         rule: Rule::column,
+    //         input: "42",
+    //         expected: AstNode::IntegerLiteral { s: "42".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn column_named_column() {
+    //     parse_rule! {
+    //         rule: Rule::column,
+    //         input: "a AS b",
+    //         expected: AstNode::NamedColumn {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             alias: "b".to_string(),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn column_named_column_2() {
+    //     parse_rule! {
+    //         rule: Rule::column,
+    //         input: "a.b AS c",
+    //         expected: AstNode::NamedColumn {
+    //             expr: Box::new(AstNode::QualifiedIdentifier {
+    //                 s: vec![
+    //                     AstNode::Identifier { s: "a".to_string() },
+    //                     AstNode::Identifier { s: "b".to_string() }
+    //                 ]
+    //             }),
+    //             alias: "c".to_string(),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn column_named_column_function_expression() {
+    //     parse_rule! {
+    //         rule: Rule::column,
+    //         input: "COALESCE(1, 2) AS a",
+    //         expected: AstNode::NamedColumn {
+    //             expr: Box::new(AstNode::CoalesceFunction {
+    //                 exprs: vec![
+    //                     AstNode::IntegerLiteral { s: "1".to_string() },
+    //                     AstNode::IntegerLiteral { s: "2".to_string() }
+    //                 ]
+    //             }),
+    //             alias: "a".to_string(),
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::join_clause
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn join_clause() {
+    //     parse_rule! {
+    //         rule: Rule::join_clause,
+    //         input: "JOIN b ON a.id = b.id",
+    //         expected: AstNode::JoinClause {
+    //             join_type: Box::new(AstNode::InnerJoin),
+    //             table_expr: Box::new(AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                 alias: None,
+    //             }),
+    //             constraint: Box::new(AstNode::JoinConstraintOn {
+    //                 expr: Box::new(AstNode::Expression {
+    //                     left: Box::new(AstNode::QualifiedIdentifier {
+    //                         s: vec![
+    //                             AstNode::Identifier { s: "a".to_string() },
+    //                             AstNode::Identifier { s: "id".to_string() }
+    //                         ]
+    //                     }),
+    //                     op: Operation::Equal,
+    //                     right: Box::new(AstNode::QualifiedIdentifier {
+    //                         s: vec![
+    //                             AstNode::Identifier { s: "b".to_string() },
+    //                             AstNode::Identifier { s: "id".to_string() }
+    //                         ]
+    //                     }),
+    //                 })}
+    //             ),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn join_clause_named_tables() {
+    //     parse_rule! {
+    //         rule: Rule::join_clause,
+    //         input: "JOIN b t2 ON t1.id = t2.id",
+    //         expected: AstNode::JoinClause {
+    //             join_type: Box::new(AstNode::InnerJoin),
+    //             table_expr: Box::new(AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                 alias: Some("t2".to_string()),
+    //             }),
+    //             constraint: Box::new(AstNode::JoinConstraintOn {
+    //                 expr: Box::new(AstNode::Expression {
+    //                     left: Box::new(AstNode::QualifiedIdentifier {
+    //                         s: vec![
+    //                             AstNode::Identifier { s: "t1".to_string() },
+    //                             AstNode::Identifier { s: "id".to_string() }
+    //                         ]
+    //                     }),
+    //                     op: Operation::Equal,
+    //                     right: Box::new(AstNode::QualifiedIdentifier {
+    //                         s: vec![
+    //                             AstNode::Identifier { s: "t2".to_string() },
+    //                             AstNode::Identifier { s: "id".to_string() }
+    //                         ]
+    //                     }),
+    //                 })}
+    //             ),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn join_clause_with_and() {
+    //     parse_rule! {
+    //         rule: Rule::join_clause,
+    //         input: "JOIN b ON a.id = b.id AND a.field = b.field",
+    //         expected: AstNode::JoinClause {
+    //             join_type: Box::new(AstNode::InnerJoin),
+    //             table_expr: Box::new(AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                 alias: None,
+    //             }),
+    //             constraint: Box::new(AstNode::JoinConstraintOn {
+    //                 expr: Box::new(AstNode::Expression {
+    //                     left: Box::new(AstNode::Expression {
+    //                         left: Box::new(AstNode::QualifiedIdentifier {
+    //                             s: vec![
+    //                                 AstNode::Identifier { s: "a".to_string() },
+    //                                 AstNode::Identifier { s: "id".to_string() }
+    //                             ]
+    //                         }),
+    //                         op: Operation::Equal,
+    //                         right: Box::new(AstNode::QualifiedIdentifier {
+    //                             s: vec![
+    //                                 AstNode::Identifier { s: "b".to_string() },
+    //                                 AstNode::Identifier { s: "id".to_string() }
+    //                             ]
+    //                         }),
+    //                     }),
+    //                     op: Operation::And,
+    //                     right: Box::new(AstNode::Expression {
+    //                         left: Box::new(AstNode::QualifiedIdentifier {
+    //                             s: vec![
+    //                                 AstNode::Identifier { s: "a".to_string() },
+    //                                 AstNode::Identifier { s: "field".to_string() }
+    //                             ]
+    //                         }),
+    //                         op: Operation::Equal,
+    //                         right: Box::new(AstNode::QualifiedIdentifier {
+    //                             s: vec![
+    //                                 AstNode::Identifier { s: "b".to_string() },
+    //                                 AstNode::Identifier { s: "field".to_string() }
+    //                             ]
+    //                         }),
+    //                     })
+    //                 })
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::join_type
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn join_type_inner_join() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "JOIN",
+    //         expected: AstNode::InnerJoin
+    //     };
+    // }
+
+    // #[test]
+    // fn join_type_inner_join_2() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "INNER JOIN",
+    //         expected: AstNode::InnerJoin
+    //     };
+    // }
+
+    // #[test]
+    // fn join_type_left_outer_join() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "LEFT JOIN",
+    //         expected: AstNode::LeftOuterJoin
+    //     };
+    // }
+
+    // #[test]
+    // fn join_type_left_outer_join_2() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "LEFT OUTER JOIN",
+    //         expected: AstNode::LeftOuterJoin
+    //     };
+    // }
+
+    // #[test]
+    // fn join_type_right_outer_join() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "RIGHT JOIN",
+    //         expected: AstNode::RightOuterJoin
+    //     };
+    // }
+
+    // #[test]
+    // fn join_type_right_outer_join_2() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "RIGHT OUTER JOIN",
+    //         expected: AstNode::RightOuterJoin
+    //     };
+    // }
+
+    // #[test]
+    // fn join_type_full_outer() {
+    //     parse_rule! {
+    //         rule: Rule::join_type,
+    //         input: "FULL OUTER JOIN",
+    //         expected: AstNode::FullOuterJoin
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::join_constraint
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn join_constraint_on() {
+    //     parse_rule! {
+    //         rule: Rule::join_constraint,
+    //         input: "ON a = b",
+    //         expected: AstNode::JoinConstraintOn {
+    //             expr: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 op: Operation::Equal,
+    //                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn join_constraint_using() {
+    //     parse_rule! {
+    //         rule: Rule::join_constraint,
+    //         input: "USING (a)",
+    //         expected: AstNode::JoinConstraintUsing {
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn join_constraint_using_2() {
+    //     parse_rule! {
+    //         rule: Rule::join_constraint,
+    //         input: "USING (a, b)",
+    //         expected: AstNode::JoinConstraintUsing {
+    //             columns: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() },
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::expression
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn expression_identifier() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a",
+    //         expected: AstNode::Identifier { s: "a".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_qualified_identifier() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a.b",
+    //         expected: AstNode::QualifiedIdentifier {
+    //             s: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_integer() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "42",
+    //         expected: AstNode::IntegerLiteral { s: "42".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_signed_expression() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "-42",
+    //         expected: AstNode::SignedExpression{
+    //             sign: Sign::Negative,
+    //             expr: Box::new(AstNode::IntegerLiteral { s: "42".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_with_comment() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: r#"
+    //             a
+    //             -- comment
+    //             AND b
+    //         "#.trim(),
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::And,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_equals() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a = b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Equal,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_equals_literal() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a = 1",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Equal,
+    //             right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_not_equal() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a != b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::NotEqual,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_greater_than() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a > b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::GreaterThan,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_greater_or_equal_than() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a >= b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::GreaterOrEqualThan,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_less_than() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a < b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::LessThan,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_less_or_equal_than() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a <= b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::LessOrEqualThan,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_qualified_identifier_equals() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a.b = c",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::QualifiedIdentifier {
+    //                 s: vec![
+    //                     AstNode::Identifier { s: "a".to_string() },
+    //                     AstNode::Identifier { s: "b".to_string() },
+    //                 ]
+    //             }),
+    //             op: Operation::Equal,
+    //             right: Box::new(AstNode::Identifier { s: "c".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_case_expression() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a = CASE WHEN 1 THEN 'one' END",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Equal,
+    //             right: Box::new(AstNode::CaseExpression {
+    //                 expr: None,
+    //                 when_expr: vec![AstNode::WhenClause{
+    //                     guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                     body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //                 }],
+    //                 else_expr: None
+    //             })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_prec_climber_equality() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a = b - c",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Equal,
+    //             right: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                 op: Operation::Subtract,
+    //                 right: Box::new(AstNode::Identifier { s: "c".to_string() })
+    //             })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_with_interval_literal() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a - INTERVAL '1' MONTH",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Subtract,
+    //             right: Box::new(AstNode::IntervalLiteral {
+    //                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //                 period: Interval::Month,
+    //                 precision: vec![],
+    //                 convert_to: None,
+    //                 convert_precision: None,
+    //             })
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::unary_expression
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn unary_expression_is_null() {
+    //     parse_rule! {
+    //         rule: Rule::unary_expression,
+    //         input: "a IS NULL",
+    //         expected: AstNode::IsNullExpression {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             is_null: true,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn unary_expression_is_not_null() {
+    //     parse_rule! {
+    //         rule: Rule::unary_expression,
+    //         input: "a IS NOT NULL",
+    //         expected: AstNode::IsNullExpression {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             is_null: false,
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::case_expression
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn case_expression() {
+    //     parse_rule! {
+    //         rule: Rule::case_expression,
+    //         input: "CASE a WHEN 1 THEN 'one' END",
+    //         expected: AstNode::CaseExpression {
+    //             expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
+    //             when_expr: vec![AstNode::WhenClause{
+    //                 guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                 body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //             }],
+    //             else_expr: None
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn case_expression_when_with_function() {
+    //     parse_rule! {
+    //         rule: Rule::case_expression,
+    //         input: "CASE WHEN SUBSTR('abc', 1) THEN 'one' END",
+    //         expected: AstNode::CaseExpression {
+    //             expr: None,
+    //             when_expr: vec![AstNode::WhenClause{
+    //                 guard: Box::new(AstNode::SubstringFunction {
+    //                     string: Box::new(AstNode::StringLiteral { s: "abc".to_string() }),
+    //                     position: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                     length: None
+    //                 }),
+    //                 body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //             }],
+    //             else_expr: None
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn case_expression_no_case_expression() {
+    //     parse_rule! {
+    //         rule: Rule::case_expression,
+    //         input: "CASE WHEN 1 THEN 'one' END",
+    //         expected: AstNode::CaseExpression {
+    //             expr: None,
+    //             when_expr: vec![AstNode::WhenClause{
+    //                 guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                 body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //             }],
+    //             else_expr: None
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn case_expression_with_else() {
+    //     parse_rule! {
+    //         rule: Rule::case_expression,
+    //         input: "CASE a WHEN 1 THEN 'one' ELSE 'zero' END",
+    //         expected: AstNode::CaseExpression {
+    //             expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
+    //             when_expr: vec![AstNode::WhenClause {
+    //                 guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                 body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //             }],
+    //             else_expr: Some(Box::new(AstNode::StringLiteral { s: "zero".to_string() }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn case_expression_else_with_function() {
+    //     parse_rule! {
+    //         rule: Rule::case_expression,
+    //         input: "CASE WHEN 1 THEN 'one' ELSE SUBSTR('abc', 1) END",
+    //         expected: AstNode::CaseExpression {
+    //             expr: None,
+    //             when_expr: vec![AstNode::WhenClause {
+    //                 guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                 body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //             }],
+    //             else_expr: Some(Box::new(AstNode::SubstringFunction {
+    //                 string: Box::new(AstNode::StringLiteral { s: "abc".to_string() }),
+    //                 position: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                 length: None
+    //             }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn case_expression_more_cases() {
+    //     parse_rule! {
+    //         rule: Rule::case_expression,
+    //         input: "CASE a WHEN 1 THEN 'one' WHEN 2 THEN 'two' END",
+    //         expected: AstNode::CaseExpression {
+    //             expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
+    //             when_expr: vec![
+    //                 AstNode::WhenClause {
+    //                     guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                     body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
+    //                 },
+    //                 AstNode::WhenClause {
+    //                     guard: Box::new(AstNode::IntegerLiteral { s: "2".to_string() }),
+    //                     body: Box::new(AstNode::StringLiteral { s: "two".to_string() }),
+    //                 },
+    //             ],
+    //             else_expr: None
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::expression
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn expression_concat_operator() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a || b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Concat,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_and_operator() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a AND b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::And,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_or_operator() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a OR b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Or,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_binary_concat() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "COALESCE(1) || b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::CoalesceFunction{
+    //                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
+    //             }),
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             op: Operation::Concat
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_binary_concat_2() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "b || COALESCE(1)",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             right: Box::new(AstNode::CoalesceFunction{
+    //                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
+    //             }),
+    //             op: Operation::Concat
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_binary_concat_3() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "COALESCE(1) || COALESCE(2)",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::CoalesceFunction{
+    //                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
+    //             }),
+    //             right: Box::new(AstNode::CoalesceFunction{
+    //                 exprs: vec![AstNode::IntegerLiteral { s: "2".to_string() }]
+    //             }),
+    //             op: Operation::Concat
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_binary_concat_4() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "COALESCE(1) || a || COALESCE(2)",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::CoalesceFunction{
+    //                     exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
+    //                 }),
+    //                 op: Operation::Concat,
+    //                 right: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             }),
+    //             op: Operation::Concat,
+    //             right: Box::new(AstNode::CoalesceFunction{
+    //                 exprs: vec![AstNode::IntegerLiteral { s: "2".to_string() }]
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_parens() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a + (b + c)",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Add,
+    //             right: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                 op: Operation::Add,
+    //                 right: Box::new(AstNode::Identifier { s: "c".to_string() }),
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_parens_2() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "(a + b) + c",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 op: Operation::Add,
+    //                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             }),
+    //             op: Operation::Add,
+    //             right: Box::new(AstNode::Identifier { s: "c".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_multiply() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a * b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Multiply,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_divide() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a / b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Divide,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_subtract() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a - b",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Subtract,
+    //             right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_and_boolean_literal() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "TRUE AND a",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
+    //             op: Operation::And,
+    //             right: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_unary_expression() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a IS NULL AND TRUE",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::IsNullExpression {
+    //                expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                is_null: true,
+    //             }),
+    //             op: Operation::And,
+    //             right: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_in_expression() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a IN (1)",
+    //         expected: AstNode::InExpression {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             not_in: false,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_in_not_expression() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a NOT IN (1)",
+    //         expected: AstNode::InExpression {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             not_in: true,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_in_expressions() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a IN (1, 2)",
+    //         expected: AstNode::InExpression {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             exprs: vec![
+    //                 AstNode::IntegerLiteral { s: "1".to_string() },
+    //                 AstNode::IntegerLiteral { s: "2".to_string() },
+    //             ],
+    //             not_in: false,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn expression_in_select_statement() {
+    //     parse_rule! {
+    //         rule: Rule::expression,
+    //         input: "a IN (SELECT 1)",
+    //         expected: AstNode::InExpression {
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             exprs: vec![AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }],
+    //             not_in: false,
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::boolean_literal
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn boolean_literal() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "TRUE",
+    //         expected: AstNode::BooleanLiteral { s: "TRUE".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn boolean_literal_false() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "FALSE",
+    //         expected: AstNode::BooleanLiteral { s: "FALSE".to_string() }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::integer_literal
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn integer_literal() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "42",
+    //         expected: AstNode::IntegerLiteral { s: "42".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn integer_literal_negative() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "-42",
+    //         expected: AstNode::IntegerLiteral { s: "-42".to_string() }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::float_literal
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn float_literal() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "42.0E10",
+    //         expected: AstNode::FloatLiteral { s: "42.0E10".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn float_literal_no_leading_zero() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: ".42E10",
+    //         expected: AstNode::FloatLiteral { s: ".42E10".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn float_literal_negative_esponent() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "42.0E-10",
+    //         expected: AstNode::FloatLiteral { s: "42.0E-10".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn float_literal_negative_with_negative_esponent() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "-42.0E-10",
+    //         expected: AstNode::FloatLiteral { s: "-42.0E-10".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn float_literal_negative_with_negative_esponent_no_leading_zero() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "-.42E-10",
+    //         expected: AstNode::FloatLiteral { s: "-.42E-10".to_string() }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::decimal_literal
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn decimal_literal() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "42.0",
+    //         expected: AstNode::DecimalLiteral { s: "42.0".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn decimal_literal_no_leading_zero() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: ".42",
+    //         expected: AstNode::DecimalLiteral { s: ".42".to_string() }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::string_literal
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn string_literal() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "'text'",
+    //         expected: AstNode::StringLiteral { s: "text".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn string_literal_empty() {
+    //     parse_rule! {
+    //         rule: Rule::literal_value,
+    //         input: "''",
+    //         expected: AstNode::StringLiteral { s: "".to_string() }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::interval_literal
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn interval_literal_month() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' MONTH",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Month,
+    //             precision: vec![],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_month_with_precision() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' MONTH (3)",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Month,
+    //             precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_year() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' YEAR",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Year,
+    //             precision: vec![],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_year_with_precision() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' YEAR (3)",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Year,
+    //             precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_year_to_month() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' YEAR TO MONTH",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Year,
+    //             precision: vec![],
+    //             convert_to: Some(Interval::Month),
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_year_to_month_with_precision() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' YEAR (3) TO MONTH",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Year,
+    //             precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
+    //             convert_to: Some(Interval::Month),
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_day() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' DAY",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Day,
+    //             precision: vec![],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_day_with_precision() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' DAY (3)",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Day,
+    //             precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_day_with_precision_to_hour() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' DAY (3) TO HOUR",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Day,
+    //             precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
+    //             convert_to: Some(Interval::Hour),
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_day_with_precision_to_second_with_precision() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' DAY (3) TO SECOND (4)",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Day,
+    //             precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
+    //             convert_to: Some(Interval::Second),
+    //             convert_precision:Some(Box::new(AstNode::IntegerLiteral { s: "4".to_string() }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn interval_literal_second_with_precision_fractional() {
+    //     parse_rule! {
+    //         rule: Rule::interval_literal,
+    //         input: "INTERVAL '1' SECOND (3, 1)",
+    //         expected: AstNode::IntervalLiteral {
+    //             interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
+    //             period: Interval::Second,
+    //             precision: vec![
+    //                 AstNode::IntegerLiteral { s: "3".to_string() },
+    //                 AstNode::IntegerLiteral { s: "1".to_string() },
+    //             ],
+    //             convert_to: None,
+    //             convert_precision: None,
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::function_expression
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn function_expression_unknown() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "my_function(a)",
+    //         expected: AstNode::UnknownFunction {
+    //             name: Box::new(AstNode::Identifier { s: "my_function".to_string() }),
+    //             exprs: vec![AstNode::Identifier { s: "a".to_string() }]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_unknown_2() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "my_function(a, b)",
+    //         expected: AstNode::UnknownFunction {
+    //             name: Box::new(AstNode::Identifier { s: "my_function".to_string() }),
+    //             exprs: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_unknown_3() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SCHEMA.MY_FUNCTION(a, b)",
+    //         expected: AstNode::UnknownFunction {
+    //             name: Box::new(AstNode::QualifiedIdentifier {
+    //                 s: vec![
+    //                     AstNode::Identifier { s: "SCHEMA".to_string() },
+    //                     AstNode::Identifier { s: "MY_FUNCTION".to_string() }
+    //                 ]
+    //             }),
+    //             exprs: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_coalesce() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COALESCE(a, b)",
+    //         expected: AstNode::CoalesceFunction {
+    //             exprs: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_replace() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "REPLACE(a, b)",
+    //         expected: AstNode::ReplaceFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             search_string: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             replace_string: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_replace_with_replace_string() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "REPLACE(a, b, c)",
+    //         expected: AstNode::ReplaceFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             search_string: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             replace_string: Some(Box::new(AstNode::Identifier { s: "c".to_string() })),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_right() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "RIGHT(a, 3)",
+    //         expected: AstNode::RightFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             length: Box::new(AstNode::IntegerLiteral { s: "3".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_count() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COUNT(*)",
+    //         expected: AstNode::CountFunction {
+    //             columns: vec![AstNode::AllColumns],
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_count_column() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COUNT(a)",
+    //         expected: AstNode::CountFunction {
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_count_column_all() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COUNT(ALL a)",
+    //         expected: AstNode::CountFunction {
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_count_column_distinct() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COUNT(DISTINCT a)",
+    //         expected: AstNode::CountFunction {
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_count_columns() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COUNT((a, b))",
+    //         expected: AstNode::CountFunction {
+    //             columns: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ],
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_substring_short() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUBSTR(a, b)",
+    //         expected: AstNode::SubstringFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             position: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             length: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_substring() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUBSTRING(a, b)",
+    //         expected: AstNode::SubstringFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             position: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             length: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_substring_3() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUBSTRING(a, b, c)",
+    //         expected: AstNode::SubstringFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             position: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             length: Some(Box::new(AstNode::Identifier { s: "c".to_string() }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_substring_from() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUBSTRING(a FROM b)",
+    //         expected: AstNode::SubstringFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             position: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             length: None
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_substring_from_for() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUBSTRING(a FROM b FOR c)",
+    //         expected: AstNode::SubstringFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             position: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //             length: Some(Box::new(AstNode::Identifier { s: "c".to_string() }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_to_date() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "TO_DATE(a)",
+    //         expected: AstNode::ToDateFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             format: None
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_to_date_short() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "DATE a",
+    //         expected: AstNode::ToDateFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             format: None
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_to_date_format() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "TO_DATE(a, b)",
+    //         expected: AstNode::ToDateFunction {
+    //             string: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             format: Some(Box::new(AstNode::Identifier { s: "b".to_string() }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_power() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "POWER(a, b)",
+    //         expected: AstNode::PowerFunction {
+    //             base: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             exponent: Box::new(AstNode::Identifier { s: "b".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_concat() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "CONCAT(a, b)",
+    //         expected: AstNode::ConcatFunction {
+    //             exprs: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_max() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MAX(a)",
+    //         expected: AstNode::MaxFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_max_all() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MAX(ALL a)",
+    //         expected: AstNode::MaxFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_max_distinct() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MAX(DISTINCT a)",
+    //         expected: AstNode::MaxFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_min() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MIN(a)",
+    //         expected: AstNode::MinFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_min_all() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MIN(ALL a)",
+    //         expected: AstNode::MinFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_min_distinct() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MIN(DISTINCT a)",
+    //         expected: AstNode::MinFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_sum() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUM(a)",
+    //         expected: AstNode::SumFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_sum_all() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUM(ALL a)",
+    //         expected: AstNode::SumFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_sum_distinct() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "SUM(DISTINCT a)",
+    //         expected: AstNode::SumFunction {
+    //             mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
+    //             expr: Box::new(AstNode::Identifier { s: "a".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_nested_function() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "COALESCE(POWER(1, 2), 3)",
+    //         expected: AstNode::CoalesceFunction{
+    //             exprs: vec![
+    //                 AstNode::PowerFunction{
+    //                     base: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                     exponent: Box::new(AstNode::IntegerLiteral { s: "2".to_string() })
+    //                 },
+    //                 AstNode::IntegerLiteral { s: "3".to_string() }
+    //             ]
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_date_trunc_function() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "DATE_TRUNC('month', '2020-06-01')",
+    //         expected: AstNode::DateTruncFunction{
+    //             format: Box::new(AstNode::StringLiteral { s: "month".to_string() }),
+    //             datetime: Box::new(AstNode::StringLiteral { s: "2020-06-01".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn function_expression_months_between_function() {
+    //     parse_rule! {
+    //         rule: Rule::function_expression,
+    //         input: "MONTHS_BETWEEN('2020-05-01', '2020-06-01')",
+    //         expected: AstNode::MonthsBetweenFunction{
+    //             datetime1: Box::new(AstNode::StringLiteral { s: "2020-05-01".to_string() }),
+    //             datetime2: Box::new(AstNode::StringLiteral { s: "2020-06-01".to_string() }),
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::identifier
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn identifier() {
+    //     parse_rule! {
+    //         rule: Rule::identifier,
+    //         input: "name",
+    //         expected: AstNode::Identifier { s: "name".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn identifier_upper() {
+    //     parse_rule! {
+    //         rule: Rule::identifier,
+    //         input: "NAME",
+    //         expected: AstNode::Identifier { s: "NAME".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn idenfier_alphanumeric() {
+    //     parse_rule! {
+    //         rule: Rule::identifier,
+    //         input: "name4",
+    //         expected: AstNode::Identifier { s: "name4".to_string() }
+    //     };
+    // }
+
+    // #[test]
+    // fn idenfier_underscore() {
+    //     parse_rule! {
+    //         rule: Rule::identifier,
+    //         input: "my_name",
+    //         expected: AstNode::Identifier { s: "my_name".to_string() }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::with_clause
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn with_clause() {
+    //     parse_rule! {
+    //         rule: Rule::with_clause,
+    //         input:  "my_cte AS ( SELECT 1 )",
+    //         expected: AstNode::WithClause {
+    //             identifier: Box::new(AstNode::Identifier { s: "my_cte".to_string() }),
+    //             columns: vec![],
+    //             query: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::where_clause
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn where_with_expression() {
+    //     parse_rule! {
+    //         rule: Rule::where_clause,
+    //         input: "WHERE a = 1",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //             op: Operation::Equal,
+    //             right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn where_with_expression_multi() {
+    //     parse_rule! {
+    //         rule: Rule::where_clause,
+    //         input: "WHERE TRUE AND a = 1",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
+    //             op: Operation::And,
+    //             right: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 op: Operation::Equal,
+    //                 right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
+    //             })
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn where_with_unary_expression() {
+    //     parse_rule! {
+    //         rule: Rule::where_clause,
+    //         input: "WHERE a IS NULL AND a = 1",
+    //         expected: AstNode::Expression {
+    //             left: Box::new(AstNode::IsNullExpression {
+    //                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 is_null: true,
+    //             }),
+    //             op: Operation::And,
+    //             right: Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 op: Operation::Equal,
+    //                 right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
+    //             })
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::select_union_statement
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn select_union() {
+    //     parse_rule! {
+    //         rule: Rule::select_union_statement,
+    //         input: "SELECT 1 UNION SELECT 2",
+    //         expected: AstNode::SelectUnionStatement {
+    //             left: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //             op: Union::UnionAll,
+    //             right: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_union_all() {
+    //     parse_rule! {
+    //         rule: Rule::select_union_statement,
+    //         input: "SELECT 1 UNION ALL SELECT 2",
+    //         expected: AstNode::SelectUnionStatement {
+    //             left: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //             op: Union::UnionAll,
+    //             right: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_union_intersect() {
+    //     parse_rule! {
+    //         rule: Rule::select_union_statement,
+    //         input: "SELECT 1 INTERSECT SELECT 2",
+    //         expected: AstNode::SelectUnionStatement {
+    //             left: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //             op: Union::Intersect,
+    //             right: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_union_minus() {
+    //     parse_rule! {
+    //         rule: Rule::select_union_statement,
+    //         input: "SELECT 1 MINUS SELECT 2",
+    //         expected: AstNode::SelectUnionStatement {
+    //             left: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //             op: Union::Minus,
+    //             right: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //         }
+    //     };
+    // }
+    // #[test]
+    // fn select_union_except() {
+    //     parse_rule! {
+    //         rule: Rule::select_union_statement,
+    //         input: "SELECT 1 EXCEPT SELECT 2",
+    //         expected: AstNode::SelectUnionStatement {
+    //             left: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //             op: Union::Except,
+    //             right: Box::new(AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "2".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }),
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::select_single_statement
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn select_literal() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT 1",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_with_cte() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "WITH my_cte AS ( SELECT 1 AS c ) SELECT c FROM my_cte",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![AstNode::WithClause {
+    //                 identifier: Box::new(AstNode::Identifier { s: "my_cte".to_string() }),
+    //                 columns: vec![],
+    //                 query: Box::new(AstNode::SelectStatement {
+    //                     common: vec![],
+    //                     mode: SelectMode::All,
+    //                     columns: vec![AstNode::NamedColumn {
+    //                         expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                         alias: "c".to_string(),
+    //                     }],
+    //                     table_exprs: vec![],
+    //                     where_expr: None,
+    //                     group_by: None,
+    //                 }),
+    //             }],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "c".to_string() }],
+    //             table_exprs: vec![AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier{ s: "my_cte".to_string() }),
+    //                 alias: None,
+    //             }],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_with_cte_2() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "WITH cte_1 AS ( SELECT 1 AS a ), cte_2 AS ( SELECT 1 AS b ) SELECT a FROM cte_1",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![
+    //                 AstNode::WithClause {
+    //                     identifier: Box::new(AstNode::Identifier { s: "cte_1".to_string() }),
+    //                     columns: vec![],
+    //                     query: Box::new(AstNode::SelectStatement {
+    //                         common: vec![],
+    //                         mode: SelectMode::All,
+    //                         columns: vec![AstNode::NamedColumn {
+    //                             expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                             alias: "a".to_string(),
+    //                         }],
+    //                         table_exprs: vec![],
+    //                         where_expr: None,
+    //                         group_by: None,
+    //                     }),
+    //                 },
+    //                 AstNode::WithClause {
+    //                     identifier: Box::new(AstNode::Identifier { s: "cte_2".to_string() }),
+    //                     columns: vec![],
+    //                     query: Box::new(AstNode::SelectStatement {
+    //                         common: vec![],
+    //                         mode: SelectMode::All,
+    //                         columns: vec![AstNode::NamedColumn {
+    //                             expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                             alias: "b".to_string(),
+    //                         }],
+    //                         table_exprs: vec![],
+    //                         where_expr: None,
+    //                         group_by: None,
+    //                     }),
+    //                 }
+    //             ],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier{ s: "cte_1".to_string() }),
+    //                 alias: None,
+    //             }],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_with_cte_with_union() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "WITH cte AS ( SELECT 1 AS a UNION SELECT 2 AS a ) SELECT a FROM cte",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![AstNode::WithClause {
+    //                 identifier: Box::new(AstNode::Identifier { s: "cte".to_string() }),
+    //                 columns: vec![],
+    //                 query: Box::new(AstNode::SelectUnionStatement {
+    //                     left: Box::new(AstNode::SelectStatement {
+    //                         common: vec![],
+    //                         mode: SelectMode::All,
+    //                         columns: vec![AstNode::NamedColumn {
+    //                             expr: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //                             alias: "a".to_string(),
+    //                         }],
+    //                         table_exprs: vec![],
+    //                         where_expr: None,
+    //                         group_by: None,
+    //                     }),
+    //                     op: Union::UnionAll,
+    //                     right: Box::new(AstNode::SelectStatement {
+    //                         common: vec![],
+    //                         mode: SelectMode::All,
+    //                         columns: vec![AstNode::NamedColumn {
+    //                             expr: Box::new(AstNode::IntegerLiteral { s: "2".to_string() }),
+    //                             alias: "a".to_string(),
+    //                         }],
+    //                         table_exprs: vec![],
+    //                         where_expr: None,
+    //                         group_by: None,
+    //                     }),
+    //                 }),
+    //             }],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier{ s: "cte".to_string() }),
+    //                 alias: None,
+    //             }],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_two_fields_from_table() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a, b FROM table",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ],
+    //             table_exprs: vec![
+    //                 AstNode::NamedTableExpression {
+    //                     name: Box::new(AstNode::Identifier{ s: "table".to_string() }),
+    //                     alias: None,
+    //                 }
+    //             ],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_two_fields_from_table_with_schema() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a, b FROM schema.table",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ],
+    //             table_exprs: vec![AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::QualifiedIdentifier {
+    //                     s: vec![
+    //                         AstNode::Identifier { s: "schema".to_string() },
+    //                         AstNode::Identifier { s: "table".to_string() }
+    //                     ]
+    //                 }),
+    //                 alias: None,
+    //             }],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_two_fields_from_named_table() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a, b FROM table AS alias",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ],
+    //             table_exprs: vec![
+    //                 AstNode::NamedTableExpression{
+    //                     name: Box::new(AstNode::Identifier { s: "table".to_string() }),
+    //                     alias: Some("alias".to_string()),
+    //                 },
+    //             ],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_two_fields_from_named_table_2() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a, b FROM schema.table AS alias",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![
+    //                 AstNode::Identifier { s: "a".to_string() },
+    //                 AstNode::Identifier { s: "b".to_string() }
+    //             ],
+    //             table_exprs: vec![
+    //                 AstNode::NamedTableExpression{
+    //                     name: Box::new(
+    //                         AstNode::QualifiedIdentifier {
+    //                             s: vec![
+    //                                 AstNode::Identifier { s: "schema".to_string() },
+    //                                 AstNode::Identifier { s: "table".to_string() }
+    //                             ]
+    //                         }
+    //                     ),
+    //                     alias: Some("alias".to_string()),
+    //                 },
+    //             ],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_all_from_named_table_short() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT * FROM schema.table alias",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::AllColumns],
+    //             table_exprs: vec![
+    //                 AstNode::NamedTableExpression{
+    //                     name: Box::new(
+    //                         AstNode::QualifiedIdentifier {
+    //                             s: vec![
+    //                                 AstNode::Identifier { s: "schema".to_string() },
+    //                                 AstNode::Identifier { s: "table".to_string() }
+    //                             ]
+    //                         }
+    //                     ),
+    //                     alias: Some("alias".to_string()),
+    //                 },
+    //             ],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_join() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT * FROM a JOIN b ON a.id = b.id",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::AllColumns],
+    //             table_exprs: vec![
+    //                 AstNode::NamedTableExpression {
+    //                     name: Box::new(AstNode::Identifier{ s: "a".to_string() }),
+    //                     alias: None,
+    //                 },
+    //                 AstNode::JoinClause {
+    //                     join_type: Box::new(AstNode::InnerJoin),
+    //                     table_expr: Box::new(AstNode::NamedTableExpression {
+    //                         name: Box::new(AstNode::Identifier{ s: "b".to_string() }),
+    //                         alias: None,
+    //                     }),
+    //                     constraint: Box::new(AstNode::JoinConstraintOn {
+    //                         expr: Box::new(AstNode::Expression {
+    //                             left: Box::new(AstNode::QualifiedIdentifier {
+    //                                 s: vec![
+    //                                     AstNode::Identifier { s: "a".to_string() },
+    //                                     AstNode::Identifier { s: "id".to_string() }
+    //                                 ]
+    //                             }),
+    //                             op: Operation::Equal,
+    //                             right: Box::new(AstNode::QualifiedIdentifier {
+    //                                 s: vec![
+    //                                     AstNode::Identifier { s: "b".to_string() },
+    //                                     AstNode::Identifier { s: "id".to_string() }
+    //                                 ]
+    //                             }),
+    //                         })
+    //                     }),
+    //                 }
+    //             ],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_where_clause() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT * WHERE a = 1",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::AllColumns],
+    //             table_exprs: vec![],
+    //             where_expr: Some(Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                 op: Operation::Equal,
+    //                 right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //             })),
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_where_clause_from_table() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT * FROM a WHERE b = 1",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::AllColumns],
+    //             table_exprs: vec![AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier{ s: "a".to_string() }),
+    //                 alias: None,
+    //             }],
+    //             where_expr: Some(Box::new(AstNode::Expression {
+    //                 left: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                 op: Operation::Equal,
+    //                 right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
+    //             })),
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_distinct() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT DISTINCT a",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::Distinct,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_all() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT ALL a",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_from_group_by() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a FROM t GROUP BY a",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![AstNode::NamedTableExpression {
+    //                 name: Box::new(AstNode::Identifier { s: "t".to_string() }),
+    //                 alias: None
+    //             }],
+    //             where_expr: None,
+    //             group_by: Some(Box::new(AstNode::GroupBy {
+    //                 groupings: vec![AstNode::Identifier { s: "a".to_string() }],
+    //                 having: None
+    //             }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_group_by() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a GROUP BY a",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: Some(Box::new(AstNode::GroupBy {
+    //                 groupings: vec![AstNode::Identifier { s: "a".to_string() }],
+    //                 having: None
+    //             }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_group_by_positional() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT a GROUP BY 1",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::Identifier { s: "a".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: Some(Box::new(AstNode::GroupBy {
+    //                 groupings: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 having: None
+    //             }))
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_from_subquery() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT 1 FROM (SELECT 1)",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             table_exprs: vec![AstNode::SelectStatement {
+    //                 common: vec![],
+    //                 mode: SelectMode::All,
+    //                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //                 table_exprs: vec![],
+    //                 where_expr: None,
+    //                 group_by: None,
+    //             }],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn select_join_clause_multiple() {
+    //     parse_rule! {
+    //         rule: Rule::select_statement,
+    //         input: "SELECT * FROM a JOIN b ON a.id = b.id JOIN c ON a.id = c.id",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::AllColumns],
+    //             table_exprs: vec![
+    //                 AstNode::NamedTableExpression {
+    //                     name: Box::new(AstNode::Identifier { s: "a".to_string() }),
+    //                     alias: None,
+    //                 },
+    //                 AstNode::JoinClause {
+    //                     join_type: Box::new(AstNode::InnerJoin),
+    //                     table_expr: Box::new(AstNode::NamedTableExpression {
+    //                         name: Box::new(AstNode::Identifier { s: "b".to_string() }),
+    //                         alias: None,
+    //                     }),
+    //                     constraint: Box::new(AstNode::JoinConstraintOn {
+    //                         expr: Box::new(AstNode::Expression {
+    //                             left: Box::new(AstNode::QualifiedIdentifier {
+    //                                 s: vec![
+    //                                     AstNode::Identifier { s: "a".to_string() },
+    //                                     AstNode::Identifier { s: "id".to_string() }
+    //                                 ]
+    //                             }),
+    //                             op: Operation::Equal,
+    //                             right: Box::new(AstNode::QualifiedIdentifier {
+    //                                 s: vec![
+    //                                     AstNode::Identifier { s: "b".to_string() },
+    //                                     AstNode::Identifier { s: "id".to_string() }
+    //                                 ]
+    //                             }),
+    //                         })
+    //                     }),
+    //                 },
+    //                 AstNode::JoinClause {
+    //                     join_type: Box::new(AstNode::InnerJoin),
+    //                     table_expr: Box::new(AstNode::NamedTableExpression {
+    //                         name: Box::new(AstNode::Identifier { s: "c".to_string() }),
+    //                         alias: None,
+    //                     }),
+    //                     constraint: Box::new(AstNode::JoinConstraintOn {
+    //                         expr: Box::new(AstNode::Expression {
+    //                             left: Box::new(AstNode::QualifiedIdentifier {
+    //                                 s: vec![
+    //                                     AstNode::Identifier { s: "a".to_string() },
+    //                                     AstNode::Identifier { s: "id".to_string() }
+    //                                 ]
+    //                             }),
+    //                             op: Operation::Equal,
+    //                             right: Box::new(AstNode::QualifiedIdentifier {
+    //                                 s: vec![
+    //                                     AstNode::Identifier { s: "c".to_string() },
+    //                                     AstNode::Identifier { s: "id".to_string() }
+    //                                 ]
+    //                             }),
+    //                         })
+    //                     }),
+    //                 }
+    //             ],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // // ------------------------------------------------------------------
+    // // Rule::sql_statement
+    // // ------------------------------------------------------------------
+
+    // #[test]
+    // fn sql_statement_comment_before_statement() {
+    //     parse_rule! {
+    //         rule: Rule::sql_statement,
+    //         input:
+    //         r#"
+    //             -- comment
+    //             SELECT 1
+    //         "#.trim(),
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn sql_statement_comment_after_statement() {
+    //     parse_rule! {
+    //         rule: Rule::sql_statement,
+    //         input:
+    //         r#"
+    //             SELECT 1
+    //             -- comment
+    //         "#.trim(),
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn sql_statement_comment_inline() {
+    //     parse_rule! {
+    //         rule: Rule::sql_statement,
+    //         input: "SELECT 1 -- comment",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
+
+    // #[test]
+    // fn not_a_comment() {
+    //     parse_rule! {
+    //         rule: Rule::sql_statement,
+    //         input: "SELECT '--'",
+    //         expected: AstNode::SelectStatement {
+    //             common: vec![],
+    //             mode: SelectMode::All,
+    //             columns: vec![AstNode::StringLiteral { s: "--".to_string() }],
+    //             table_exprs: vec![],
+    //             where_expr: None,
+    //             group_by: None,
+    //         }
+    //     };
+    // }
 }

@@ -35,12 +35,18 @@ lazy_static! {
 }
 
 fn primary(pair: Pair<Rule>) -> AstNode {
+    eprintln!(">>> {:#?}", pair);
     let mut inner_iter = pair.clone().into_inner().filter(|p| match p.as_rule() {
         Rule::COMMENT => false,
         _ => true,
     });
 
     match pair.as_rule() {
+        // ------------------------------------------------------------------
+        // Columns
+        // ------------------------------------------------------------------
+        Rule::EOI => AstNode::Empty,
+
         // ------------------------------------------------------------------
         // Columns
         // ------------------------------------------------------------------
@@ -598,18 +604,15 @@ fn parse_value(pairs: Pairs<Rule>) -> AstNode {
     )
 }
 
-fn parse_str_to_pairs(rule: Rule,sql: &str) -> Pairs<Rule> {
+#[inline]
+fn parse_str_to_pairs(rule: Rule, sql: &str) -> Pairs<Rule> {
     SqlParser::parse(rule, sql).unwrap()
 }
 
-fn parse_pairs_to_ast(pairs: Pairs<Rule>) -> Option<AstNode> {
-    Some(parse_value(pairs))
-}
-
-pub fn parse(sql: &str) -> Result<Option<AstNode>, Error<Rule>> {
+pub fn parse(sql: &str) -> Result<AstNode, Error<Rule>> {
     let pairs = parse_str_to_pairs(Rule::sql_statement, sql);
 
-    Ok(parse_pairs_to_ast(pairs))
+    Ok(parse_value(pairs))
 }
 
 #[cfg(test)]
@@ -619,11 +622,12 @@ mod tests {
     #[allow(unused_macros)]
     macro_rules! parse_rule {
         (rule: $rule:expr, input: $sql:expr, expected: $expected:expr) => {
-            let pairs = parse_str_to_pairs($rule, $sql);
-            let node = parse_pairs_to_ast(pairs.clone());
-
-            eprintln!("{:#?}", pairs);
             eprintln!("{}", $sql);
+
+            let pairs = parse_str_to_pairs($rule, $sql);
+            eprintln!("{:#?}", pairs);
+
+            let node = parse_value(pairs.clone());
 
             assert_eq!(node, $expected);
         };
@@ -638,7 +642,7 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "BOOLEAN",
-            expected: Some(AstNode::BooleanType)
+            expected: AstNode::BooleanType
         };
     }
 
@@ -647,7 +651,7 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "DOUBLE",
-            expected: Some(AstNode::DoubleType)
+            expected: AstNode::DoubleType
         };
     }
 
@@ -656,7 +660,7 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "TIMESTAMP",
-            expected: Some(AstNode::TimestampType)
+            expected: AstNode::TimestampType
         };
     }
 
@@ -665,7 +669,7 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "TIMESTAMP",
-            expected: Some(AstNode::TimestampType)
+            expected: AstNode::TimestampType
         };
     }
 
@@ -674,10 +678,10 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "DECIMAL(10, 2)",
-            expected: Some(AstNode::DecimalType {
+            expected: AstNode::DecimalType {
                 p: Box::new(AstNode::IntegerLiteral { s: "10".to_string() }),
                 s: Box::new(AstNode::IntegerLiteral { s: "2".to_string() })
-            })
+            }
         };
     }
 
@@ -686,9 +690,9 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "CHAR(1)",
-            expected: Some(AstNode::CharType {
+            expected: AstNode::CharType {
                 n: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-            })
+            }
         };
     }
 
@@ -697,7 +701,7 @@ mod tests {
         parse_rule! {
             rule: Rule::data_type,
             input: "DATE",
-            expected: Some(AstNode::DateType)
+            expected: AstNode::DateType
         };
     }
 
@@ -710,12 +714,12 @@ mod tests {
         parse_rule! {
             rule: Rule::coalesce_function,
             input: "COALESCE(a, b)",
-            expected: Some(AstNode::CoalesceFunction {
+            expected: AstNode::CoalesceFunction {
                 exprs: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() },
                 ]
-            })
+            }
         };
     }
 
@@ -724,13 +728,13 @@ mod tests {
         parse_rule! {
             rule: Rule::coalesce_function,
             input: "COALESCE(a, b, c)",
-            expected: Some(AstNode::CoalesceFunction {
+            expected: AstNode::CoalesceFunction {
                 exprs: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() },
                     AstNode::Identifier { s: "c".to_string() },
                 ]
-            })
+            }
         };
     }
 
@@ -743,10 +747,10 @@ mod tests {
         parse_rule! {
             rule: Rule::cast_function,
             input: "CAST(a AS BOOLEAN)",
-            expected: Some(AstNode::CastFunction{
+            expected: AstNode::CastFunction{
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 data_type: Box::new(AstNode::BooleanType)
-            })
+            }
         };
     }
 
@@ -755,14 +759,14 @@ mod tests {
         parse_rule! {
             rule: Rule::cast_function,
             input: "CAST(a / b AS BOOLEAN)",
-            expected: Some(AstNode::CastFunction{
+            expected: AstNode::CastFunction{
                 expr: Box::new(AstNode::Expression {
                     left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                     op: Operation::Divide,
                     right: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 }),
                 data_type: Box::new(AstNode::BooleanType)
-            })
+            }
         };
     }
 
@@ -775,7 +779,7 @@ mod tests {
         parse_rule! {
             rule: Rule::column,
             input: "a",
-            expected: Some(AstNode::Identifier { s: "a".to_string() })
+            expected: AstNode::Identifier { s: "a".to_string() }
         };
     }
 
@@ -784,7 +788,7 @@ mod tests {
         parse_rule! {
             rule: Rule::column,
             input: "42",
-            expected: Some(AstNode::IntegerLiteral { s: "42".to_string() })
+            expected: AstNode::IntegerLiteral { s: "42".to_string() }
         };
     }
 
@@ -793,10 +797,10 @@ mod tests {
         parse_rule! {
             rule: Rule::column,
             input: "a AS b",
-            expected: Some(AstNode::NamedColumn {
+            expected: AstNode::NamedColumn {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 alias: "b".to_string(),
-            })
+            }
         };
     }
 
@@ -805,7 +809,7 @@ mod tests {
         parse_rule! {
             rule: Rule::column,
             input: "a.b AS c",
-            expected: Some(AstNode::NamedColumn {
+            expected: AstNode::NamedColumn {
                 expr: Box::new(AstNode::QualifiedIdentifier {
                     s: vec![
                         AstNode::Identifier { s: "a".to_string() },
@@ -813,7 +817,7 @@ mod tests {
                     ]
                 }),
                 alias: "c".to_string(),
-            })
+            }
         };
     }
 
@@ -822,7 +826,7 @@ mod tests {
         parse_rule! {
             rule: Rule::column,
             input: "COALESCE(1, 2) AS a",
-            expected: Some(AstNode::NamedColumn {
+            expected: AstNode::NamedColumn {
                 expr: Box::new(AstNode::CoalesceFunction {
                     exprs: vec![
                         AstNode::IntegerLiteral { s: "1".to_string() },
@@ -830,7 +834,7 @@ mod tests {
                     ]
                 }),
                 alias: "a".to_string(),
-            })
+            }
         };
     }
 
@@ -843,7 +847,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_clause,
             input: "JOIN b ON a.id = b.id",
-            expected: Some(AstNode::JoinClause {
+            expected: AstNode::JoinClause {
                 join_type: Box::new(AstNode::InnerJoin),
                 table_expr: Box::new(AstNode::NamedTableExpression {
                     name: Box::new(AstNode::Identifier { s: "b".to_string() }),
@@ -866,7 +870,7 @@ mod tests {
                         }),
                     })}
                 ),
-            })
+            }
         };
     }
 
@@ -875,7 +879,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_clause,
             input: "JOIN b t2 ON t1.id = t2.id",
-            expected: Some(AstNode::JoinClause {
+            expected: AstNode::JoinClause {
                 join_type: Box::new(AstNode::InnerJoin),
                 table_expr: Box::new(AstNode::NamedTableExpression {
                     name: Box::new(AstNode::Identifier { s: "b".to_string() }),
@@ -898,7 +902,7 @@ mod tests {
                         }),
                     })}
                 ),
-            })
+            }
         };
     }
 
@@ -907,7 +911,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_clause,
             input: "JOIN b ON a.id = b.id AND a.field = b.field",
-            expected: Some(AstNode::JoinClause {
+            expected: AstNode::JoinClause {
                 join_type: Box::new(AstNode::InnerJoin),
                 table_expr: Box::new(AstNode::NamedTableExpression {
                     name: Box::new(AstNode::Identifier { s: "b".to_string() }),
@@ -948,7 +952,7 @@ mod tests {
                         })
                     })
                 }),
-            })
+            }
         };
     }
 
@@ -961,7 +965,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "JOIN",
-            expected: Some(AstNode::InnerJoin)
+            expected: AstNode::InnerJoin
         };
     }
 
@@ -970,7 +974,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "INNER JOIN",
-            expected: Some(AstNode::InnerJoin)
+            expected: AstNode::InnerJoin
         };
     }
 
@@ -979,7 +983,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "LEFT JOIN",
-            expected: Some(AstNode::LeftOuterJoin)
+            expected: AstNode::LeftOuterJoin
         };
     }
 
@@ -988,7 +992,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "LEFT OUTER JOIN",
-            expected: Some(AstNode::LeftOuterJoin)
+            expected: AstNode::LeftOuterJoin
         };
     }
 
@@ -997,7 +1001,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "RIGHT JOIN",
-            expected: Some(AstNode::RightOuterJoin)
+            expected: AstNode::RightOuterJoin
         };
     }
 
@@ -1006,7 +1010,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "RIGHT OUTER JOIN",
-            expected: Some(AstNode::RightOuterJoin)
+            expected: AstNode::RightOuterJoin
         };
     }
 
@@ -1015,7 +1019,7 @@ mod tests {
         parse_rule! {
             rule: Rule::join_type,
             input: "FULL OUTER JOIN",
-            expected: Some(AstNode::FullOuterJoin)
+            expected: AstNode::FullOuterJoin
         };
     }
 
@@ -1028,13 +1032,13 @@ mod tests {
         parse_rule! {
             rule: Rule::join_constraint,
             input: "ON a = b",
-            expected: Some(AstNode::JoinConstraintOn {
+            expected: AstNode::JoinConstraintOn {
                 expr: Box::new(AstNode::Expression {
                     left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                     op: Operation::Equal,
                     right: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 })
-            })
+            }
         };
     }
 
@@ -1043,9 +1047,9 @@ mod tests {
         parse_rule! {
             rule: Rule::join_constraint,
             input: "USING (a)",
-            expected: Some(AstNode::JoinConstraintUsing {
+            expected: AstNode::JoinConstraintUsing {
                 columns: vec![AstNode::Identifier { s: "a".to_string() }]
-            })
+            }
         };
     }
 
@@ -1054,12 +1058,12 @@ mod tests {
         parse_rule! {
             rule: Rule::join_constraint,
             input: "USING (a, b)",
-            expected: Some(AstNode::JoinConstraintUsing {
+            expected: AstNode::JoinConstraintUsing {
                 columns: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() },
                 ]
-            })
+            }
         };
     }
 
@@ -1072,7 +1076,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a",
-            expected: Some(AstNode::Identifier { s: "a".to_string() })
+            expected: AstNode::Identifier { s: "a".to_string() }
         };
     }
 
@@ -1081,12 +1085,12 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a.b",
-            expected: Some(AstNode::QualifiedIdentifier {
+            expected: AstNode::QualifiedIdentifier {
                 s: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() },
                 ]
-            })
+            }
         };
     }
 
@@ -1095,7 +1099,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "42",
-            expected: Some(AstNode::IntegerLiteral { s: "42".to_string() })
+            expected: AstNode::IntegerLiteral { s: "42".to_string() }
         };
     }
 
@@ -1104,10 +1108,10 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "-42",
-            expected: Some(AstNode::SignedExpression{
+            expected: AstNode::SignedExpression{
                 sign: Sign::Negative,
                 expr: Box::new(AstNode::IntegerLiteral { s: "42".to_string() })
-            })
+            }
         };
     }
 
@@ -1120,11 +1124,11 @@ mod tests {
                 -- comment
                 AND b
             "#.trim(),
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::And,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            })
+            }
         };
     }
 
@@ -1133,11 +1137,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a = b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Equal,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1146,11 +1150,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a = 1",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Equal,
                 right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-            })
+            }
         };
     }
 
@@ -1159,11 +1163,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a != b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::NotEqual,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1172,11 +1176,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a > b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::GreaterThan,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1185,11 +1189,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a >= b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::GreaterOrEqualThan,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1198,11 +1202,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a < b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::LessThan,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1211,11 +1215,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a <= b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::LessOrEqualThan,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1224,7 +1228,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a.b = c",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::QualifiedIdentifier {
                     s: vec![
                         AstNode::Identifier { s: "a".to_string() },
@@ -1233,7 +1237,7 @@ mod tests {
                 }),
                 op: Operation::Equal,
                 right: Box::new(AstNode::Identifier { s: "c".to_string() })
-            })
+            }
         };
     }
 
@@ -1242,7 +1246,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a = CASE WHEN 1 THEN 'one' END",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Equal,
                 right: Box::new(AstNode::CaseExpression {
@@ -1253,7 +1257,7 @@ mod tests {
                     }],
                     else_expr: None
                 })
-            })
+            }
         };
     }
 
@@ -1262,7 +1266,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a = b - c",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Equal,
                 right: Box::new(AstNode::Expression {
@@ -1270,7 +1274,7 @@ mod tests {
                     op: Operation::Subtract,
                     right: Box::new(AstNode::Identifier { s: "c".to_string() })
                 })
-            })
+            }
         };
     }
 
@@ -1279,7 +1283,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a - INTERVAL '1' MONTH",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Subtract,
                 right: Box::new(AstNode::IntervalLiteral {
@@ -1289,7 +1293,7 @@ mod tests {
                     convert_to: None,
                     convert_precision: None,
                 })
-            })
+            }
         };
     }
 
@@ -1302,10 +1306,10 @@ mod tests {
         parse_rule! {
             rule: Rule::unary_expression,
             input: "a IS NULL",
-            expected: Some(AstNode::IsNullExpression {
+            expected: AstNode::IsNullExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 is_null: true,
-            })
+            }
         };
     }
 
@@ -1314,10 +1318,10 @@ mod tests {
         parse_rule! {
             rule: Rule::unary_expression,
             input: "a IS NOT NULL",
-            expected: Some(AstNode::IsNullExpression {
+            expected: AstNode::IsNullExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 is_null: false,
-            })
+            }
         };
     }
 
@@ -1330,14 +1334,14 @@ mod tests {
         parse_rule! {
             rule: Rule::case_expression,
             input: "CASE a WHEN 1 THEN 'one' END",
-            expected: Some(AstNode::CaseExpression {
+            expected: AstNode::CaseExpression {
                 expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
                 when_expr: vec![AstNode::WhenClause{
                     guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
                     body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
                 }],
                 else_expr: None
-            })
+            }
         };
     }
 
@@ -1346,7 +1350,7 @@ mod tests {
         parse_rule! {
             rule: Rule::case_expression,
             input: "CASE WHEN SUBSTR('abc', 1) THEN 'one' END",
-            expected: Some(AstNode::CaseExpression {
+            expected: AstNode::CaseExpression {
                 expr: None,
                 when_expr: vec![AstNode::WhenClause{
                     guard: Box::new(AstNode::SubstringFunction {
@@ -1357,7 +1361,7 @@ mod tests {
                     body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
                 }],
                 else_expr: None
-            })
+            }
         };
     }
 
@@ -1366,14 +1370,14 @@ mod tests {
         parse_rule! {
             rule: Rule::case_expression,
             input: "CASE WHEN 1 THEN 'one' END",
-            expected: Some(AstNode::CaseExpression {
+            expected: AstNode::CaseExpression {
                 expr: None,
                 when_expr: vec![AstNode::WhenClause{
                     guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
                     body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
                 }],
                 else_expr: None
-            })
+            }
         };
     }
 
@@ -1382,14 +1386,14 @@ mod tests {
         parse_rule! {
             rule: Rule::case_expression,
             input: "CASE a WHEN 1 THEN 'one' ELSE 'zero' END",
-            expected: Some(AstNode::CaseExpression {
+            expected: AstNode::CaseExpression {
                 expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
                 when_expr: vec![AstNode::WhenClause {
                     guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
                     body: Box::new(AstNode::StringLiteral { s: "one".to_string() }),
                 }],
                 else_expr: Some(Box::new(AstNode::StringLiteral { s: "zero".to_string() }))
-            })
+            }
         };
     }
 
@@ -1398,7 +1402,7 @@ mod tests {
         parse_rule! {
             rule: Rule::case_expression,
             input: "CASE WHEN 1 THEN 'one' ELSE SUBSTR('abc', 1) END",
-            expected: Some(AstNode::CaseExpression {
+            expected: AstNode::CaseExpression {
                 expr: None,
                 when_expr: vec![AstNode::WhenClause {
                     guard: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
@@ -1409,7 +1413,7 @@ mod tests {
                     position: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
                     length: None
                 }))
-            })
+            }
         };
     }
 
@@ -1418,7 +1422,7 @@ mod tests {
         parse_rule! {
             rule: Rule::case_expression,
             input: "CASE a WHEN 1 THEN 'one' WHEN 2 THEN 'two' END",
-            expected: Some(AstNode::CaseExpression {
+            expected: AstNode::CaseExpression {
                 expr: Some(Box::new(AstNode::Identifier { s: "a".to_string() })),
                 when_expr: vec![
                     AstNode::WhenClause {
@@ -1431,7 +1435,7 @@ mod tests {
                     },
                 ],
                 else_expr: None
-            })
+            }
         };
     }
 
@@ -1444,11 +1448,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a || b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Concat,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1457,11 +1461,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a AND b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::And,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1470,11 +1474,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a OR b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Or,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -1483,13 +1487,13 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "COALESCE(1) || b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::CoalesceFunction{
                     exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
                 }),
                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 op: Operation::Concat
-            })
+            }
         };
     }
 
@@ -1498,13 +1502,13 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "b || COALESCE(1)",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 right: Box::new(AstNode::CoalesceFunction{
                     exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
                 }),
                 op: Operation::Concat
-            })
+            }
         };
     }
 
@@ -1513,7 +1517,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "COALESCE(1) || COALESCE(2)",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::CoalesceFunction{
                     exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
                 }),
@@ -1521,7 +1525,7 @@ mod tests {
                     exprs: vec![AstNode::IntegerLiteral { s: "2".to_string() }]
                 }),
                 op: Operation::Concat
-            })
+            }
         };
     }
 
@@ -1530,7 +1534,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "COALESCE(1) || a || COALESCE(2)",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Expression {
                     left: Box::new(AstNode::CoalesceFunction{
                         exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }]
@@ -1542,7 +1546,7 @@ mod tests {
                 right: Box::new(AstNode::CoalesceFunction{
                     exprs: vec![AstNode::IntegerLiteral { s: "2".to_string() }]
                 }),
-            })
+            }
         };
     }
 
@@ -1551,7 +1555,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a + (b + c)",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Add,
                 right: Box::new(AstNode::Expression {
@@ -1559,7 +1563,7 @@ mod tests {
                     op: Operation::Add,
                     right: Box::new(AstNode::Identifier { s: "c".to_string() }),
                 }),
-            })
+            }
         };
     }
 
@@ -1568,7 +1572,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "(a + b) + c",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Expression {
                     left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                     op: Operation::Add,
@@ -1576,7 +1580,7 @@ mod tests {
                 }),
                 op: Operation::Add,
                 right: Box::new(AstNode::Identifier { s: "c".to_string() }),
-            })
+            }
         };
     }
 
@@ -1585,11 +1589,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a * b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Multiply,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            })
+            }
         };
     }
 
@@ -1598,11 +1602,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a / b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Divide,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            })
+            }
         };
     }
 
@@ -1611,11 +1615,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a - b",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Subtract,
                 right: Box::new(AstNode::Identifier { s: "b".to_string() }),
-            })
+            }
         };
     }
 
@@ -1624,11 +1628,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "TRUE AND a",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
                 op: Operation::And,
                 right: Box::new(AstNode::Identifier { s: "a".to_string() }),
-            })
+            }
         };
     }
 
@@ -1637,14 +1641,14 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a IS NULL AND TRUE",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::IsNullExpression {
                    expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                    is_null: true,
                 }),
                 op: Operation::And,
                 right: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
-            })
+            }
         };
     }
 
@@ -1653,11 +1657,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a IN (1)",
-            expected: Some(AstNode::InExpression {
+            expected: AstNode::InExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 not_in: false,
-            })
+            }
         };
     }
 
@@ -1666,11 +1670,11 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a NOT IN (1)",
-            expected: Some(AstNode::InExpression {
+            expected: AstNode::InExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exprs: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 not_in: true,
-            })
+            }
         };
     }
 
@@ -1679,14 +1683,14 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a IN (1, 2)",
-            expected: Some(AstNode::InExpression {
+            expected: AstNode::InExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exprs: vec![
                     AstNode::IntegerLiteral { s: "1".to_string() },
                     AstNode::IntegerLiteral { s: "2".to_string() },
                 ],
                 not_in: false,
-            })
+            }
         };
     }
 
@@ -1695,7 +1699,7 @@ mod tests {
         parse_rule! {
             rule: Rule::expression,
             input: "a IN (SELECT 1)",
-            expected: Some(AstNode::InExpression {
+            expected: AstNode::InExpression {
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exprs: vec![AstNode::SelectStatement {
                     common: vec![],
@@ -1706,7 +1710,7 @@ mod tests {
                     group_by: None,
                 }],
                 not_in: false,
-            })
+            }
         };
     }
 
@@ -1719,7 +1723,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "TRUE",
-            expected: Some(AstNode::BooleanLiteral { s: "TRUE".to_string() })
+            expected: AstNode::BooleanLiteral { s: "TRUE".to_string() }
         };
     }
 
@@ -1728,7 +1732,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "FALSE",
-            expected: Some(AstNode::BooleanLiteral { s: "FALSE".to_string() })
+            expected: AstNode::BooleanLiteral { s: "FALSE".to_string() }
         };
     }
 
@@ -1741,7 +1745,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "42",
-            expected: Some(AstNode::IntegerLiteral { s: "42".to_string() })
+            expected: AstNode::IntegerLiteral { s: "42".to_string() }
         };
     }
 
@@ -1750,7 +1754,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "-42",
-            expected: Some(AstNode::IntegerLiteral { s: "-42".to_string() })
+            expected: AstNode::IntegerLiteral { s: "-42".to_string() }
         };
     }
 
@@ -1763,7 +1767,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "42.0E10",
-            expected: Some(AstNode::FloatLiteral { s: "42.0E10".to_string() })
+            expected: AstNode::FloatLiteral { s: "42.0E10".to_string() }
         };
     }
 
@@ -1772,7 +1776,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: ".42E10",
-            expected: Some(AstNode::FloatLiteral { s: ".42E10".to_string() })
+            expected: AstNode::FloatLiteral { s: ".42E10".to_string() }
         };
     }
 
@@ -1781,7 +1785,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "42.0E-10",
-            expected: Some(AstNode::FloatLiteral { s: "42.0E-10".to_string() })
+            expected: AstNode::FloatLiteral { s: "42.0E-10".to_string() }
         };
     }
 
@@ -1790,7 +1794,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "-42.0E-10",
-            expected: Some(AstNode::FloatLiteral { s: "-42.0E-10".to_string() })
+            expected: AstNode::FloatLiteral { s: "-42.0E-10".to_string() }
         };
     }
 
@@ -1799,7 +1803,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "-.42E-10",
-            expected: Some(AstNode::FloatLiteral { s: "-.42E-10".to_string() })
+            expected: AstNode::FloatLiteral { s: "-.42E-10".to_string() }
         };
     }
 
@@ -1812,7 +1816,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "42.0",
-            expected: Some(AstNode::DecimalLiteral { s: "42.0".to_string() })
+            expected: AstNode::DecimalLiteral { s: "42.0".to_string() }
         };
     }
 
@@ -1821,7 +1825,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: ".42",
-            expected: Some(AstNode::DecimalLiteral { s: ".42".to_string() })
+            expected: AstNode::DecimalLiteral { s: ".42".to_string() }
         };
     }
 
@@ -1834,7 +1838,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "'text'",
-            expected: Some(AstNode::StringLiteral { s: "text".to_string() })
+            expected: AstNode::StringLiteral { s: "text".to_string() }
         };
     }
 
@@ -1843,7 +1847,7 @@ mod tests {
         parse_rule! {
             rule: Rule::literal_value,
             input: "''",
-            expected: Some(AstNode::StringLiteral { s: "".to_string() })
+            expected: AstNode::StringLiteral { s: "".to_string() }
         };
     }
 
@@ -1856,13 +1860,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' MONTH",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Month,
                 precision: vec![],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1871,13 +1875,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' MONTH (3)",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Month,
                 precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1886,13 +1890,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' YEAR",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Year,
                 precision: vec![],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1901,13 +1905,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' YEAR (3)",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Year,
                 precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1916,13 +1920,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' YEAR TO MONTH",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Year,
                 precision: vec![],
                 convert_to: Some(Interval::Month),
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1931,13 +1935,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' YEAR (3) TO MONTH",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Year,
                 precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
                 convert_to: Some(Interval::Month),
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1946,13 +1950,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' DAY",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Day,
                 precision: vec![],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1961,13 +1965,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' DAY (3)",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Day,
                 precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1976,13 +1980,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' DAY (3) TO HOUR",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Day,
                 precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
                 convert_to: Some(Interval::Hour),
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -1991,13 +1995,13 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' DAY (3) TO SECOND (4)",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Day,
                 precision: vec![AstNode::IntegerLiteral { s: "3".to_string() }],
                 convert_to: Some(Interval::Second),
                 convert_precision:Some(Box::new(AstNode::IntegerLiteral { s: "4".to_string() }))
-            })
+            }
         };
     }
 
@@ -2006,7 +2010,7 @@ mod tests {
         parse_rule! {
             rule: Rule::interval_literal,
             input: "INTERVAL '1' SECOND (3, 1)",
-            expected: Some(AstNode::IntervalLiteral {
+            expected: AstNode::IntervalLiteral {
                 interval: Box::new(AstNode::StringLiteral { s: "1".to_string() }),
                 period: Interval::Second,
                 precision: vec![
@@ -2015,7 +2019,7 @@ mod tests {
                 ],
                 convert_to: None,
                 convert_precision: None,
-            })
+            }
         };
     }
 
@@ -2028,10 +2032,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "my_function(a)",
-            expected: Some(AstNode::UnknownFunction {
+            expected: AstNode::UnknownFunction {
                 name: Box::new(AstNode::Identifier { s: "my_function".to_string() }),
                 exprs: vec![AstNode::Identifier { s: "a".to_string() }]
-            })
+            }
         };
     }
 
@@ -2040,13 +2044,13 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "my_function(a, b)",
-            expected: Some(AstNode::UnknownFunction {
+            expected: AstNode::UnknownFunction {
                 name: Box::new(AstNode::Identifier { s: "my_function".to_string() }),
                 exprs: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() }
                 ]
-            })
+            }
         };
     }
 
@@ -2055,7 +2059,7 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SCHEMA.MY_FUNCTION(a, b)",
-            expected: Some(AstNode::UnknownFunction {
+            expected: AstNode::UnknownFunction {
                 name: Box::new(AstNode::QualifiedIdentifier {
                     s: vec![
                         AstNode::Identifier { s: "SCHEMA".to_string() },
@@ -2066,7 +2070,7 @@ mod tests {
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() }
                 ]
-            })
+            }
         };
     }
 
@@ -2075,12 +2079,12 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COALESCE(a, b)",
-            expected: Some(AstNode::CoalesceFunction {
+            expected: AstNode::CoalesceFunction {
                 exprs: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() }
                 ]
-            })
+            }
         };
     }
 
@@ -2089,11 +2093,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "REPLACE(a, b)",
-            expected: Some(AstNode::ReplaceFunction {
+            expected: AstNode::ReplaceFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 search_string: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 replace_string: None,
-            })
+            }
         };
     }
 
@@ -2102,11 +2106,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "REPLACE(a, b, c)",
-            expected: Some(AstNode::ReplaceFunction {
+            expected: AstNode::ReplaceFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 search_string: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 replace_string: Some(Box::new(AstNode::Identifier { s: "c".to_string() })),
-            })
+            }
         };
     }
 
@@ -2115,10 +2119,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "RIGHT(a, 3)",
-            expected: Some(AstNode::RightFunction {
+            expected: AstNode::RightFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 length: Box::new(AstNode::IntegerLiteral { s: "3".to_string() }),
-            })
+            }
         };
     }
 
@@ -2127,10 +2131,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COUNT(*)",
-            expected: Some(AstNode::CountFunction {
+            expected: AstNode::CountFunction {
                 columns: vec![AstNode::AllColumns],
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            })
+            }
         };
     }
 
@@ -2139,10 +2143,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COUNT(a)",
-            expected: Some(AstNode::CountFunction {
+            expected: AstNode::CountFunction {
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            })
+            }
         };
     }
 
@@ -2151,10 +2155,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COUNT(ALL a)",
-            expected: Some(AstNode::CountFunction {
+            expected: AstNode::CountFunction {
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            })
+            }
         };
     }
 
@@ -2163,10 +2167,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COUNT(DISTINCT a)",
-            expected: Some(AstNode::CountFunction {
+            expected: AstNode::CountFunction {
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
-            })
+            }
         };
     }
 
@@ -2175,13 +2179,13 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COUNT((a, b))",
-            expected: Some(AstNode::CountFunction {
+            expected: AstNode::CountFunction {
                 columns: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() }
                 ],
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
-            })
+            }
         };
     }
 
@@ -2190,11 +2194,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUBSTR(a, b)",
-            expected: Some(AstNode::SubstringFunction {
+            expected: AstNode::SubstringFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 position: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 length: None,
-            })
+            }
         };
     }
 
@@ -2203,11 +2207,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUBSTRING(a, b)",
-            expected: Some(AstNode::SubstringFunction {
+            expected: AstNode::SubstringFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 position: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 length: None,
-            })
+            }
         };
     }
 
@@ -2216,11 +2220,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUBSTRING(a, b, c)",
-            expected: Some(AstNode::SubstringFunction {
+            expected: AstNode::SubstringFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 position: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 length: Some(Box::new(AstNode::Identifier { s: "c".to_string() }))
-            })
+            }
         };
     }
 
@@ -2229,11 +2233,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUBSTRING(a FROM b)",
-            expected: Some(AstNode::SubstringFunction {
+            expected: AstNode::SubstringFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 position: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 length: None
-            })
+            }
         };
     }
 
@@ -2242,11 +2246,11 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUBSTRING(a FROM b FOR c)",
-            expected: Some(AstNode::SubstringFunction {
+            expected: AstNode::SubstringFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 position: Box::new(AstNode::Identifier { s: "b".to_string() }),
                 length: Some(Box::new(AstNode::Identifier { s: "c".to_string() }))
-            })
+            }
         };
     }
 
@@ -2255,10 +2259,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "TO_DATE(a)",
-            expected: Some(AstNode::ToDateFunction {
+            expected: AstNode::ToDateFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 format: None
-            })
+            }
         };
     }
 
@@ -2267,10 +2271,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "DATE a",
-            expected: Some(AstNode::ToDateFunction {
+            expected: AstNode::ToDateFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 format: None
-            })
+            }
         };
     }
 
@@ -2279,10 +2283,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "TO_DATE(a, b)",
-            expected: Some(AstNode::ToDateFunction {
+            expected: AstNode::ToDateFunction {
                 string: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 format: Some(Box::new(AstNode::Identifier { s: "b".to_string() }))
-            })
+            }
         };
     }
 
@@ -2291,10 +2295,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "POWER(a, b)",
-            expected: Some(AstNode::PowerFunction {
+            expected: AstNode::PowerFunction {
                 base: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 exponent: Box::new(AstNode::Identifier { s: "b".to_string() })
-            })
+            }
         };
     }
 
@@ -2303,12 +2307,12 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "CONCAT(a, b)",
-            expected: Some(AstNode::ConcatFunction {
+            expected: AstNode::ConcatFunction {
                 exprs: vec![
                     AstNode::Identifier { s: "a".to_string() },
                     AstNode::Identifier { s: "b".to_string() }
                 ]
-            })
+            }
         };
     }
 
@@ -2317,10 +2321,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MAX(a)",
-            expected: Some(AstNode::MaxFunction {
+            expected: AstNode::MaxFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2329,10 +2333,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MAX(ALL a)",
-            expected: Some(AstNode::MaxFunction {
+            expected: AstNode::MaxFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2341,10 +2345,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MAX(DISTINCT a)",
-            expected: Some(AstNode::MaxFunction {
+            expected: AstNode::MaxFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2353,10 +2357,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MIN(a)",
-            expected: Some(AstNode::MinFunction {
+            expected: AstNode::MinFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2365,10 +2369,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MIN(ALL a)",
-            expected: Some(AstNode::MinFunction {
+            expected: AstNode::MinFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2377,10 +2381,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MIN(DISTINCT a)",
-            expected: Some(AstNode::MinFunction {
+            expected: AstNode::MinFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2389,10 +2393,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUM(a)",
-            expected: Some(AstNode::SumFunction {
+            expected: AstNode::SumFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2401,10 +2405,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUM(ALL a)",
-            expected: Some(AstNode::SumFunction {
+            expected: AstNode::SumFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::All }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2413,10 +2417,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "SUM(DISTINCT a)",
-            expected: Some(AstNode::SumFunction {
+            expected: AstNode::SumFunction {
                 mode: Box::new(AstNode::SelectMode { mode:SelectMode::Distinct }),
                 expr: Box::new(AstNode::Identifier { s: "a".to_string() })
-            })
+            }
         };
     }
 
@@ -2425,7 +2429,7 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "COALESCE(POWER(1, 2), 3)",
-            expected: Some(AstNode::CoalesceFunction{
+            expected: AstNode::CoalesceFunction{
                 exprs: vec![
                     AstNode::PowerFunction{
                         base: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
@@ -2433,7 +2437,7 @@ mod tests {
                     },
                     AstNode::IntegerLiteral { s: "3".to_string() }
                 ]
-            })
+            }
         };
     }
 
@@ -2442,10 +2446,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "DATE_TRUNC('month', '2020-06-01')",
-            expected: Some(AstNode::DateTruncFunction{
+            expected: AstNode::DateTruncFunction{
                 format: Box::new(AstNode::StringLiteral { s: "month".to_string() }),
                 datetime: Box::new(AstNode::StringLiteral { s: "2020-06-01".to_string() }),
-            })
+            }
         };
     }
 
@@ -2454,10 +2458,10 @@ mod tests {
         parse_rule! {
             rule: Rule::function_expression,
             input: "MONTHS_BETWEEN('2020-05-01', '2020-06-01')",
-            expected: Some(AstNode::MonthsBetweenFunction{
+            expected: AstNode::MonthsBetweenFunction{
                 datetime1: Box::new(AstNode::StringLiteral { s: "2020-05-01".to_string() }),
                 datetime2: Box::new(AstNode::StringLiteral { s: "2020-06-01".to_string() }),
-            })
+            }
         };
     }
 
@@ -2470,7 +2474,7 @@ mod tests {
         parse_rule! {
             rule: Rule::identifier,
             input: "name",
-            expected: Some(AstNode::Identifier { s: "name".to_string() })
+            expected: AstNode::Identifier { s: "name".to_string() }
         };
     }
 
@@ -2479,7 +2483,7 @@ mod tests {
         parse_rule! {
             rule: Rule::identifier,
             input: "NAME",
-            expected: Some(AstNode::Identifier { s: "NAME".to_string() })
+            expected: AstNode::Identifier { s: "NAME".to_string() }
         };
     }
 
@@ -2488,7 +2492,7 @@ mod tests {
         parse_rule! {
             rule: Rule::identifier,
             input: "name4",
-            expected: Some(AstNode::Identifier { s: "name4".to_string() })
+            expected: AstNode::Identifier { s: "name4".to_string() }
         };
     }
 
@@ -2497,7 +2501,7 @@ mod tests {
         parse_rule! {
             rule: Rule::identifier,
             input: "my_name",
-            expected: Some(AstNode::Identifier { s: "my_name".to_string() })
+            expected: AstNode::Identifier { s: "my_name".to_string() }
         };
     }
 
@@ -2510,7 +2514,7 @@ mod tests {
         parse_rule! {
             rule: Rule::with_clause,
             input:  "my_cte AS ( SELECT 1 )",
-            expected: Some(AstNode::WithClause {
+            expected: AstNode::WithClause {
                 identifier: Box::new(AstNode::Identifier { s: "my_cte".to_string() }),
                 columns: vec![],
                 query: Box::new(AstNode::SelectStatement {
@@ -2521,7 +2525,7 @@ mod tests {
                     where_expr: None,
                     group_by: None,
                 }),
-            })
+            }
         };
     }
 
@@ -2534,11 +2538,11 @@ mod tests {
         parse_rule! {
             rule: Rule::where_clause,
             input: "WHERE a = 1",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::Identifier { s: "a".to_string() }),
                 op: Operation::Equal,
                 right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
-            })
+            }
         };
     }
 
@@ -2547,7 +2551,7 @@ mod tests {
         parse_rule! {
             rule: Rule::where_clause,
             input: "WHERE TRUE AND a = 1",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::BooleanLiteral { s: "TRUE".to_string() }),
                 op: Operation::And,
                 right: Box::new(AstNode::Expression {
@@ -2555,7 +2559,7 @@ mod tests {
                     op: Operation::Equal,
                     right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
                 })
-            })
+            }
         };
     }
 
@@ -2564,7 +2568,7 @@ mod tests {
         parse_rule! {
             rule: Rule::where_clause,
             input: "WHERE a IS NULL AND a = 1",
-            expected: Some(AstNode::Expression {
+            expected: AstNode::Expression {
                 left: Box::new(AstNode::IsNullExpression {
                     expr: Box::new(AstNode::Identifier { s: "a".to_string() }),
                     is_null: true,
@@ -2575,7 +2579,7 @@ mod tests {
                     op: Operation::Equal,
                     right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() })
                 })
-            })
+            }
         };
     }
 
@@ -2588,7 +2592,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_union_statement,
             input: "SELECT 1 UNION SELECT 2",
-            expected: Some(AstNode::SelectUnionStatement {
+            expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
                     common: vec![],
                     mode: SelectMode::All,
@@ -2606,7 +2610,7 @@ mod tests {
                     where_expr: None,
                     group_by: None,
                 }),
-            })
+            }
         };
     }
 
@@ -2615,7 +2619,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_union_statement,
             input: "SELECT 1 UNION ALL SELECT 2",
-            expected: Some(AstNode::SelectUnionStatement {
+            expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
                     common: vec![],
                     mode: SelectMode::All,
@@ -2633,7 +2637,7 @@ mod tests {
                     where_expr: None,
                     group_by: None,
                 }),
-            })
+            }
         };
     }
 
@@ -2642,7 +2646,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_union_statement,
             input: "SELECT 1 INTERSECT SELECT 2",
-            expected: Some(AstNode::SelectUnionStatement {
+            expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
                     common: vec![],
                     mode: SelectMode::All,
@@ -2660,7 +2664,7 @@ mod tests {
                     where_expr: None,
                     group_by: None,
                 }),
-            })
+            }
         };
     }
 
@@ -2669,7 +2673,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_union_statement,
             input: "SELECT 1 MINUS SELECT 2",
-            expected: Some(AstNode::SelectUnionStatement {
+            expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
                     common: vec![],
                     mode: SelectMode::All,
@@ -2687,7 +2691,7 @@ mod tests {
                     where_expr: None,
                     group_by: None,
                 }),
-            })
+            }
         };
     }
     #[test]
@@ -2695,7 +2699,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_union_statement,
             input: "SELECT 1 EXCEPT SELECT 2",
-            expected: Some(AstNode::SelectUnionStatement {
+            expected: AstNode::SelectUnionStatement {
                 left: Box::new(AstNode::SelectStatement {
                     common: vec![],
                     mode: SelectMode::All,
@@ -2713,7 +2717,7 @@ mod tests {
                     where_expr: None,
                     group_by: None,
                 }),
-            })
+            }
         };
     }
 
@@ -2726,14 +2730,14 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT 1",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2742,7 +2746,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "WITH my_cte AS ( SELECT 1 AS c ) SELECT c FROM my_cte",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![AstNode::WithClause {
                     identifier: Box::new(AstNode::Identifier { s: "my_cte".to_string() }),
                     columns: vec![],
@@ -2766,7 +2770,7 @@ mod tests {
                 }],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2775,7 +2779,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "WITH cte_1 AS ( SELECT 1 AS a ), cte_2 AS ( SELECT 1 AS b ) SELECT a FROM cte_1",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![
                     AstNode::WithClause {
                         identifier: Box::new(AstNode::Identifier { s: "cte_1".to_string() }),
@@ -2816,7 +2820,7 @@ mod tests {
                 }],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2825,7 +2829,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "WITH cte AS ( SELECT 1 AS a UNION SELECT 2 AS a ) SELECT a FROM cte",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![AstNode::WithClause {
                     identifier: Box::new(AstNode::Identifier { s: "cte".to_string() }),
                     columns: vec![],
@@ -2863,7 +2867,7 @@ mod tests {
                 }],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2872,7 +2876,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a, b FROM table",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![
@@ -2887,7 +2891,7 @@ mod tests {
                 ],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2896,7 +2900,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a, b FROM schema.table",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![
@@ -2914,7 +2918,7 @@ mod tests {
                 }],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2923,7 +2927,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a, b FROM table AS alias",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![
@@ -2938,7 +2942,7 @@ mod tests {
                 ],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2947,7 +2951,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a, b FROM schema.table AS alias",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![
@@ -2969,7 +2973,7 @@ mod tests {
                 ],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -2978,7 +2982,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT * FROM schema.table alias",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::AllColumns],
@@ -2997,7 +3001,7 @@ mod tests {
                 ],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3006,7 +3010,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT * FROM a JOIN b ON a.id = b.id",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::AllColumns],
@@ -3042,7 +3046,7 @@ mod tests {
                 ],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3051,7 +3055,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT * WHERE a = 1",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::AllColumns],
@@ -3062,7 +3066,7 @@ mod tests {
                     right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
                 })),
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3071,7 +3075,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT * FROM a WHERE b = 1",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::AllColumns],
@@ -3085,7 +3089,7 @@ mod tests {
                     right: Box::new(AstNode::IntegerLiteral { s: "1".to_string() }),
                 })),
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3094,14 +3098,14 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT DISTINCT a",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::Distinct,
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3110,14 +3114,14 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT ALL a",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3126,7 +3130,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a FROM t GROUP BY a",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
@@ -3139,7 +3143,7 @@ mod tests {
                     groupings: vec![AstNode::Identifier { s: "a".to_string() }],
                     having: None
                 }))
-            })
+            }
         };
     }
 
@@ -3148,7 +3152,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a GROUP BY a",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
@@ -3158,7 +3162,7 @@ mod tests {
                     groupings: vec![AstNode::Identifier { s: "a".to_string() }],
                     having: None
                 }))
-            })
+            }
         };
     }
 
@@ -3167,7 +3171,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT a GROUP BY 1",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::Identifier { s: "a".to_string() }],
@@ -3177,7 +3181,7 @@ mod tests {
                     groupings: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                     having: None
                 }))
-            })
+            }
         };
     }
 
@@ -3186,7 +3190,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT 1 FROM (SELECT 1)",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
@@ -3200,7 +3204,7 @@ mod tests {
                 }],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3209,7 +3213,7 @@ mod tests {
         parse_rule! {
             rule: Rule::select_statement,
             input: "SELECT * FROM a JOIN b ON a.id = b.id JOIN c ON a.id = c.id",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::AllColumns],
@@ -3269,7 +3273,7 @@ mod tests {
                 ],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3286,14 +3290,14 @@ mod tests {
                 -- comment
                 SELECT 1
             "#.trim(),
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3306,14 +3310,14 @@ mod tests {
                 SELECT 1
                 -- comment
             "#.trim(),
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3322,14 +3326,34 @@ mod tests {
         parse_rule! {
             rule: Rule::sql_statement,
             input: "SELECT 1 -- comment",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::IntegerLiteral { s: "1".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
+        };
+    }
+
+    #[test]
+    fn sql_statement_comment_inline_with_expression() {
+        parse_rule! {
+            rule: Rule::sql_statement,
+            input: "SELECT a / b -- comment",
+            expected: AstNode::SelectStatement {
+                common: vec![],
+                mode: SelectMode::All,
+                columns: vec![AstNode::Expression {
+                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                    op: Operation::Divide,
+                    right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+                }],
+                table_exprs: vec![],
+                where_expr: None,
+                group_by: None,
+            }
         };
     }
 
@@ -3338,14 +3362,14 @@ mod tests {
         parse_rule! {
             rule: Rule::sql_statement,
             input: "SELECT '--'",
-            expected: Some(AstNode::SelectStatement {
+            expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
                 columns: vec![AstNode::StringLiteral { s: "--".to_string() }],
                 table_exprs: vec![],
                 where_expr: None,
                 group_by: None,
-            })
+            }
         };
     }
 
@@ -3354,7 +3378,7 @@ mod tests {
         parse_rule! {
             rule: Rule::sql_statement,
             input: "",
-            expected: None
+            expected: AstNode::Empty
         };
     }
 }

@@ -3271,11 +3271,11 @@ mod tests {
     }
 
     // ------------------------------------------------------------------
-    // Rule::comment
+    // Rule::sql_statement
     // ------------------------------------------------------------------
 
     #[test]
-    fn comment_before_statement() {
+    fn sql_statement_comment_before_statement() {
         parse_rule! {
             rule: Rule::sql_statement,
             input:
@@ -3295,7 +3295,7 @@ mod tests {
     }
 
     #[test]
-    fn comment_after_statement() {
+    fn sql_statement_comment_after_statement() {
         parse_rule! {
             rule: Rule::sql_statement,
             input:
@@ -3315,7 +3315,7 @@ mod tests {
     }
 
     #[test]
-    fn comment_inline() {
+    fn sql_statement_comment_inline() {
         parse_rule! {
             rule: Rule::sql_statement,
             input: "SELECT 1 -- comment",

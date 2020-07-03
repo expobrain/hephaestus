@@ -434,6 +434,8 @@ table_or_subquery = _{
 
 table_expression = _{ table_or_subquery ~ join_clause* }
 
+// I don't know why I need to exclude the keywords WHERE and GROUP BY here,
+// they are already listed in `joins_and_clauses` and it should be enough
 table_expressions = { table_expression ~ (","? ~ !(WHERE | (GROUP ~ BY) ) ~ table_expression)* }
 
 from_clause = _{ FROM ~ table_expressions }

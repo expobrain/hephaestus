@@ -9,8 +9,8 @@ name = "hephaestus"
 crate-type = ["cdylib"]
 
 [dependencies]
-pest = "~2.1"
-pest_derive = "~2.1"
+pest = "~2.1.3"
+pest_derive = "~2.1.0"
 dict_derive = "~0.2.0"
 lazy_static = "~1.4.0"
 

@@ -3281,7 +3281,7 @@ mod tests {
             input:
             r#"
                 -- comment
-                select 1
+                SELECT 1
             "#.trim(),
             expected: AstNode::SelectStatement {
                 common: vec![],
@@ -3298,7 +3298,7 @@ mod tests {
     fn comment_inline() {
         parse_rule! {
             rule: Rule::select_statement,
-            input: "select 1 -- comment",
+            input: "SELECT 1 -- comment",
             expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,
@@ -3314,7 +3314,7 @@ mod tests {
     fn not_a_comment() {
         parse_rule! {
             rule: Rule::select_statement,
-            input: "select '--'",
+            input: "SELECT '--'",
             expected: AstNode::SelectStatement {
                 common: vec![],
                 mode: SelectMode::All,

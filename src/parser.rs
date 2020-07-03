@@ -598,12 +598,12 @@ fn parse_value(pairs: Pairs<Rule>) -> AstNode {
     )
 }
 
-fn parse_tokens(sql: &str) -> Pairs<Rule> {
+fn parse_str_to_pairs(sql: &str) -> Pairs<Rule> {
     SqlParser::parse(Rule::sql_statement, sql).unwrap()
 }
 
 pub fn parse(sql: &str) -> Result<AstNode, Error<Rule>> {
-    let pair = parse_tokens(sql);
+    let pair = parse_str_to_pairs(sql);
 
     Ok(parse_value(pair))
 }

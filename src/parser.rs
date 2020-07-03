@@ -3311,6 +3311,26 @@ mod tests {
     }
 
     #[test]
+    fn comment_inline_with_operation() {
+        parse_rule! {
+            rule: Rule::select_statement,
+            input: "SELECT a / b -- comment",
+            expected: AstNode::SelectStatement {
+                common: vec![],
+                mode: SelectMode::All,
+                columns: vec![AstNode::Expression {
+                    left: Box::new(AstNode::Identifier { s: "a".to_string() }),
+                    op: Operation::Divide,
+                    right: Box::new(AstNode::Identifier { s: "b".to_string() }),
+                }],
+                table_exprs: vec![],
+                where_expr: None,
+                group_by: None,
+            }
+        };
+    }
+
+    #[test]
     fn not_a_comment() {
         parse_rule! {
             rule: Rule::select_statement,

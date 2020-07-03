@@ -15,7 +15,7 @@ dict_derive = "~0.2.0"
 lazy_static = "~1.4.0"
 
 [dependencies.pyo3]
-version = "~0.10.1"
+version = "~0.11.1"
 # git = "https://github.com/expobrain/pyo3.git"
 # branch = "python3_bin"
 # features = []

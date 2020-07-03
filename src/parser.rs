@@ -551,19 +551,6 @@ fn primary(pair: Pair<Rule>) -> AstNode {
         }
 
         // ------------------------------------------------------------------
-        // Comment
-        // ------------------------------------------------------------------
-        Rule::COMMENT => {
-            // Necessary to strip the single quotes around the string
-            let s = inner_iter
-                .next()
-                .map(|v| v.as_str().to_string())
-                .unwrap_or_else(|| "".to_string());
-
-            AstNode::Comment { s }
-        }
-
-        // ------------------------------------------------------------------
         // Unknown
         // ------------------------------------------------------------------
         _ => unreachable!(format!("Rule {:#?} not supported", pair)),

@@ -3,7 +3,7 @@
 // ------------------------------------------------------------------
 
 WHITESPACE = _{ " " | NEWLINE }
-COMMENT = { "--" ~ (!NEWLINE ~ ANY)* ~ (NEWLINE | EOI) }
+COMMENT = { "--" ~ (!NEWLINE ~ ANY)* ~ (NEWLINE | EOI)? }
 
 ALL = _{ ^"ALL" }
 AND = _{ ^"AND" }

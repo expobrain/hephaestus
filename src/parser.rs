@@ -35,7 +35,6 @@ lazy_static! {
 }
 
 fn primary(pair: Pair<Rule>) -> AstNode {
-    eprintln!(">>> {:#?}", pair);
     let mut inner_iter = pair.clone().into_inner().filter(|p| match p.as_rule() {
         Rule::COMMENT => false,
         _ => true,
@@ -581,9 +580,20 @@ fn infix(left: AstNode, op: Pair<Rule>, right: AstNode) -> AstNode {
 }
 
 fn parse_value(pairs: Pairs<Rule>) -> AstNode {
+    let usable_pairs: Vec<_> = pairs
+        .clone()
+        .map(|p| p.as_rule())
+        .filter(|p| match p {
+            Rule::COMMENT | Rule::EOI => false,
+            _ => true,
+        })
+        .collect();
+    eprintln!("==========================");
+    eprintln!(">>> {:#?}", pairs.clone());
+    eprintln!("<<< {:#?}", usable_pairs);
     PREC_CLIMBER.climb(
         pairs.filter(|p| match p.as_rule() {
-            Rule::COMMENT => false,
+            Rule::COMMENT | Rule::EOI => false,
             _ => true,
         }),
         primary,

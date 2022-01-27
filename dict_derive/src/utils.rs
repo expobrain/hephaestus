@@ -33,7 +33,7 @@ pub fn which_field_type(ty: &syn::Type) -> MappedFieldType {
 
                 let field_type = match argument {
                     GenericArgument::Type(ref t) => which_field_type(&t),
-                    _ => panic!(format!("Unexpected GenericArgument {:?}", argument)),
+                    _ => panic!("Unexpected GenericArgument {:?}", argument),
                 };
 
                 match field_type {
@@ -42,10 +42,10 @@ pub fn which_field_type(ty: &syn::Type) -> MappedFieldType {
                 }
             }
             PathArguments::None => MappedFieldType::IsAny,
-            _ => panic!(format!(
+            _ => panic!(
                 "Unexpected segment {:?}",
                 path.segments[0].arguments
-            )),
+            ),
         }
     } else {
         MappedFieldType::IsAny
